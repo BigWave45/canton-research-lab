@@ -31,6 +31,7 @@ class SettlementBinding:
     interval_id: str
     synchronizer_id: str
     obligation_id: str
+    agreement_id: str
     agreement_version: str
     authority_reference: str
     signer_key_id: str
@@ -66,15 +67,16 @@ def reconcile_protocol_evidence(
     for binding in bindings:
         if binding.interval_id not in expected_ids:
             return _blocked("UNEXPECTED_BINDING_INTERVAL")
-        if not all((binding.synchronizer_id, binding.obligation_id,
-                    binding.agreement_version, binding.authority_reference)):
+        if not all((binding.synchronizer_id, binding.obligation_id, binding.agreement_id,
+                    binding.agreement_version, binding.authority_reference,
+                    binding.signer_key_id, binding.signature_b64)):
             return _blocked("INCOMPLETE_SETTLEMENT_BINDING")
         if binding.interval_id in by_interval:
             return _blocked("AMBIGUOUS_INTERVAL_BINDING")
         pricing = pricing_agreements.get(binding.agreement_version)
         if pricing is None:
             return _blocked("UNKNOWN_PRICING_AGREEMENT_VERSION")
-        if pricing.version_id != binding.agreement_version or pricing.agreement_id != binding.obligation_id:
+        if pricing.version_id != binding.agreement_version or pricing.agreement_id != binding.agreement_id:
             return _blocked("AGREEMENT_BINDING_MISMATCH")
         signed_document = {
             "agreement_id": pricing.agreement_id,
