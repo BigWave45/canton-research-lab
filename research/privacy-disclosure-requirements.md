@@ -99,6 +99,6 @@ It does not establish:
 
 A proof over a committed manifest can establish constraints over that manifest. It cannot prove that the manifest contains every chargeable event unless completeness is established by an additional trusted or independently verifiable mechanism.
 
-## Next research task
+## Integration status and remaining work
 
-Integrate the disclosure requirements with the comparative assurance scenarios. For each architecture, assess (a) what must be public, (b) what must be auditor-restricted, (c) what remains operationally private, and (d) which trust assumptions remain. Then add a qualitative operational-cost and latency model without inventing measured performance numbers.
+The disclosure requirements have been incorporated into `research/integrated-assurance-architecture-comparison.md`. The remaining task is to validate each architecture's disclosure claims against concrete evidence flows and then develop a parameterised operational-cost and latency model. Do not present the qualitative ratings as measured performance.
