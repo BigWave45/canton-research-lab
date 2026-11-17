@@ -57,6 +57,10 @@ python analysis/assurance_cost_model.py
 
 The module prints a usage notice rather than an illustrative cost result when run without supplied inputs. To produce a substantive comparison, populate all four architecture input sets from measured prototype runs, documented vendor rates, a defined time-and-motion protocol, or clearly labelled scenario assumptions.
 
+## Worked scenario
+
+See [Illustrative Assurance-Cost Scenario Analysis](illustrative-assurance-cost-scenario.md) for one explicitly synthetic input set, calculated results and sensitivity checks. Its ICU values are not Canton estimates and must not be cited as empirical costs.
+
 ## Interpretation limits
 
 - This is a cost-accounting framework, not a weighted architecture score.
