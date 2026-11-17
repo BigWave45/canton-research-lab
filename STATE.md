@@ -653,3 +653,17 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Ten unit tests are authored but have not been executed in a repository runtime. Do not report them as passing.
 - Explicit limitation: the state machine does not prove source-meter truth/completeness, legal agreement authority, public burn finality, correctness of the upstream due calculation or reward arithmetic.
 - Next exact task: implement and test a separate deterministic agreement-schedule calculator for effective dates, instalment deadlines, timezone handling, grace periods, tolerances and carry-forward rules; then feed its due amounts into this state machine.
+
+
+## Update — 17 November 2026: agreement schedule calculator and reconciliation integration
+
+- Added `analysis/agreement_schedule.py` and `tests/test_agreement_schedule.py`. The pure calculator handles effective periods, explicit-offset timestamps, due tranches, grace deadlines, FIFO payment allocation, tolerances and opt-in carry-forward credit.
+- Added `research/agreement-schedule-calculator.md` with the schedule rules, example and limitations.
+- Extended `analysis/reconciliation_state_machine.py` with `reconcile_with_schedules`, which calculates due amounts per obligation before running the existing report, agreement, allocation and reward checks.
+- Added `tests/test_scheduled_reconciliation.py` and `research/scheduled-reconciliation-integration.md`.
+- The integrated state machine now distinguishes `WITHIN_GRACE` from `PAST_GRACE_UNPAID`; it rejects missing schedules and schedule-version mismatches; it applies explicit agreement tolerance; and it accepts prior credit only when the schedule enables carry-forward.
+- Corrected two schedule-test boundary expectations during review: FIFO test now evaluates while the later tranche remains within grace, and the timezone test evaluates before the UTC-equivalent due instant.
+- Corrected the carry-forward-disabled integration test to expect past-grace unpaid rather than reconciliation. Added explicit stale-version and tolerance integration tests.
+- Test inventory: 12 standalone schedule tests and 6 scheduled-integration tests are authored. They have not been executed in a repository runtime; do not report them as passing.
+- Remaining assumptions: supplied agreement authority, source report completeness, burn finality and allocation authenticity are external inputs. This is synthetic research code, not production Canton functionality.
+- Next exact task: review the combined model for edge cases and run the full Python test suite in a reproducible runtime. If execution remains unavailable, continue static review and clearly preserve the unexecuted status; do not invent test results.
