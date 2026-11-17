@@ -1,8 +1,4 @@
-"""Portfolio-level settlement allocation and smoothing model.
-
-Synthetic reference model. It does not parse Canton ledger events or execute
-CIP-0132 paymaster automation.
-"""
+"""Portfolio-level settlement allocation and smoothing model."""
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Iterable
@@ -49,16 +45,10 @@ class Allocation:
     amount_cc: Decimal
 
 
-def validate_portfolio(
-    obligations: Iterable[Obligation],
-    burns: Iterable[Burn],
-    allocations: Iterable[Allocation],
-    as_of: int,
-) -> dict:
-    obligations = tuple(obligations)
-    burns = tuple(burns)
-    allocations = tuple(allocations)
-    errors: list[str] = []
+def validate_portfolio(obligations: Iterable[Obligation], burns: Iterable[Burn],
+                       allocations: Iterable[Allocation], as_of: int) -> dict:
+    obligations, burns, allocations = tuple(obligations), tuple(burns), tuple(allocations)
+    errors = []
     by_obligation = {o.obligation_id: o for o in obligations}
     by_burn = {b.event_id: b for b in burns}
     if len(by_obligation) != len(obligations):
@@ -77,113 +67,87 @@ def validate_portfolio(
                 errors.append(f"{obligation.obligation_id}: interval gap/overlap")
             if interval.status != "Ok" or interval.traffic_bytes is None:
                 errors.append(f"{obligation.obligation_id}: incomplete interval")
-            if not interval.agreement_version:
-                errors.append(f"{obligation.obligation_id}: missing agreement version")
-            if interval.expected_cc < 0:
-                errors.append(f"{obligation.obligation_id}: negative priced interval")
+            if not interval.agreement_version or interval.expected_cc < 0:
+                errors.append(f"{obligation.obligation_id}: invalid pricing evidence")
             cursor = interval.end
-
         expected = sum((x.expected_cc for x in intervals), D("0"))
         scheduled = sum((x.amount_cc for x in obligation.due_schedule), D("0"))
-        if any(x.amount_cc < 0 for x in obligation.due_schedule):
-            errors.append(f"{obligation.obligation_id}: negative due tranche")
-        if scheduled != expected:
-            errors.append(f"{obligation.obligation_id}: due schedule does not equal liability")
+        if any(x.amount_cc < 0 for x in obligation.due_schedule) or scheduled != expected:
+            errors.append(f"{obligation.obligation_id}: invalid due schedule")
         due_dates = [x.due_at for x in obligation.due_schedule]
         if due_dates != sorted(due_dates):
             errors.append(f"{obligation.obligation_id}: due dates not ordered")
 
-    allocated_by_burn: dict[str, Decimal] = {}
-    allocated_by_obligation: dict[str, Decimal] = {}
+    allocated_by_burn, allocated_by_obligation = {}, {}
     for allocation in allocations:
         burn = by_burn.get(allocation.event_id)
         obligation = by_obligation.get(allocation.obligation_id)
-        if burn is None:
-            errors.append(f"unknown burn event {allocation.event_id}")
-            continue
-        if obligation is None:
-            errors.append(f"unknown obligation {allocation.obligation_id}")
+        if burn is None or obligation is None:
+            errors.append("allocation references unknown burn or obligation")
             continue
         if burn.paymaster_id != obligation.paymaster_id:
             errors.append(f"paymaster mismatch for {allocation.event_id}")
         if allocation.amount_cc < 0:
             errors.append(f"negative allocation for {allocation.event_id}")
-        allocated_by_burn[allocation.event_id] = (
-            allocated_by_burn.get(allocation.event_id, D("0")) + allocation.amount_cc
-        )
-        allocated_by_obligation[allocation.obligation_id] = (
-            allocated_by_obligation.get(allocation.obligation_id, D("0")) + allocation.amount_cc
-        )
+        allocated_by_burn[allocation.event_id] = allocated_by_burn.get(allocation.event_id, D("0")) + allocation.amount_cc
+        allocated_by_obligation[allocation.obligation_id] = allocated_by_obligation.get(allocation.obligation_id, D("0")) + allocation.amount_cc
 
-    for event_id, allocated in allocated_by_burn.items():
-        if allocated > by_burn[event_id].amount_cc:
+    for event_id, amount in allocated_by_burn.items():
+        if amount > by_burn[event_id].amount_cc:
             errors.append(f"burn over-allocated: {event_id}")
 
     statuses = {}
     for obligation in obligations:
         expected = sum((x.expected_cc for x in obligation.intervals), D("0"))
         paid = allocated_by_obligation.get(obligation.obligation_id, D("0"))
+        due = sum((x.amount_cc for x in obligation.due_schedule if x.due_at <= as_of), D("0"))
         if paid > expected:
             errors.append(f"{obligation.obligation_id}: allocated above liability")
-            statuses[obligation.obligation_id] = "overpaid"
-            continue
-        due = sum((x.amount_cc for x in obligation.due_schedule if x.due_at <= as_of), D("0"))
-        if paid >= expected:
+            status = "overpaid"
+        elif paid >= expected:
             status = "reconciled"
-        elif as_of >= max((x.due_at for x in obligation.due_schedule), default=as_of) and paid < expected:
-            status = "short_paid"
         elif paid < due:
             status = "short_paid"
         else:
             status = "not_yet_due"
         statuses[obligation.obligation_id] = status
 
-    if errors:
-        return {"status": "invalid", "obligations": statuses, "errors": tuple(errors)}
-    return {"status": "valid", "obligations": statuses, "errors": ()}
+    return {"status": "invalid" if errors else "valid",
+            "obligations": statuses, "errors": tuple(errors)}
 
 
 def example_portfolio():
-    o1 = Obligation(
-        "O-A", "PM-1", "dSync-A",
-        (
-            PricedInterval(0, 600, "Ok", 1000, "v1", D("5")),
-            PricedInterval(600, 1200, "Ok", 1200, "v2", D("4")),
-        ),
-        (DueTranche(100, D("3")), DueTranche(200, D("6"))),
-    )
-    o2 = Obligation(
-        "O-B", "PM-1", "dSync-B",
-        (PricedInterval(0, 1200, "Ok", 800, "v4", D("6")),),
-        (DueTranche(100, D("6")),),
-    )
-    burn = Burn("burn-portfolio-1", D("15"), "PM-1")
+    o1 = Obligation("O-A", "PM-1", "dSync-A", (
+        PricedInterval(0, 600, "Ok", 1000, "v1", D("5")),
+        PricedInterval(600, 1200, "Ok", 1200, "v2", D("4")),
+    ), (DueTranche(100, D("3")), DueTranche(200, D("6"))))
+    o2 = Obligation("O-B", "PM-1", "dSync-B", (
+        PricedInterval(0, 1200, "Ok", 800, "v4", D("6")),
+    ), (DueTranche(100, D("6")),))
+    burns = (Burn("burn-1", D("9"), "PM-1"), Burn("burn-2", D("6"), "PM-1"))
     allocations = (
-        Allocation("burn-portfolio-1", "O-A", D("9")),
-        Allocation("burn-portfolio-1", "O-B", D("6")),
+        Allocation("burn-1", "O-A", D("3")),
+        Allocation("burn-1", "O-B", D("6")),
+        Allocation("burn-2", "O-A", D("6")),
     )
-    return (o1, o2), (burn,), allocations
+    return (o1, o2), burns, allocations
 
 
 def run():
     obligations, burns, allocations = example_portfolio()
-    early = validate_portfolio(obligations, burns, allocations, as_of=150)
-    assert early["status"] == "valid"
-    assert early["obligations"] == {"O-A": "not_yet_due", "O-B": "reconciled"}
-    late = validate_portfolio(obligations, burns, allocations, as_of=250)
+    early = validate_portfolio(obligations, burns, allocations, 150)
+    assert early == {"status": "valid", "obligations": {
+        "O-A": "not_yet_due", "O-B": "reconciled"}, "errors": ()}
+    late = validate_portfolio(obligations, burns, allocations, 250)
     assert late["obligations"] == {"O-A": "reconciled", "O-B": "reconciled"}
-
-    over_allocated = (
-        Allocation("burn-portfolio-1", "O-A", D("10")),
-        Allocation("burn-portfolio-1", "O-B", D("6")),
-    )
-    assert validate_portfolio(obligations, burns, over_allocated, 250)["status"] == "invalid"
-
-    underpaid = (
-        Allocation("burn-portfolio-1", "O-A", D("8")),
-        Allocation("burn-portfolio-1", "O-B", D("6")),
-    )
-    assert validate_portfolio(obligations, burns, underpaid, 250)["obligations"]["O-A"] == "short_paid"
+    over = (Allocation("burn-1", "O-A", D("4")),
+            Allocation("burn-1", "O-B", D("6")),
+            Allocation("burn-2", "O-A", D("6")))
+    assert validate_portfolio(obligations, burns, over, 250)["status"] == "invalid"
+    short = (Allocation("burn-1", "O-A", D("2")),
+             Allocation("burn-1", "O-B", D("6")),
+             Allocation("burn-2", "O-A", D("6")))
+    assert validate_portfolio(obligations, burns, short, 250)["obligations"]["O-A"] == "short_paid"
     print("shared-paymaster smoothing and allocation scenarios passed")
 
 
