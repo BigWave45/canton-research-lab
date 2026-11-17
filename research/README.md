@@ -18,6 +18,7 @@ The current project stage is evidence consolidation and validation. The topic ha
 6. [Quantitative assurance evaluation plan](quantitative-assurance-evaluation-plan.md): the evaluation design and existing-artifact feasibility audit.
 7. [Assurance cost model](assurance-cost-model.md): the parameterised calculator, inputs, outputs and limits.
 8. [Illustrative assurance-cost scenario](illustrative-assurance-cost-scenario.md): a synthetic four-architecture cost comparison and sensitivity checks; not Canton cost evidence.
+9. [Prototype measurement protocol](prototype-measurement-protocol.md): the reproducible local microbenchmark method for manifest validation, allocation checks and aggregate-leakage analysis.
 
 ## Workstream organisation
 
