@@ -42,9 +42,9 @@ No claim is made that all repository tests were discovered or executed. A full c
 1. Excess current payment is now exposed as `unapplied_payment_cc`. It is not silently converted into carry-forward credit. Prior credit remains separately governed by the agreement's explicit carry-forward flag.
 2. Agreement schedule version is checked against each obligation's authoritative version before reconciliation.
 3. Grace-period classification is separate from contractual due amount.
-4. Report agreement-version comparison in the base model uses sets of versions. The schedule-integrated path adds a per-obligation version check, but report-to-obligation identity is not yet represented. A later interface revision should bind each report interval explicitly to its synchronizer/obligation and agreement version.
+4. Each report now carries a stable report_id, obligation_id, synchronizer_id and agreement_version. The verifier checks the synchronizer and obligation binding and compares the report's agreement version against that specific obligation's authoritative version. This avoids incorrectly requiring all synchronizers to share one agreement version.
 5. The model still cannot prove the truth or completeness of source traffic measurement, agreement legal authority, ledger finality or reward arithmetic.
 
 ## Next step
 
-Add explicit synchronizer/obligation identity and interval-to-agreement binding to the input records, then add cross-obligation tests. After that, obtain a real repository checkout and run the exact checked-in test suite in CI or another reproducible Python environment.
+Next, add a report-to-obligation interval coverage rule that validates the expected report set against the reporting schedule, then obtain a real repository checkout and run the exact checked-in test suite in CI or another reproducible Python environment.
