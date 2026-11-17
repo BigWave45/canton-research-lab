@@ -1,3 +1,8 @@
+> **Status note (17 November 2026): earlier interface draft.**  
+> This six-record schema is retained as design history. The current working specification is [settlement-accounting-interface-specification.md](settlement-accounting-interface-specification.md), which consolidates the interface into five linked record types. The implementation prototype is documented in [protocol-report-settlement-binding-interface.md](protocol-report-settlement-binding-interface.md) and [protocol-report-to-commercial-obligation-boundary.md](protocol-report-to-commercial-obligation-boundary.md). Do not treat this earlier schema as a second competing specification.
+
+---
+
 # Settlement Accounting Interface Specification v1
 
 **Date:** 17 November 2026  
