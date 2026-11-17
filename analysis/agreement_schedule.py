@@ -136,6 +136,7 @@ def calculate_due(
         "past_grace_due_cc": max(0, gross_overdue - credit_applied),
         "gross_future_cc": gross_future,
         "allocated_payment_cc": allocated_payment_cc,
+        "unapplied_payment_cc": payment_left,
         "due_unpaid_cc": due_unpaid,
         "past_grace_unpaid_cc": overdue_unpaid,
         "tolerance_cc": tolerance,
