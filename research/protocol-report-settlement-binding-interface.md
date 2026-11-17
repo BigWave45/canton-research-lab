@@ -30,7 +30,7 @@ Contains the separate off-ledger mapping:
 - agreement version;
 - authority reference for the mapping.
 
-The authority reference is a synthetic provenance field. It does not itself authenticate the referenced document or prove that the signer had authority.
+The authority reference is a synthetic provenance field. It does not itself authenticate the referenced document or prove that the signer had authority. Agreement signatures are separately verified against a supplied trusted-key registry, but the registry's authority and the signer's legal capacity remain external trust assumptions.
 
 ## Join and validation
 
@@ -52,6 +52,6 @@ A successful reconciliation still does not prove the underlying traffic measurem
 
 ## Tests and limitations
 
-Five tests cover a valid join, missing binding, ambiguous binding, invalid non-OK payload and invalid OK byte count. They are authored but not executed.
+The checked-in `tests/test_protocol_settlement_interface.py` contains nine test methods covering a valid join, missing and ambiguous bindings, invalid report payloads, invalid signatures, unknown/revoked signers and a missing trusted-key registry. The test file is present; this audit has not independently run the full repository suite on the latest branch head.
 
 This is an implementation-neutral synthetic research interface, not a production Canton integration.
