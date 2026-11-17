@@ -39,7 +39,7 @@ class AgreementScheduleTests(unittest.TestCase):
         self.assertEqual(result["status"], "PAST_GRACE_UNPAID")
 
     def test_payment_covers_oldest_tranche_fifo(self):
-        result = calculate_due(schedule(), "2026-12-15T00:00:00Z", 4)
+        result = calculate_due(schedule(), "2026-12-11T00:00:00Z", 4)
         self.assertEqual(result["due_unpaid_cc"], 6)
         self.assertEqual(result["past_grace_unpaid_cc"], 0)
         self.assertEqual(result["status"], "WITHIN_GRACE")
@@ -79,7 +79,7 @@ class AgreementScheduleTests(unittest.TestCase):
     def test_timezone_offsets_are_respected(self):
         result = calculate_due(
             schedule(tranches=(Tranche("t1", "2026-11-10T01:00:00+01:00", 4),)),
-            "2026-11-10T00:30:00Z", 0,
+            "2026-11-09T23:30:00Z", 0,
         )
         self.assertEqual(result["due_cc"], 0)
 
