@@ -90,3 +90,9 @@ At the end of each substantial research session, update this file with work comp
 - Doppler has a public whitepaper and technical documentation describing its Dutch-auction dynamic bonding-curve mechanism and Uniswap v4 hook behaviour. Independent comparative performance evidence has not yet been established.
 - EF slashing and blockspace projects, and SDF AMM/perpetual-DEX projects, are currently supported by award records only; completed outputs remain to be located.
 - Next task: locate and inspect completed research outputs for those award-only cases, then verify current Allium portal/data access and independent Doppler evaluations.
+
+
+## Follow-up verification — 17 November 2026
+
+- University at Buffalo's project record lists the SDF-funded AMM design project as active from 1 September 2025 through 31 August 2027, with USD 37,500 funding. Its final output should not be expected yet; the current absence of a paper is not evidence of non-delivery.
+- Added this status clarification to `research/completed-output-case-studies.md`.
