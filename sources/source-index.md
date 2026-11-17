@@ -22,3 +22,7 @@
 
 ## Notes
 Record access date, source type, claims supported, and whether the underlying project output was inspected. An award announcement is not proof that the final deliverable was completed.
+
+
+## Canton Development Funding
+- Canton Foundation, Protocol Development Fund: The First Report (24 Aug 2026): https://canton.foundation/protocol-development-fund-the-first-report/
