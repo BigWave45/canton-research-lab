@@ -44,9 +44,9 @@ The test explicitly encodes the second rule as a participant who left during the
 
 ### Pruning-boundary race noted in the implementation
 
-The PR #111 `TrafficReport.firstReadableStart` source comment states that the sequencer prunes its journal before moving the pruning lower bound, and that a request at the edge of the retention period can race a prune and report a wrong total. The reader obtains pruning status and then performs counter reads, so the source itself identifies a possible time-of-check/time-of-use boundary condition. The reviewed tests cover alignment, paging, participant joins/leaves and LSU reads; they do not demonstrate a test for this concurrent pruning race.
+The PR #111 `TrafficReport.firstReadableStart` source comment warns that a request at the edge of the retention period can race pruning and report a wrong total. A separate test-harness audit narrows this concern: the pruning implementation retains, for each member, the latest traffic-consumption row at or before the pruning timestamp, so that boundary row may still answer reads at or after the effective pruning point. The unresolved case is a stale pruning-status observation combined with pruning advancing between the status check and counter read. Existing mocked tests do not exercise this database-level concurrency.
 
-This is a source-level risk observation, not evidence that a wrong report has occurred in production. It should be treated as an unresolved implementation assurance question: can the report reader distinguish a complete interval from a counter snapshot affected by concurrent pruning, and what retry/locking/version mechanism, if any, prevents an incorrect `Ok` result?
+This is an unresolved concurrency hypothesis, not an established incorrect-report defect. No incorrect `Ok` response has been demonstrated. A deterministic test must distinguish a correct `Ok`, an explicit unavailable/error response, a safe retry and an incorrect `Ok` against an independent reference.
 
 ## 4. Report storage was removed from the current PR
 
@@ -108,7 +108,7 @@ Do not write that the complete paymaster traffic-to-reward pipeline is implement
 - Daml purchase constraints and registered-paymaster purchase paths in merged PR #100.
 - Scan/SV registration and contract handling in merged PR #104.
 - Proposed traffic report calculation, status model, JWT-protected handler and single-operator/LSU tests in open PR #111. These remain proposed until merged and deployed.
-- Source-level edge cases in the same PR: participants present at interval start but absent at interval end are excluded from the computed interval delta; the source comment also acknowledges a possible race between pruning and reading the pruning lower bound. Neither is evidence of actual production misbilling, but both require explicit treatment in the accounting assurance analysis.
+- Source-level edge cases in the same PR: participants present at interval start but absent at interval end are excluded from the computed interval delta; the source comment warns of a possible pruning-boundary race, but the test-harness audit narrows it to an untested concurrency hypothesis because retained boundary rows may preserve correct reads. Neither is evidence of actual production misbilling.
 - Specific participant join/leave calculation behaviour in TrafficReport.scala and its tests.
 
 **Open or draft**
