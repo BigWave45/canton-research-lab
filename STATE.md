@@ -16,7 +16,7 @@ The repository already contains substantial research and model work. Do not expa
 
 ## Verified repository inventory at the base snapshot
 
-At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map and documentation updates, the branch inventory grew to 133 files, including 72 under `research/`. Counts describe repository contents, not quality or validation.
+At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map and documentation updates, the branch inventory grew to 134 files, including 73 under `research/`. Counts describe repository contents, not quality or validation.
 
 ## Current evidence position
 
