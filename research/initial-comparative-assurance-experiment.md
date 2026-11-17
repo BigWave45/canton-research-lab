@@ -1,6 +1,6 @@
 # Comparative Assurance Experiment: Initial and Extended Scenarios
 
-**Status:** Executed synthetic model; not an empirical study of Canton traffic or paymaster behaviour.  
+**Status:** Synthetic model and experiment. The original three-scenario baseline was executed; the current six-scenario extension is checked in, but its full-suite execution on the latest branch head has not been independently verified. This is not an empirical study of Canton traffic or paymaster behaviour.  
 **Model:** `analysis/comparative_assurance_model.py`  
 **Tests:** `tests/test_comparative_assurance_model.py`
 
@@ -13,7 +13,7 @@ The experiment began with three accounting conditions and was subsequently exten
 - One synchronizer, one paymaster and one required accounting interval.
 - The expected interval schedule is known to the verifier for the signed-reconciliation and proof architectures. Without a known schedule, an omitted interval may be indistinguishable from an interval that was never expected.
 - The independent auditor can inspect complete and sufficiently reliable source records. If source records are incomplete or controlled by the same unverified measurement process, the audit result is weaker.
-- The cryptographic proof binds the expected interval set, report commitment, agreement calculation and burn-allocation statement. It proves the encoded statement over submitted inputs, not the truth of the source measurement.
+- The signed-reconciliation and cryptographic-proof architectures are abstract capability assumptions in this comparison. The model does not verify a signed traffic report or implement a proof circuit. The current agreement-signature prototype verifies pricing-agreement terms only; it does not attest the report-to-obligation binding. The proof architecture is assumed to bind the expected interval set, report commitment, agreement calculation and burn-allocation statement. Even then, it proves the encoded statement over submitted inputs, not the truth of the source measurement.
 - A payment is considered reconciled when the burn equals the liability calculated from the submitted report and agreement. This is deliberately distinct from whether the report reflects actual activity.
 - All activity and CC amounts below are illustrative.
 
