@@ -8,51 +8,64 @@
 
 - Research orientation: interdisciplinary.
 - Quantitative analysis: central where appropriate, not decorative.
-- Deliverable: hybrid research package consisting of a substantial paper supported by reproducible models, documented data, calculations, and visualisations.
+- Deliverable: hybrid research package consisting of a substantial paper supported by reproducible calculations, documented data, models, and visualisations.
 - Working method: comparative study of funded research programmes and completed outputs, followed by Canton landscape mapping and original hypothesis development.
 - Repository visibility: private.
 
+## Completed
+
+- Repository created and confirmed private.
+- Initial research methodology and folder structure committed.
+- Initial desk-research sample assembled: 34 funded projects across Ethereum Foundation (15), Stellar Development Foundation (16), and Uniswap Foundation (3).
+- Preliminary comparative findings documented.
+- Initial source index created.
+- Official Canton programme announcement rechecked.
+
 ## Current phase
 
-**Phase 0: repository and methodology setup.**
+**Phase 1: comparative grant-winner intelligence.**
 
-The repository has been created. The methodology is to be established before research execution.
+The sample is purposive and preliminary. Most entries are sourced from award announcements, not independently verified completed deliverables. The project register explicitly records this limitation.
+
+## Initial findings
+
+- Research projects often define a specific mechanism, problem, or comparison rather than a broad theme.
+- Interdisciplinary work is visible where disciplines jointly answer one question (e.g. financial market design, privacy/compliance, institutional economics/governance).
+- Some funders support reusable research infrastructure such as standardised datasets and public analytics portals.
+- Some programmes are academic grants with strict institutional eligibility; they are not comparable to Canton’s discretionary community research programme.
+- There is no historical Canton Community Research Grant winner cohort in the November 4 launch announcement because the programme is beginning in November 2026.
+
+## Important programme facts to verify
+
+Official announcement: https://canton.foundation/introducing-the-canton-community-research-grants/
+
+- Original research and educational content publicly published November 1–30, 2026 may be considered for November.
+- Work shared on X by December 4, 2026 will be reviewed in connection with November; the announcement says sharing is optional, with @CantonFdn and #CantonResearchNov26.
+- The announcement says the Foundation expects up to 50,000 CC per month, but may award less or nothing.
+- It identifies research quality, educational/community value, and contribution to public understanding as considerations, not a fixed scoring rubric.
+- It says favourable coverage is not required.
+- The announcement said formal Terms and Conditions were expected by November 15, 2026. In this research pass, no official linked terms document was verified. This remains an urgent open item.
+
+## Open tasks
+
+1. Inspect actual outputs for Allium DEX Analytics Portal and Doppler.
+2. Locate completed research outputs for the Stellar market microstructure and AMM-design projects.
+3. Locate the output for the Ethereum institutional economics/slashing and anonymity/compliance projects.
+4. Expand the register only with sufficiently documented projects.
+5. Map existing Canton-specific research and public data sources.
+6. Verify formal Canton programme terms and applicant eligibility.
+7. Develop five interdisciplinary hypotheses with data feasibility assessments.
 
 ## Decisions
 
 1. Do not treat this as a conventional writing/video contest.
-2. Study prior funded projects across multiple research programmes.
-3. Distinguish research grants from developer grants, public-goods funding, prizes, and content programmes.
-4. Examine completed outputs, not only grant announcements.
-5. Do not infer private selection reasons or claim a formula for winning.
-6. Do not choose the research topic before mapping the literature, evidence, and data feasibility.
-7. Keep working research private.
-
-## Open verification items
-
-- Obtain and review the current Canton Community Research Grants terms and conditions.
-- Verify eligibility, KYC/sanctions requirements, eligible work, submission procedure, award discretion, payment mechanics, and relevant deadlines.
-- Confirm whether the November 2026 publication window remains practically usable and whether any late or future cycle applies.
-
-## Immediate next actions
-
-1. Verify official Canton programme documentation and current terms.
-2. Create the comparative programme register.
-3. Assemble the funded-project sample, targeting 30 relevant projects if public evidence permits.
-4. Locate and inspect completed outputs for each project.
-5. Build the Canton research landscape and source ledger.
-6. Produce five research hypotheses with data and quantitative feasibility assessments.
-
-## Current status
-
-No research topic has been selected. No article has been drafted. No grant eligibility or award outcome is assumed.
+2. Study prior funded projects and inspect completed outputs, not only grant announcements.
+3. Distinguish academic research grants, developer grants, public-goods funding, prizes, and discretionary content grants.
+4. Do not infer private selection reasons or claim a formula for winning.
+5. Do not choose the research topic before mapping literature, evidence, and data feasibility.
+6. Keep unpublished research private.
+7. Do not present simulated results as observed Canton data.
 
 ## Update protocol
 
-At the end of each substantial research session, update this file with:
-- work completed;
-- sources added;
-- verified findings;
-- unresolved questions;
-- decisions made;
-- next exact action.
+At the end of each substantial research session, update this file with work completed, sources added, verified findings, unresolved questions, decisions made, and the next exact action.
