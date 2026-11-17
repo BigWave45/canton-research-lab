@@ -505,3 +505,8 @@ At the end of each substantial research session, update this file with work comp
 - Refined the suspected wrong-Ok path: pruning retains the latest row at/before the pruning timestamp, so a query at an earlier requested timestamp may omit that member. If the start map omits the member but the end map contains it, participantsConsumed counts the end cumulative value from zero. If the RPC instead fails with NotAtUpgradeTimeOrBeyond, the reader emits Undetermined. Actual RPC behaviour remains to be tested.
 - Added research/executable-pruning-race-test-plan.md with a staged implementation: reader unit test for both response shapes, DB-store concurrency test, then real report endpoint integration test. Use barriers/promises, not sleeps.
 - No upstream code was changed and no Scala test was run in this research step. Do not claim confirmed defect or production impact.
+
+
+## Research direction correction — 17 November 2026
+
+The project is an interdisciplinary study of verifiable economic accounting for privacy-preserving financial infrastructure, using the proposed Dedicated Synchronizer Paymaster Model as a case study. It is not a vulnerability hunt or general security audit. The pruning race is a bounded implementation-audit subtask only: establish whether the interleaving is reachable, classify the response, record its implication for measurement assurance/availability, then stop. Resume the central work on comparing assurance mechanisms across measurement integrity, payment completeness, reward attribution, privacy, residual trust, cost, latency and dispute resolution. See research/research-scope-correction.md.
