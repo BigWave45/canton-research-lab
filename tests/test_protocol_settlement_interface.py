@@ -72,7 +72,7 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
             self.binding.authority_reference,self.binding.signer_key_id,"AAAA")
         out=self.run_case(bindings=(bad,))
         self.assertEqual(out["payment_state"],"BLOCKED_SETTLEMENT_BINDING")
-        self.assertEqual(out["coverage"]["reason"],"AGREEMENT_SIGNATURE_MALFORMED_KEY_SIGNATURE_OR_DOCUMENT")
+        self.assertEqual(out["coverage"]["reason"],"AGREEMENT_SIGNATURE_INVALID_SIGNATURE")
     def test_unknown_signer_blocks_settlement(self):
         bad=SettlementBinding(self.binding.binding_id,self.binding.interval_id,
             self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_id,self.binding.agreement_version,
