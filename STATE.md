@@ -38,8 +38,8 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 
 1. Complete the source-to-claim audit, especially report lifecycle semantics, agreement signatures versus binding attestations, and the distinction between API authentication and report attestation.
 2. Reconcile the remaining research models and tests against the selected accounting question; do not add another model unless a specific measurable gap remains.
-3. Populate the new assurance cost calculator from measured prototype data or explicitly labelled scenarios; do not present test fixtures as Canton cost estimates.
-4. Run the new cost-model tests and the existing deterministic model commands, then record the exact commit and outputs.
+3. Replace the illustrative cost inputs with measured prototype data, scoped engineering estimates or confidential operator data where obtainable; do not present synthetic ICU values as Canton estimates.
+4. When CI execution is available again, run the eight cost-model tests and existing deterministic model commands, then record the exact commit and outputs. Until then, treat the tests as unexecuted.
 5. Build the evidence-to-predicate matrix and complete the economic, privacy and operational comparison without inventing empirical costs or probabilities.
 6. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
 7. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
