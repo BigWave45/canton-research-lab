@@ -1,3 +1,8 @@
+> **Scope status (17 November 2026): earlier alternative research design.**  
+> This document explores a broader public-observability and synchronizer-economics question. It is retained as supporting background and a source of potentially reusable methods, but it is **not** the controlling research question. The selected study is defined in [research-scope-correction.md](research-scope-correction.md) and mapped in [research-evidence-map.md](research-evidence-map.md). Reuse any equations or proposed metrics only where they directly support the selected Paymaster accounting study, and re-verify all protocol parameters and source claims before publication. The document's original statement that topic selection was still pending is historical and superseded.
+
+---
+
 # Quantitative Research Design: Observability, Metrics, and Synchronizer Economics
 
 **Date:** 17 November 2026  
