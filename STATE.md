@@ -96,3 +96,14 @@ At the end of each substantial research session, update this file with work comp
 
 - University at Buffalo's project record lists the SDF-funded AMM design project as active from 1 September 2025 through 31 August 2027, with USD 37,500 funding. Its final output should not be expected yet; the current absence of a paper is not evidence of non-delivery.
 - Added this status clarification to `research/completed-output-case-studies.md`.
+
+
+## Update — 17 November 2026: comparative case-study synthesis
+
+- Added `research/case-study-synthesis.md`.
+- Inspected Allium's public DEX Analytics portal, orderflow schema and methodology documentation; identified data-standardisation and reproducibility as the core contribution. Recorded access and licensing caveats.
+- Inspected Doppler whitepaper and technical documentation; identified its Dutch-auction dynamic bonding-curve mechanism and implementation link. Kept funder-reported adoption separate from independent performance evidence.
+- Located the EF-funded working paper *Automated Penalties and Networked Coordination* and distinguished it from the separately titled slashing project in the initial grant register.
+- Confirmed the SDF AMM project remains active through 31 August 2027; no final output should be expected yet.
+- The EF blockspace derivatives and SDF perpetual-DEX completed outputs remain unlocated in this pass.
+- Next exact task: complete the remaining project-output searches, then create a Canton-specific literature and public-data inventory. Do not generate or select hypotheses before this inventory.
