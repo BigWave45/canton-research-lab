@@ -404,3 +404,9 @@ At the end of each substantial research session, update this file with work comp
 - At synthetic time 150, the first obligation is not yet due for its final tranche while the second is reconciled. At time 250 both are reconciled. An over-allocation and a post-deadline short payment are detected.
 - The model stores expected CC per interval under its agreement version. It does not invent a universal pricing formula or claim to reproduce a live agreement.
 - Next exact task: determine which manifest evidence can be public, which requires selective disclosure to an authorised auditor, and which must remain confidential. Then build the disclosure matrix and privacy leakage scenarios.
+
+
+## Correction — 17 November 2026: portfolio smoothing example
+
+- Corrected the portfolio example so the early payment status matches the actual allocation: first 9 CC burn allocates 3 CC to O-A and 6 CC to O-B; a later 6 CC burn pays O-A's second tranche. At t=150, O-A is not yet due for the final 6 CC; at t=250 both obligations are reconciled.
+- Added/updated tests to enforce this due-date interpretation. The prior draft example allocated the full 9 CC liability to O-A immediately while labelling it not-yet-due; that was inconsistent and has been corrected.
