@@ -732,3 +732,14 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Confirmed PR #111 remained open at the snapshot. Paymaster purchase PR #100 and Scan/SV handling PR #104 were merged, but those merges do not establish that the traffic-report endpoint or full end-to-end flow was deployed.
 - Research consequence: model protocol reports separately from off-ledger settlement bindings and public burn/reward evidence. The assurance comparison should test the authority, integrity, completeness and auditability of the mapping, rather than assume it is native to the report.
 - Next: revise the synthetic model interface to separate protocol report records from settlement bindings, then freeze feature work and execute a reproducible test suite. The participant departure accounting rule should remain a scenario dimension, not be silently chosen.
+
+
+## Update — 17 November 2026: protocol and settlement-binding separation
+
+- Added `analysis/protocol_settlement_interface.py` with separate immutable record types for protocol traffic reports and off-ledger settlement bindings.
+- Protocol records contain interval boundaries, status, aggregate traffic bytes and correction lineage. Commercial synchronizer, obligation, agreement-version and authority-reference metadata are supplied separately.
+- Added a join adapter that rejects missing, duplicate, ambiguous or incomplete bindings; invalid byte counts; and non-OK reports carrying chargeable byte values.
+- The current synthetic interface explicitly requires exactly one binding per expected interval. It does not claim this cardinality is specified by CIP-0132. Split allocation and multi-interval binding remain unsupported pending evidence.
+- Added five interface tests and a research note. Tests are authored but not executed.
+- Important limitation: the authority reference is a provenance label only. This implementation does not authenticate the document, signer or authority. Nor does a successful join prove source measurement completeness.
+- Next: add a CI workflow or reproducible local test instructions, run the full suite, and fix all integration failures before extending the comparative assurance experiment. Feature development remains frozen pending validation.
