@@ -8,6 +8,7 @@ synthetic fixtures only; they are not Canton production benchmarks.
 """
 import argparse
 import json
+import math
 import statistics
 import sys
 import time
@@ -28,7 +29,7 @@ def percentile(values, q):
     ordered = sorted(values)
     if not ordered:
         return None
-    index = min(len(ordered) - 1, max(0, int((len(ordered) - 1) * q)))
+    index = min(len(ordered) - 1, max(0, math.ceil(len(ordered) * q) - 1))
     return ordered[index]
 
 
@@ -172,8 +173,8 @@ def main():
         sizes = [int(value) for value in args.sizes.split(",")]
     except ValueError:
         parser.error("--sizes must be comma-separated positive integers")
-    if not sizes or any(value < 1 for value in sizes) or sizes != sorted(set(sizes)):
-        parser.error("--sizes must be unique, ascending positive integers")
+    if not sizes or any(value < 3 for value in sizes) or sizes != sorted(set(sizes)):
+        parser.error("--sizes must be unique, ascending integers of at least 3 (privacy fixture requires 3+)")
 
     output = {
         "evidence_class": "LOCAL_SYNTHETIC_MICROBENCHMARK",
@@ -186,7 +187,7 @@ def main():
             "platform": sys.platform,
         },
         "method": {
-            "timing": "perf_counter_ns; median, nearest-rank lower p95, min and max",
+            "timing": "perf_counter_ns; median, nearest-rank p95, min and max",
             "memory": "tracemalloc peak across repeated calls; excludes interpreter baseline",
             "serialization": "UTF-8 compact sorted JSON; schema-specific research fixture",
             "warmup_calls": min(3, args.repeats),
