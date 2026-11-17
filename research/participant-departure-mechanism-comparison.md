@@ -107,3 +107,24 @@ Run:
 - python -m unittest discover -s tests -p 'test_participant_lifecycle_mechanisms.py' -v
 
 The tests establish the behaviour of this synthetic model only. They do not establish actual Canton billing policy, production deployment, participant omission in live traffic, or actual financial loss.
+
+
+## 8. Paymaster automation and the missing normative link
+
+A further source check narrows the implementation boundary.
+
+The tracking issue for DSync Paymaster Support (#87) explicitly says the work enables paymaster automation but does not add the automation itself; each paymaster must implement it. CIP-0132 says the report-to-burn automation is up to the paymaster. The traffic-report PR #111 exposes the report endpoint but does not define a universal paymaster-side consumer or a common report-to-burn reconciliation implementation.
+
+Consequences:
+- There is no single upstream paymaster automation path in the inspected work whose member-departure treatment can be traced end to end.
+- A paymaster could implement agreement-specific aggregation, smoothing and reconciliation differently from another paymaster.
+- The off-ledger agreement and the paymaster's own automation are therefore essential evidence for resolving whether departure usage is billable and how it is included.
+- The on-ledger purchase choices enforce registered-paymaster identity and create burns/activity records for the bytes purchased, but issue #155 states that the purchase path does not check the amount paid against the traffic report.
+
+This strengthens the case for making the accounting interface explicit, but it does not establish that any particular paymaster omits departure traffic.
+
+Sources:
+- DSync paymaster tracking issue #87: https://github.com/canton-network/splice-multi-sync/issues/87
+- Traffic report PR #111: https://github.com/canton-network/splice-multi-sync/pull/111
+- CIP-0132: https://github.com/canton-foundation/cips/blob/main/cip-0132/cip-0132.md
+- Paymaster purchase issue #155: https://github.com/ChainSafe/canton-extending-mainnet/issues/155
