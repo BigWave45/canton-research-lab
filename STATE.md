@@ -1,3 +1,44 @@
+# Current checkpoint — 17 November 2026
+
+**Repository:** private  
+**Reviewed branch:** `circleci-project-setup`  
+**Reviewed base snapshot:** `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0` (the evidence-map and documentation-alignment commits follow this snapshot).
+
+## Controlling research question
+
+**What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?**
+
+The scope-correction note and evidence map control. Older public-observability/synchronizer-economics material is retained as supporting background, not a parallel thesis.
+
+## Current phase: evidence consolidation and validation
+
+The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
+
+## Verified repository inventory at the base snapshot
+
+The recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files, 62 files under `research/`, and the remaining root/source/data/output documentation. Counts describe repository contents, not quality or validation.
+
+## Current evidence position
+
+- The initial comparative assurance experiment is explicitly synthetic. It demonstrates a logical counterexample: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
+- The integrated assurance comparison is qualitative. Its cost, latency and operational-burden assessments are not measured benchmarks.
+- The implementation reviews are dated public-source snapshots, not deployment audits. PR, issue and deployment states must be rechecked before publication.
+- The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
+- The user reported a successful CircleCI run. During this audit, the GitHub integration did not permit retrieval of the combined status for the branch head (403). Therefore this checkpoint does not independently certify the latest branch's full-suite CI status. The earlier reconstructed 29-case harness is not a full repository test run.
+
+## Immediate next actions
+
+1. Verify the public CIP, Splice PRs, tracker issues and relevant source revisions against current upstream state; preserve dates and commit references.
+2. Obtain a reproducible full-suite run for the exact branch head and record the SHA and result.
+3. Audit the model-to-test mapping and check for duplicated or unsupported research claims.
+4. Define measurable experimental outcomes before adding any new model.
+5. Confirm current Canton grant terms, eligibility, publication rules and submission requirements from the official source.
+6. Draft the paper only from evidence that has passed these checks.
+
+**Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
+
+---
+
 # Project State
 
 **Last updated:** 2026-11-17  
