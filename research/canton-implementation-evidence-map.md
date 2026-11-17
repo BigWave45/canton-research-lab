@@ -62,8 +62,8 @@ CIP-0132 describes ActivityRecorder as part of the intended flow. However, the r
 2. Do not treat purchase authorisation as payment completeness. PRs #100/#104 constrain who can buy and for which registered synchronizer; they do not bind the amount to a complete liability calculation.
 3. Do not treat activity-weight plumbing as reward-chain completion. The hook and full integration test remain unresolved in this snapshot.
 4. Keep the off-ledger agreement explicit. CIP-0132 allows cross-synchronizer volume discounts and delayed/smoothed burns. A settlement manifest must represent multiple obligations, pricing segments, due tranches and allocation rules.
-5. Treat the report's participant-lifecycle and pruning-boundary semantics as open accounting questions. The PR #111 source test excludes a participant present at interval start but absent at interval end; its source comment also acknowledges a possible pruning/read race at the retention boundary. Neither is proof of production error, but both matter to measurement completeness and report reliability.
-5. Prioritise interface and evidence completeness before proof engineering. A proof cannot repair missing interval reports, an unauthorised agreement version or incomplete source metering.
+5. Treat the report's participant-lifecycle and pruning-boundary semantics as open accounting questions. The PR #111 source test excludes a participant present at interval start but absent at interval end. Its source comment warns about a possible pruning/read race, but the separate test-harness audit finds that retained boundary rows may preserve correct reads; the stale-status concurrency case remains untested. Neither observation proves a production accounting error.
+6. Prioritise interface and evidence completeness before proof engineering. A proof cannot repair missing interval reports, an unauthorised agreement version or incomplete source metering.
 
 ## 5. Source register
 
