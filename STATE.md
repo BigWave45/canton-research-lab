@@ -27,6 +27,16 @@ The scope-correction note and evidence map control. Older public-observability/s
 - Next validation targets that do not require TestNet access: duplicate/overlapping/out-of-order interval cases; multi-obligation burn allocation bounds; binding-attestation tampering, replay and signer-authorisation tests; then locally execute the relevant test suite and preserve commit/environment/output provenance.
 - No CI workflow should be invoked; the user's CI budget is exhausted. The CircleCI pass remains user-confirmed but is not tied to the latest commit SHA.
 
+## Latest update — 18 November 2026: separate settlement-binding attestation implemented in prototype
+
+- Extended `SettlementBinding` with a report-set digest and a separate binding signature. The digest commits to canonical report fields (report ID, interval, timestamps, status, bytes, revision and supersession reference), deterministically ordered before hashing.
+- Reconciliation now requires the digest to match the actual report set and verifies a separate Ed25519 signature over binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference.
+- Added role-scoped signer checks: agreement signatures require the `agreement` role; mapping attestations require `settlement_binding`. The trusted signer registry must explicitly carry those roles.
+- Expanded protocol-interface tests for authority-reference tampering, obligation/synchronizer/version tampering, report-digest substitution, report-content tampering, missing/invalid attestation, unknown/revoked signer and missing signer role. Existing status/byte-count tests now re-sign the altered report set so they isolate those invariants rather than failing earlier on digest mismatch.
+- Updated the settlement interface specification to include the report-set digest and distinct binding attestation.
+- **Execution status:** these newly committed tests have not yet been run in Codespaces. This is implementation work, not a validated result. No CI workflow was invoked.
+- **Security boundary:** the binding attestation authenticates the mapping and exact report content supplied to the verifier. It still does not prove that the operator's source meter captured all chargeable traffic, nor does a signer role establish legal authority unless the trust registry and role assignment are governed independently.
+
 ## Current phase: evidence consolidation and validation
 
 The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
