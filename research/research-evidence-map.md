@@ -94,13 +94,15 @@ The PR #111 source comment warns that a request at the retention edge can race p
 
 No incorrect `Ok` report has been demonstrated. Treat this as an unresolved concurrency hypothesis, not a confirmed implementation defect. A deterministic test must distinguish a correct value, an explicit error/unavailable response, a safe retry and an incorrect `Ok` against an independent reference.
 
-### Finding 9: agreement integrity and settlement-binding integrity are separate
+### Finding 9: agreement integrity and settlement-binding integrity require separate attestations
 
-The synthetic adapter in `analysis/protocol_settlement_interface.py` verifies a signature over the canonical pricing-agreement document. The signed payload contains agreement terms and effective dates, but does not contain the `SettlementBinding` fields that map a protocol interval to a synchronizer, obligation and agreement version. The `authority_reference` is only checked for non-empty content.
+The prototype now verifies the canonical pricing-agreement document and a separate `SettlementBinding` attestation. The binding attestation covers a deterministic digest of the interval report set plus the binding ID, interval, synchronizer, obligation, agreement ID/version and authority reference. It is signed and verified using the explicit `binding_signer_key_id`, with the `settlement_binding` role required by the trusted signer registry. A missing binding signer identity fails closed with `SETTLEMENT_BINDING_SIGNER_ID_MISSING`; the agreement signer identity is not silently substituted.
 
-Therefore, the current prototype verifies agreement-document integrity against a supplied key registry; it does not cryptographically authenticate the report-to-obligation mapping or establish mapping-specific signer authority. This is a limitation of the research prototype, not a Canton production finding. A new checked-in test changes the authority reference while retaining the valid agreement signature and asserts that reconciliation still succeeds. This demonstrates the unsigned-field gap in the prototype. The user subsequently confirmed that the CircleCI research-test pipeline passed, but the exact tested commit SHA was not captured here; do not claim that this particular test was included in that run unless the run's commit and test discovery are confirmed.
+The targeted `tests/test_protocol_settlement_interface.py` suite was run in Codespaces after commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`: 18 tests passed, including the legacy-binding fail-closed regression. `git diff --check` passed. This is a user-reported local execution result, not a CI result; no CI workflow was invoked. The commit is on `circleci-project-setup`.
 
-The paper must distinguish agreement content integrity, signer authority, mapping integrity and measurement completeness. A candidate schema now specifies a separate binding attestation over the report digest and mapping fields; this is a proposed requirement, not an implemented feature.
+This closes the previously demonstrated unsigned report-to-obligation mapping gap in this research prototype. It does not establish source-meter completeness, legal authority of the referenced agreement or mapping, or correctness of the trust registry. The code requires a distinct signer-key field and role, but does not enforce distinct legal principals or prohibit one key from holding both roles. Separation of duties therefore remains a governance/registry policy unless a stricter distinct-key/principal invariant is added and tested.
+
+The paper must distinguish agreement content integrity, signer attribution, mapping integrity, source-measurement completeness and legal authority. This is prototype evidence only, not a Canton production finding.
 
 ## 6. Important implementation boundary
 
@@ -198,8 +200,12 @@ The access-check record is [research/scan-api-access-check-2026-11-18.md](scan-a
 The current invariant-by-invariant validation plan is [research/accounting-invariant-validation-matrix-2026-11-18.md](accounting-invariant-validation-matrix-2026-11-18.md). It maps twelve accounting/privacy invariants to public Canton evidence, existing prototype artefacts/tests, evidence level and remaining validation. It identifies the settlement-binding attestation gap as the first prototype issue to close.
 
 
-## 13. Prototype binding-attestation change: 18 November 2026
+## 13. Prototype binding-attestation change and local validation: 18 November 2026
 
-The research prototype now requires a distinct Ed25519 settlement-binding attestation, in addition to the agreement signature. It commits to a deterministic digest of the exact interval report set and signs the binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference. Agreement and settlement-binding signatures require distinct roles in the trusted signer registry. The protocol-interface tests were expanded for tampering, digest substitution, signer-role and revocation cases. The interface specification was updated accordingly.
+Commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e` adds an independent binding-signer identity to `SettlementBinding`. The canonical binding document includes that identity; reconciliation rejects a missing identity and verifies the attestation against that key with the `settlement_binding` role. Agreement and binding signatures are represented by separate signer identities in the positive test fixture.
 
-This is an unexecuted prototype change at the time of this note. Do not report the new tests as passing until they are run locally and the command/output/commit are recorded. Even if they pass, this attestation proves integrity and attribution of the submitted report-to-obligation mapping; it does not prove source-meter completeness or the legal correctness of the trust registry.
+The user reports that the targeted protocol-interface suite passed all 18 tests in Codespaces and `git diff --check` passed. No CI workflow was invoked. The local test result is recorded as user-reported rather than independently rerun here.
+
+The legacy-binding regression verifies fail-closed behavior when the binding signer identity is absent, even when the agreement key is configured with both roles. The implementation does not, however, enforce that agreement and binding keys belong to different principals or prevent a single key from being granted both roles. That is a trust-registry governance requirement, not a code-enforced separation-of-duties guarantee.
+
+The attestation authenticates the mapping and exact report content supplied to the verifier. It does not prove source-meter completeness, truth of the source counters, legal authority of the agreement/mapping, or independence of the signer-governance process. This remains a research prototype result, not a Canton production finding.
