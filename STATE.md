@@ -19,6 +19,14 @@ The scope-correction note and evidence map control. Older public-observability/s
 - Detailed record: [research/scan-api-access-check-2026-11-18.md](research/scan-api-access-check-2026-11-18.md). Evidence map updated accordingly.
 - Next route: stop retrying identical endpoints from the same browser context; continue source-to-invariant validation and local reproducible experiments. No validator onboarding or CI workflow is required for this step.
 
+## Latest update — 18 November 2026: invariant validation mapped
+
+- Added `research/accounting-invariant-validation-matrix-2026-11-18.md`, mapping twelve invariants to public Canton evidence, existing research prototype artefacts/tests, current evidence level and remaining validation.
+- The matrix is a gap analysis, not a claim that every listed test has been executed or that Canton conforms.
+- Highest-priority technical gap: the prototype's agreement signature does not authenticate the report-to-obligation settlement binding. An existing adversarial test demonstrates that changing the authority reference while retaining the agreement signature still reconciles. The next local prototype change should introduce a distinct binding attestation and negative tests.
+- Next validation targets that do not require TestNet access: duplicate/overlapping/out-of-order interval cases; multi-obligation burn allocation bounds; binding-attestation tampering, replay and signer-authorisation tests; then locally execute the relevant test suite and preserve commit/environment/output provenance.
+- No CI workflow should be invoked; the user's CI budget is exhausted. The CircleCI pass remains user-confirmed but is not tied to the latest commit SHA.
+
 ## Current phase: evidence consolidation and validation
 
 The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
