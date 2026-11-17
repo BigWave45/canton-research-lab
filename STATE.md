@@ -760,3 +760,19 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 ## Next exact task
 
 Integrate successful agreement verification as a mandatory precondition for accepting a settlement binding in the synthetic reconciliation path. Add negative tests proving that unsigned, altered, unknown-key and revoked-key agreements cannot produce a reconciled payment. Then observe the GitHub Actions test run and fix any failures before expanding the model.
+
+
+## Update — 17 November 2026: signed-agreement enforcement integrated
+
+- `SettlementBinding` now carries separate `obligation_id` and `agreement_id` fields. These must not be conflated: the commercial agreement defines pricing terms, while the obligation identifies the settlement liability being reconciled.
+- The protocol settlement adapter reconstructs the signed agreement document from the exact `PricingAgreement` object used by the liability calculator, then verifies its Ed25519 signature before reconciliation.
+- The verifier checks the supplied trusted signer registry and evaluates key status at the expected interval end. Missing registry, unknown agreement/version, agreement identity mismatch, malformed/invalid signature, unknown signer and revoked signer block the settlement path.
+- Added integration tests for a valid signed agreement, invalid signature, unknown signer, revoked signer and missing registry. Existing binding and protocol report checks remain in place.
+- Updated GitHub Actions test workflow to set `PYTHONPATH=analysis`, matching the repository's module layout.
+- **Execution status:** commits are present, but this environment has not confirmed a completed Actions run. CI is still unverified; do not claim the suite passes.
+- **Research caveat:** evaluating revocation at interval end is a prototype policy choice, not a settled production rule. Signing-time evidence and trusted timestamping require a more explicit policy.
+- **Identity separation:** agreement ID and obligation ID are distinct by design. The protocol report itself still contains no commercial agreement identity; the off-ledger binding supplies that mapping.
+
+## Next task
+
+Inspect the CI result and run/fix the full suite. Then evaluate the remaining trust assumptions quantitatively: registry compromise, signer key compromise, delayed revocation, and false/missing traffic reports. Do not add zero-knowledge proofs until the simpler signed-report and independent-audit baselines are measured.
