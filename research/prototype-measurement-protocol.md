@@ -41,7 +41,7 @@ This tests validator scaling over the interval list. It does not prove that the 
 
 Builds one synthetic burn partitioned into N unique allocations, each assigned to a distinct obligation with a matching due amount. The expected result is valid allocation.
 
-The measured operation is `validate_allocations`. The current implementation builds duplicate identifiers using repeated list counting; that construction may have quadratic growth. The benchmark is intended to test this suspected scaling property before any optimisation is proposed. Do not infer a production bottleneck from a local synthetic run.
+The harness measures both a valid allocation manifest and a deliberately duplicated allocation-ID manifest. The measured operation is `validate_allocations`. The current implementation builds duplicate identifiers using repeated list counting; that construction may have quadratic growth. The benchmark is intended to test this suspected scaling property before any optimisation is proposed. It also checks that the duplicate fixture is actually rejected before recording a timing. Do not infer a production bottleneck from a local synthetic run.
 
 ### 3. Aggregate privacy
 
