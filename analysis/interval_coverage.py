@@ -22,6 +22,8 @@ class IntervalReport:
     supersedes_report_id: str | None = None
     agreement_version: str | None = None
     consumed_units: int | None = None
+    obligation_id: str | None = None
+    synchronizer_id: str | None = None
 
     @property
     def interval_start(self):
