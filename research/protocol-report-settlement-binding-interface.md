@@ -52,6 +52,6 @@ A successful reconciliation still does not prove the underlying traffic measurem
 
 ## Tests and limitations
 
-The checked-in `tests/test_protocol_settlement_interface.py` contains nine test methods covering a valid join, missing and ambiguous bindings, invalid report payloads, invalid agreement signatures, unknown/revoked signers and a missing trusted-key registry. It does not test whether binding metadata can be altered while retaining the same valid agreement signature. The test file is present; this audit has not independently run the full repository suite on the latest branch head.
+The checked-in `tests/test_protocol_settlement_interface.py` contains ten test methods covering a valid join, missing and ambiguous bindings, invalid report payloads, invalid agreement signatures, unknown/revoked signers and a missing trusted-key registry. One new test deliberately changes the authority reference while retaining the same valid agreement signature and asserts that reconciliation still succeeds. This is an executable demonstration that the current signature does not attest the mapping metadata. The test file is present; this audit has not independently run the full repository suite on the latest branch head.
 
 This is an implementation-neutral synthetic research interface, not a production Canton integration.
