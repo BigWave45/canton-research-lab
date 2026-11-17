@@ -9,6 +9,7 @@ from typing import Iterable, Mapping
 
 from interval_coverage import IntervalReport
 from integrated_interval_reconciliation import reconcile_with_interval_coverage
+from agreement_verification import verify_signed_agreement
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,8 @@ class SettlementBinding:
     obligation_id: str
     agreement_version: str
     authority_reference: str
+    signer_key_id: str
+    signature_b64: str
 
 
 def reconcile_protocol_evidence(
@@ -42,6 +45,7 @@ def reconcile_protocol_evidence(
     pricing_agreements: Mapping,
     prior_settlements=(),
     allow_late_reports=False,
+    trusted_signers=None,
 ):
     """Join protocol evidence to separately authorised commercial bindings.
 
@@ -50,7 +54,10 @@ def reconcile_protocol_evidence(
     """
     protocol_reports = tuple(protocol_reports)
     bindings = tuple(settlement_bindings)
-    expected_ids = {x.interval_id for x in expected_intervals}
+    expected_by_id = {x.interval_id: x for x in expected_intervals}
+    expected_ids = set(expected_by_id)
+    if trusted_signers is None:
+        return _blocked('TRUSTED_SIGNER_REGISTRY_REQUIRED')
 
     binding_ids = [x.binding_id for x in bindings]
     if len(binding_ids) != len(set(binding_ids)):
@@ -64,6 +71,31 @@ def reconcile_protocol_evidence(
             return _blocked("INCOMPLETE_SETTLEMENT_BINDING")
         if binding.interval_id in by_interval:
             return _blocked("AMBIGUOUS_INTERVAL_BINDING")
+        pricing = pricing_agreements.get(binding.agreement_version)
+        if pricing is None:
+            return _blocked("UNKNOWN_PRICING_AGREEMENT_VERSION")
+        if pricing.version_id != binding.agreement_version or pricing.agreement_id != binding.obligation_id:
+            return _blocked("AGREEMENT_BINDING_MISMATCH")
+        signed_document = {
+            "agreement_id": pricing.agreement_id,
+            "version": pricing.version_id,
+            "effective_from": pricing.effective_from,
+            "effective_until": pricing.effective_until,
+            "bands": [
+                {"upper_units_exclusive": band.upper_units_exclusive,
+                 "price_cc_per_unit": band.price_cc_per_unit}
+                for band in pricing.bands
+            ],
+            "fixed_fee_cc": pricing.fixed_fee_cc,
+            "discount_basis_points": pricing.discount_basis_points,
+            "rounding": pricing.rounding,
+        }
+        verification = verify_signed_agreement(
+            signed_document, binding.signature_b64, binding.signer_key_id,
+            trusted_signers, expected_by_id[binding.interval_id].end,
+        )
+        if not verification["verified"]:
+            return _blocked("AGREEMENT_SIGNATURE_" + verification["reason"])
         by_interval[binding.interval_id] = binding
 
     reports_by_interval = {}
