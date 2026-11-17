@@ -702,3 +702,13 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Added three integration tests for original report pricing, upward correction with a +2 CC adjustment, and incorrect synchronizer binding. Added an end-to-end research note.
 - New tests are authored but have not been executed. This update is synthetic and does not establish actual Canton tariffs, source measurement completeness or production integration.
 - Next exact task: review the new integration for multi-interval/multi-obligation cases and downward corrections, then run the exact checked-in test suite in a reproducible checkout or CI environment. Do not report unexecuted tests as passing.
+
+
+## Update — 17 November 2026: multi-interval pricing and correction edge review
+
+- Static review found and fixed an aggregation defect: when multiple expected intervals mapped to one obligation, the pricing integration could overwrite an earlier interval liability with a later one. It now sums each interval's priced liability per obligation before reconciliation.
+- Tightened report identity: pricing now requires an explicit synchronizer ID and checks it against the bound obligation. Missing synchronizer identity is rejected.
+- Added four edge-case tests for multi-interval aggregation, missing identity, wrong synchronizer identity, and a downward correction producing a negative 2 CC adjustment.
+- Added `research/multi-interval-correction-edge-review.md`.
+- Tests are authored but not executed. No validation claim is made.
+- Next exact task: inspect whether multiple obligations can share a single interval/report and whether the data model supports that mapping unambiguously; then consolidate and execute the full test suite. Avoid adding further features until this review and validation are complete.
