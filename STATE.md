@@ -432,3 +432,13 @@ At the end of each substantial research session, update this file with work comp
 - Defined conceptual assurance tiers from public burn only through signed reconciliation and proof-carrying settlement to independently measured source evidence.
 - Key limitation: a commitment or zero-knowledge proof can establish integrity or arithmetic over committed inputs, but cannot prove source-meter completeness unless the measurement mechanism is independently justified.
 - Next task: compare assurance tiers against concrete trust assumptions, operational cost, latency and privacy leakage; then decide whether the strongest defensible recommendation is auditor-based reconciliation, public cryptographic proofs, or a staged combination.
+
+
+## Update — 17 November 2026: assurance-tier comparison
+
+- Added research/assurance-tier-comparison.md.
+- Compared public burn evidence, signed reports with independent audit, public commitments, proof-carrying settlement and independent source measurement.
+- Made the central distinction explicit: calculation integrity is not measurement integrity. A signature, hash or proof over a report cannot establish that the source meter counted all chargeable activity.
+- Preliminary recommendation is staged: exact auditor reconciliation first; public commitments for tamper-evidence second; selective cryptographic proofs only if a specific public verification gap justifies their cost; independent measurement only if source completeness remains a material risk.
+- Cost ratings are qualitative analytical estimates, not measured costs or performance claims.
+- Next: verify the actual report/API and paymaster implementation evidence against the fields this design assumes, then identify which parts are implementable now and which remain proposed.
