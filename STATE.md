@@ -359,3 +359,15 @@ At the end of each substantial research session, update this file with work comp
 - Critical unresolved question: the source code defines the aggregation behaviour, but the executed off-ledger agreement and CIP/report semantics must establish whether pre-departure traffic is billable. Do not label this an underpayment defect before that policy is verified.
 - Compared four candidate treatments: signed departure snapshot, carry-forward counter, event-driven boundary settlement and explicit exclusion. No design selected.
 - Next exact task: locate authoritative charging semantics for participant departure and determine whether the paymaster's expected-liability calculation uses this same aggregate. Then quantify privacy and operational trade-offs for only the mechanisms consistent with the agreed rule.
+
+
+## Update — 17 November 2026: participant departure mechanism comparison
+
+- Added analysis/participant_lifecycle_mechanisms.py and tests/test_participant_lifecycle_mechanisms.py.
+- Added research/participant-departure-mechanism-comparison.md.
+- Formalised interval membership into continuing, joining and leaving membership epochs. If departure usage is billable, the complete interval total equals the existing end-state aggregate plus the departed member's final counter delta.
+- Compared signed departure snapshots, carry-forward counters, event-driven boundary settlement and explicit exclusion. No mechanism is selected because the authoritative commercial charging rule remains unverified.
+- Synthetic example: continuing 100 + joining 25 + departed pre-exit 40. Current end-state total is 125; billable-departure policy yields 165. Under explicit exclusion, 125 is policy-correct. These are illustrative units only.
+- Missing departure evidence returns incomplete; identical event replay is idempotent; conflicting duplicate event IDs are rejected.
+- Source distinction: CIP-0132 says the dSync tracks traffic consumed and reports ten-minute intervals, while the proposed API says traffic charged to participants. PR #111's implementation explicitly excludes a participant absent from the end-state map. The inspected CIP text does not resolve whether pre-departure traffic remains chargeable. This is a specification/contract ambiguity, not a confirmed defect.
+- Next task: search authoritative agreement/onboarding documentation and code paths for member removal, traffic-counter lifecycle and the paymaster's consumption of report totals. If no normative rule is published, record the ambiguity as an open protocol question and build a proposed invariant that makes the policy explicit.
