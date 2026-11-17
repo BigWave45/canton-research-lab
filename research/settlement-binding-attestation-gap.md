@@ -43,7 +43,7 @@ This is not evidence that a production Canton operator has misassigned a report.
 
 The current `tests/test_protocol_settlement_interface.py` checks valid reconciliation, missing and ambiguous bindings, invalid report payloads, invalid agreement signatures, unknown/revoked signers and missing trusted-key registry.
 
-It does not test whether changing `interval_id`, `synchronizer_id`, `obligation_id` or `authority_reference` while keeping the agreement signature unchanged is accepted or rejected. The model's current tests therefore validate agreement-document signature handling but do not establish cryptographic binding of the commercial mapping.
+The test file now includes a controlled case that changes `authority_reference` while retaining the valid agreement signature. The adapter still returns `RECONCILED`. This directly demonstrates that this field is not covered by the signature. Other binding-field mutations have not yet been tested. The test is authored but has not been independently executed in a full-suite run on the latest branch head.
 
 ## 5. Next bounded experiment
 
