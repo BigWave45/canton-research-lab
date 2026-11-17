@@ -283,3 +283,19 @@ At the end of each substantial research session, update this file with work comp
 - Added stop conditions: absent actual report schemas, pricing agreements and burn/reward semantics, restrict claims to proposal-level analysis and synthetic scenarios. Do not infer real operator accuracy or underpayment.
 - Novelty claim remains provisional. Existing resource-accounting, Merkle, auditing and attestation methods are precedents; candidate contribution concerns their composition across Canton's private traffic-report → public burn → reward pipeline.
 - Next exact task: trace CIP-0132's current proposal and implementation state end-to-end against the five hypotheses, and obtain/verify the official Community Research Grant terms and eligibility before fixing scope.
+
+
+## Update — 17 November 2026: end-to-end verification audit
+
+- Added `research/end-to-end-verification-audit.md`.
+- Rechecked CIP-0132 directly: it remains Proposed, dated 9–16 November. Phase 1 explicitly trusts the dSync operator/paymaster; report-to-burn linkage is off-ledger; discounts and burn smoothing/delays may apply; rewards are constrained to burn actually made, not independently proven actual consumption.
+- Verified `splice-multi-sync#100` and `#104` merged 12 November. PR #100 states the paymaster registration/purchase changes had not been deployed to a long-running network in the snapshot described. Do not claim MainNet deployment.
+- Verified traffic-report PR #111 remained open on 17 November. It describes ten-minute reports and sequencer/LSU handling; four-node equality remains an acceptance criterion not established by the inspected PR.
+- Verified ActivityRecorder PR `splice#8449` remained draft/open; tracker issue #163 remained open. The full dedicated-synchronizer app-activity reward path was therefore not verified complete.
+- Verified end-to-end test issue #159 remained open and depended on #152/#163 and related work.
+- Verified tracker issue #155 explicitly records that nothing checks the paid amount against the report and a paymaster may pay less than usage; SVs can archive a misbehaving registration. This is a documented control gap/design limitation, not evidence of actual misconduct.
+- Verified Merkle reward PoC issue #47 is closed as a PoC task but explicitly lacked Scala automation and end-to-end wiring. Not production evidence.
+- Rechecked official Canton Community Research Grants announcement. It confirms November 1–30 publication window, optional X sharing by Dec 4, discretionary programme-level maximum up to 50,000 CC/month, research-quality/community-value considerations, KYC/sanctions screening, grant agreement, disclosures, and no guaranteed award.
+- No separate official Terms and Conditions document was located in this pass despite the announcement's expected publication date of Nov 15. Jurisdictional eligibility, payment rails, tax, IP/licensing and detailed contractual terms remain unverified. Do not assume Nigeria-based applicant eligibility either way.
+- Updated hypothesis status: H1/H2 are model-testable; H3 is unestablished and needs a disclosure/identifiability test; H4 is theoretical; H5 needs architecture comparison and benchmarks. No empirical results exist yet.
+- Next exact task: obtain actual terms/eligibility confirmation; freeze source snapshots; build an end-to-end state-transition diagram and executable synthetic reconciliation experiment.
