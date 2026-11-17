@@ -23,17 +23,19 @@ Higher-priority evidence failures remain unchanged. Missing reports, agreement m
 
 ## 3. Carry-forward
 
-Prior credit is not automatically accepted. The schedule must explicitly enable carry-forward. Otherwise, supplied prior credit is ignored. This avoids silently treating an overpayment in one period as payment for another period without contractual authority.
+Prior credit is not automatically accepted. The schedule must explicitly enable carry-forward. Otherwise, supplied prior credit is ignored. This avoids silently treating an overpayment in one period as payment for another period without contractual authority. The integration also rejects a schedule whose version differs from the obligation's authoritative agreement version, and applies the schedule's explicit tolerance when checking payment coverage.
 
 ## 4. Test coverage
 
-Four integration tests cover:
+Six integration tests cover:
 - due amount within grace;
 - unpaid amount after grace;
 - missing schedule rejection;
+- stale schedule-version rejection;
+- explicit tolerance applied to payment coverage;
 - prior credit ignored unless carry-forward is enabled.
 
-The standalone schedule module has twelve authored tests; the integration has four authored tests. They have not been executed in a repository runtime in this step.
+The standalone schedule module has twelve authored tests; the integration has six authored tests. They have not been executed in a repository runtime in this step.
 
 ## 5. Remaining limits
 
