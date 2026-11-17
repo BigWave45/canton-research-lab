@@ -10,8 +10,8 @@ class ScheduledReconciliationTests(unittest.TestCase):
     def make_case(self, evaluation_time):
         return Case(
             expected_report_ids=("r1",),
-            reports=(Report("r1", "OK", "v1", "sync-a"),),
-            obligations=(Obligation("sync-a", 0, "v1"),),
+            reports=(Report("r1", "OK", "v1", "sync-a", "synchronizer-a"),),
+            obligations=(Obligation("sync-a", 0, "v1", synchronizer_id="synchronizer-a"),),
             burns=(),
             allocations=(),
             evaluation_time=evaluation_time,
