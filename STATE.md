@@ -335,3 +335,16 @@ At the end of each substantial research session, update this file with work comp
 - Added abstract reward-budget invariant: it rejects issuance above the authorised budget but does not prove the budget was derived from complete activity.
 - Added research/adversarial-accounting-experiments.md with results, implications and limits.
 - Next exact task: inspect whether the actual report API exposes stable report identity/version and interval coverage, then trace the concrete reward cap/attribution code. Replace abstract assumptions with implementation facts where source evidence permits. Only after that decide whether a cryptographic or trusted-metering prototype is justified.
+
+
+## Update — 17 November 2026: source-level traffic-report semantics
+
+- Added research/traffic-report-implementation-audit.md from the source diff of canton-network/splice-multi-sync#111. At the snapshot PR #111 is open, not merged; the audit is not evidence of deployment.
+- Confirmed the proposed JWT-authenticated report endpoint returns aggregate byte totals per aligned interval, not participant-level rows. It supports at most 100 intervals per page and statuses Ok, Undetermined and CannotProvide.
+- Read the actual TrafficReport.participantsConsumed implementation and its unit test. It iterates participants present at interval end; a participant present at start but absent at end is excluded, while a participant joining during the interval is counted from zero. The source test explicitly comments that the departing participant is not counted.
+- This is an implementation semantic, not yet a proven defect. Whether it creates undercount depends on the intended economic rule for traffic consumed before departure. The CIP/report contract should define the lifecycle charging rule.
+- Confirmed the report reader handles logical synchronizer upgrades by selecting current/successor sequencer state around the upgrade. It returns CannotProvide for intervals unavailable due to pruning or upgrade history gaps. Source comments also identify a pruning race at the retention boundary.
+- Rechecked PR #8449: ActivityRecorder integration remains draft at the snapshot. Do not describe the complete activity/reward integration as merged or deployed.
+- Tracker issue #155 is closed (12 Nov) but its body explicitly states that nothing checks paid amount against report and a paymaster may pay less than usage; SV archiving is governance enforcement. Treat this as a documented control limitation, not evidence of actual underpayment.
+- Executed the six adversarial-model assertions in the analysis runtime: all passed. They demonstrate a report-to-burn reconciliation can pass despite an omitted participant; digest comparison detects split views only when observers compare; a reward cap blocks over-issuance relative to its budget but cannot prove the budget's input was complete.
+- Next exact task: formalise participant lifecycle accounting and model the size of undercount from departures across interval boundaries; then compare alternative privacy-preserving lifecycle evidence mechanisms. Keep this conditional on the intended chargeability rule.
