@@ -230,3 +230,15 @@ At the end of each substantial research session, update this file with work comp
 - Added `analysis/paymaster_reconciliation_scenarios.py`, a dependency-free hypothetical scenario model. It measures report error, purchase coverage, unpaid/overpaid traffic, CC burn cost per actual MB and activity units. Inputs are illustrative, not observed data.
 - Research focus now has a precise implementation-grounded formulation: measurement correctness, payment completeness and reward attribution are separate properties in the traffic-report → CC-burn → reward pipeline.
 - Next task: inspect CIP-0104 ActivityRecorder design and its draft implementation, compare the Merkle-root / expansion proof-of-concept in the extension-synchronizer tracker with the paymaster approach, then refine the original contribution. Do not claim the current PR is deployed on MainNet.
+
+
+## Update — 17 November 2026: compare paymaster model with Merkle reward-reporting PoC
+
+- Added `research/paymaster-vs-merkle-reward-accounting.md`.
+- Inspected the upstream draft ActivityRecorder PR #8449. It introduces a DSO-controlled `ActivityRecorder_DsoRecordActivity` choice for app and asset activity. It also adds an AmuletRules contract-state migration that creates the ActivityRecorder. PR #8449 remains draft and unmerged at this snapshot.
+- Recovered the earlier Phase 3 Merkle-root reward-reporting PoC in tracker issue #47 and fork PR #8. It records per-round activity as a Merkle root plus total, then expands committed activity through ProcessRewardsV2.
+- Important review correction in that PoC: the initial total was not bound to the committed tree. The later design added a governance-attested purchased-traffic total, a reported-total <= purchased-total check, weighted internal Merkle nodes and a weight budget propagated through expansion.
+- The stated on-ledger invariant is: minted rewards <= committed tree weights <= reported total activity <= purchased traffic. Four adversarial tests cover over-reporting against purchases, over-declared internal nodes, over-minting leaves and unweighted-batch smuggling.
+- This PoC was Daml/Daml Script only, with no Scala automation or end-to-end wiring. The tracker says rewards were out of Phase 2 and the machinery was parked as input to Phase 3. Do not describe it as deployed or operational.
+- The comparison reveals an original research opportunity: compare how verification responsibilities are allocated across measurement integrity, payment completeness and reward integrity in the aggregate paymaster model versus the granular Merkle reward model.
+- The research candidate is now a hybrid protocol-economics and mechanism-design study with a formal state-transition model, quantitative reconciliation, and privacy-preserving reward-accounting analysis. Still provisional; verify the current CIP-0132 implementation and official grant eligibility before selecting.
