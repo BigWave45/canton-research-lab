@@ -1,4 +1,4 @@
-# Comparative Assurance Experiment: Initial Three Scenarios
+# Comparative Assurance Experiment: Initial and Extended Scenarios
 
 **Status:** Executed synthetic model; not an empirical study of Canton traffic or paymaster behaviour.  
 **Model:** `analysis/comparative_assurance_model.py`  
@@ -6,7 +6,7 @@
 
 ## Purpose
 
-The first experiment compares four assurance architectures against the same three accounting conditions. The purpose is to test what each architecture can establish from its evidence, not to estimate real-world fraud or error probabilities.
+The experiment began with three accounting conditions and was subsequently extended to six. The current executable model compares four assurance architectures against all six conditions (24 scenario/architecture combinations). The purpose is to test what each architecture can establish from its evidence, not to estimate real-world fraud or error probabilities.
 
 ## Explicit assumptions
 
@@ -24,8 +24,11 @@ The first experiment compares four assurance architectures against the same thre
 | Accurate accounting | 100 | 100 | 10 CC | 10 CC |
 | Under-reporting | 100 | 90 | 9 CC | 9 CC |
 | Missing interval | 100 | No report | Undetermined | 0 CC |
+| Agreement-version mismatch | 100 | 100 | 8 CC under stale v1 | 8 CC |
+| Smoothing not yet due | 100 | 100 | 10 CC total; 4 CC due now | 4 CC |
+| Overdue smoothing shortfall | 100 | 100 | 10 CC total; 10 CC due now | 4 CC |
 
-The under-reporting case is intentionally constructed so the paymaster burns exactly what the understated report says is due. This isolates measurement completeness from payment arithmetic.
+The under-reporting case is intentionally constructed so the paymaster burns exactly what the understated report says is due. This isolates measurement completeness from payment arithmetic. The agreement-version case tests an authoritative v2 reference against use of v1. The two smoothing cases hold total liability and burn constant but vary the amount due at evaluation time, so a not-yet-due balance is not confused with an overdue shortfall.
 
 ## Results matrix
 
@@ -42,6 +45,8 @@ The under-reporting case is intentionally constructed so the paymaster burns exa
 3. **A proof can faithfully prove the wrong input.** A proof that the submitted report was processed correctly does not show that the report includes every chargeable event.
 4. **Completeness requires an expected population or interval set.** A missing report is detectable only when the verifier knows that the interval should exist. A cryptographic proof can enforce coverage of that known set, but cannot conjure missing source data.
 5. **Independent audit has stronger measurement assurance only under a demanding assumption:** the auditor must obtain complete, reliable source evidence that is independent enough to challenge the reported measurement.
+6. **Agreement version and due schedule are independent accounting controls.** The model detects a mismatch against the authoritative agreement version and distinguishes 4 CC currently due from a 10 CC total liability.
+7. **The extended model contains six scenarios and four architectures.** Its 24 outputs are logical model classifications, not 24 empirical observations. Signed reconciliation and cryptographic proof currently share several detection outcomes because this model does not yet quantify their different privacy, cost, latency or verifier-trust properties.
 
 ## What this does not establish
 
@@ -53,7 +58,7 @@ The under-reporting case is intentionally constructed so the paymaster burns exa
 
 ## Model validation
 
-The six unit tests check matrix size, the distinction between report/payment reconciliation and source measurement, detection of under-reporting under the independent-audit assumption, missing-interval detection when the expected schedule is known, the limits of public burn-only evidence, and the limits of proofs over submitted inputs.
+The checked-in test file currently contains ten test methods. They check the 24-row matrix, report/payment reconciliation versus source measurement, under-reporting under the independent-audit assumption, missing-interval detection, public burn-only limits, proof/input limits, agreement-version mismatch, and the distinction between smoothing not yet due and an overdue shortfall. The experiment note describes model coverage; it does not certify that all ten tests passed on the current branch head. Record an actual CI run SHA before making that claim.
 
 Run from the repository root:
 
@@ -64,4 +69,4 @@ python analysis/comparative_assurance_model.py
 
 ## Next experiment
 
-Add agreement-version mismatch and smoothing/due-date handling. These test whether an architecture can distinguish a genuine shortfall from a payment that is contractually not yet due. After that, expand to burn misallocation across multiple obligations.
+The model already includes agreement-version mismatch and smoothing/due-date handling. The next research task is to audit whether these abstractions faithfully represent CIP-0132's permitted commercial arrangements, then extend the experimental design only where a measurable research question remains. Portfolio allocation is already modelled elsewhere in the repository and should be integrated into the evidence map rather than reimplemented.
