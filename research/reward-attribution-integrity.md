@@ -1,3 +1,5 @@
+> **Scope correction — 17 November 2026:** This document is an early hypothesis generated from CIP-0129 and must now be read alongside [the CIP-0104 / CIP-0129 / CIP-0132 architecture comparison](cip-0104-0129-0132-architecture-comparison.md). CIP-0132 is the proposed Phase 1 design: rewards are initially attributed to the designated paymaster, not granularly distributed to individual dSync participants. The per-party misallocation example below is therefore a model of a possible later granular-attribution regime, not a description of the proposed Phase 1 implementation or a claim of live misreporting. The immediate research focus has shifted to the integrity of the aggregate traffic-report → CC burn → reward pipeline and the transition to granular attribution.
+
 # Reward Attribution Integrity on Dedicated Synchronizers
 
 **Status:** Research avenue under evaluation; not a final topic selection.  
