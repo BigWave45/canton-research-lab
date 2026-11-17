@@ -92,9 +92,9 @@ This is an implementation observation, not proof of incorrect billing. It create
 
 ### Finding 8: the report reader's source acknowledges a pruning-boundary race
 
-The PR #111 source comment says sequencer pruning occurs before the pruning lower bound moves and that a request at the retention edge can race a prune and report a wrong total. The reader obtains pruning status before reading counter snapshots, creating a time-of-check/time-of-use boundary that the reviewed tests do not explicitly exercise.
+The PR #111 source comment warns that a request at the retention edge can race pruning. However, the separate test-harness audit found that pruning retains the latest traffic row at or before the pruning timestamp, which may preserve correct lookups at or after the effective boundary. The remaining hypothesis is a stale pruning-status observation combined with pruning advancing before the historical read. Existing mocks do not exercise this database-level concurrency.
 
-This is a source-level risk observation, not evidence of an actual production error. It warrants a bounded test/review of whether concurrent pruning can produce an incorrect `Ok` report and what mechanism prevents that outcome.
+No incorrect `Ok` report has been demonstrated. Treat this as an unresolved concurrency hypothesis, not a confirmed implementation defect. A deterministic test must distinguish a correct value, an explicit error/unavailable response, a safe retry and an incorrect `Ok` against an independent reference.
 
 ## 6. Important implementation boundary
 
