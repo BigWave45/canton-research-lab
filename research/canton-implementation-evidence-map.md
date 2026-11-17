@@ -24,7 +24,7 @@ The ActivityRecorder integration remains incomplete in the reviewed snapshot: up
 | 10-minute interval report concept | CIP-0132; tracker #152; open PR #111 (supersedes closed-unmerged #103) | Proposed / in review | Endpoint design exists in an open PR; it is not merged or established as deployed. |
 | Report statuses OK, UNDETERMINED, CANNOT_PROVIDE | PR #111 design | Proposed / in review | Intended status semantics in an open PR, not a merged endpoint. |
 | Durable report retention across pruning/LSU | Tracker #152; PR #111 current design; PR #103 superseded | Not present in current PR design / unresolved | PR #111 reads sequencer counters on demand; it does not retain a durable report archive. Availability depends on counter-history retention and upgrade handling. |
-| Operator signature on each report | No report-level signature identified in reviewed PR #103 description or CIP text | Absent from reviewed design | JWT authenticates API caller; it does not sign or attest report contents. |
+| Operator signature on each report | No report-level signature identified in reviewed PR #111 description or CIP text | Absent from reviewed design | JWT authenticates API caller; it does not sign or attest report contents. |
 | Report digest and canonical encoding | No standard field identified | Absent from reviewed design | Proposed interface adds stable content commitment and canonical serialization requirement. |
 | Agreement version, effective dates and pricing rule digest | CIP-0132 places discounts/smoothing in off-ledger agreements; no machine-readable version interface identified | Absent from reviewed implementation | Agreement authority and version binding are proposed interface requirements. |
 | Deterministic liability calculation | Paymaster automation left to implementer under CIP-0132 | Absent as shared protocol interface | A paymaster can calculate liability, but no common calculation manifest is established. |
@@ -62,6 +62,7 @@ CIP-0132 describes ActivityRecorder as part of the intended flow. However, the r
 2. Do not treat purchase authorisation as payment completeness. PRs #100/#104 constrain who can buy and for which registered synchronizer; they do not bind the amount to a complete liability calculation.
 3. Do not treat activity-weight plumbing as reward-chain completion. The hook and full integration test remain unresolved in this snapshot.
 4. Keep the off-ledger agreement explicit. CIP-0132 allows cross-synchronizer volume discounts and delayed/smoothed burns. A settlement manifest must represent multiple obligations, pricing segments, due tranches and allocation rules.
+5. Treat the report's participant-lifecycle and pruning-boundary semantics as open accounting questions. The PR #111 source test excludes a participant present at interval start but absent at interval end; its source comment also acknowledges a possible pruning/read race at the retention boundary. Neither is proof of production error, but both matter to measurement completeness and report reliability.
 5. Prioritise interface and evidence completeness before proof engineering. A proof cannot repair missing interval reports, an unauthorised agreement version or incomplete source metering.
 
 ## 5. Source register
