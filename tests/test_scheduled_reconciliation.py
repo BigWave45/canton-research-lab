@@ -61,6 +61,27 @@ class ScheduledReconciliationTests(unittest.TestCase):
         self.assertEqual(result["payment_state"], "BLOCKED_AGREEMENT_MISMATCH")
         self.assertEqual(result["schedule_version_mismatches"], ["sync-a"])
 
+    def test_schedule_tolerance_is_used_by_reconciliation(self):
+        case = self.make_case("2026-11-15T00:00:00Z")
+        tolerant = Schedule(
+            agreement_version="v1",
+            effective_from="2026-11-01T00:00:00Z",
+            effective_until="2027-01-01T00:00:00Z",
+            tranches=(Tranche("t1", "2026-11-10T00:00:00Z", 4),),
+            grace_period_seconds=3 * 24 * 60 * 60,
+            tolerance_cc=1,
+        )
+        # Three CC paid against four due leaves one CC, within tolerance.
+        from dataclasses import replace
+        from reconciliation_state_machine import Allocation, Burn
+        case = replace(
+            case,
+            burns=(Burn("burn-1", 3),),
+            allocations=(Allocation("a1", "burn-1", "sync-a", 3),),
+        )
+        result = reconcile_with_schedules(case, {"sync-a": tolerant})
+        self.assertEqual(result["payment_state"], "RECONCILED")
+
     def test_prior_credit_reduces_due_only_when_schedule_allows_it(self):
         case = self.make_case("2026-11-15T00:00:00Z")
         result = reconcile_with_schedules(
