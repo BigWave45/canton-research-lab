@@ -196,3 +196,10 @@ The access-check record is [research/scan-api-access-check-2026-11-18.md](scan-a
 **Research consequence:** stop repeating the same API request across SV hosts from the same browser context. Continue source-to-invariant validation using public CIPs, Splice code, PRs, issues and local reproducible models. Revisit live Scan extraction only if an SV/operator provides an authorised access path or export.
 
 The current invariant-by-invariant validation plan is [research/accounting-invariant-validation-matrix-2026-11-18.md](accounting-invariant-validation-matrix-2026-11-18.md). It maps twelve accounting/privacy invariants to public Canton evidence, existing prototype artefacts/tests, evidence level and remaining validation. It identifies the settlement-binding attestation gap as the first prototype issue to close.
+
+
+## 13. Prototype binding-attestation change: 18 November 2026
+
+The research prototype now requires a distinct Ed25519 settlement-binding attestation, in addition to the agreement signature. It commits to a deterministic digest of the exact interval report set and signs the binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference. Agreement and settlement-binding signatures require distinct roles in the trusted signer registry. The protocol-interface tests were expanded for tampering, digest substitution, signer-role and revocation cases. The interface specification was updated accordingly.
+
+This is an unexecuted prototype change at the time of this note. Do not report the new tests as passing until they are run locally and the command/output/commit are recorded. Even if they pass, this attestation proves integrity and attribution of the submitted report-to-obligation mapping; it does not prove source-meter completeness or the legal correctness of the trust registry.
