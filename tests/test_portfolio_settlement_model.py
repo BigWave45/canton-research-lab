@@ -11,40 +11,36 @@ from portfolio_settlement_model import (
 
 
 class PortfolioSettlementTests(unittest.TestCase):
-    def test_one_burn_can_be_partitioned_across_two_synchronizers(self):
+    def test_shared_paymaster_burns_reconcile_two_synchronizers(self):
         obligations, burns, allocations = example_portfolio()
         result = validate_portfolio(obligations, burns, allocations, 250)
         self.assertEqual(result["status"], "valid")
-        self.assertEqual(result["obligations"]["O-A"], "reconciled")
-        self.assertEqual(result["obligations"]["O-B"], "reconciled")
+        self.assertEqual(result["obligations"], {"O-A": "reconciled", "O-B": "reconciled"})
 
     def test_not_yet_due_is_not_short_paid(self):
         obligations, burns, allocations = example_portfolio()
         result = validate_portfolio(obligations, burns, allocations, 150)
         self.assertEqual(result["obligations"]["O-A"], "not_yet_due")
 
-    def test_overallocation_of_shared_burn_is_rejected(self):
+    def test_overallocation_of_burn_is_rejected(self):
         obligations, burns, _ = example_portfolio()
-        allocations = (
-            Allocation("burn-portfolio-1", "O-A", D("10")),
-            Allocation("burn-portfolio-1", "O-B", D("6")),
-        )
+        allocations = (Allocation("burn-1", "O-A", D("4")),
+                       Allocation("burn-1", "O-B", D("6")),
+                       Allocation("burn-2", "O-A", D("6")))
         self.assertEqual(validate_portfolio(obligations, burns, allocations, 250)["status"],
                          "invalid")
 
     def test_short_payment_after_due_date_is_detected(self):
         obligations, burns, _ = example_portfolio()
-        allocations = (
-            Allocation("burn-portfolio-1", "O-A", D("8")),
-            Allocation("burn-portfolio-1", "O-B", D("6")),
-        )
+        allocations = (Allocation("burn-1", "O-A", D("2")),
+                       Allocation("burn-1", "O-B", D("6")),
+                       Allocation("burn-2", "O-A", D("6")))
         result = validate_portfolio(obligations, burns, allocations, 250)
         self.assertEqual(result["obligations"]["O-A"], "short_paid")
 
-    def test_agreement_version_change_is_retained_per_interval(self):
+    def test_agreement_versions_retained_per_interval(self):
         obligations, _, _ = example_portfolio()
-        versions = [x.agreement_version for x in obligations[0].intervals]
-        self.assertEqual(versions, ["v1", "v2"])
+        self.assertEqual([x.agreement_version for x in obligations[0].intervals], ["v1", "v2"])
 
     def test_due_schedule_must_equal_expected_liability(self):
         obligations, burns, allocations = example_portfolio()
@@ -56,14 +52,14 @@ class PortfolioSettlementTests(unittest.TestCase):
 
     def test_unknown_burn_reference_is_rejected(self):
         obligations, _, allocations = example_portfolio()
-        result = validate_portfolio(obligations, (), allocations, 250)
-        self.assertEqual(result["status"], "invalid")
+        self.assertEqual(validate_portfolio(obligations, (), allocations, 250)["status"],
+                         "invalid")
 
     def test_allocation_must_match_paymaster(self):
         obligations, burns, allocations = example_portfolio()
-        wrong = Burn("burn-portfolio-1", D("15"), "PM-OTHER")
-        result = validate_portfolio(obligations, (wrong,), allocations, 250)
-        self.assertEqual(result["status"], "invalid")
+        wrong_burns = (Burn("burn-1", D("9"), "PM-X"), burns[1])
+        self.assertEqual(validate_portfolio(obligations, wrong_burns, allocations, 250)["status"],
+                         "invalid")
 
 
 if __name__ == "__main__":
