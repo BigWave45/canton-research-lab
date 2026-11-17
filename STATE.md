@@ -455,3 +455,14 @@ At the end of each substantial research session, update this file with work comp
 - PR #100's purchase checks establish registered-paymaster eligibility and synchronizer/weight constraints, but do not reconcile the burn amount against reported liability. Tracker #155 explicitly identifies that gap; this is not evidence of actual underpayment.
 - ActivityRecorder PR #8449 remained draft/open and tracker #163 remained open. The full register-transact-report-pay-reward end-to-end test in #159 remained open.
 - Research conclusion: the complete traffic-to-payment-to-reward chain is not yet demonstrated. Immediate priority is report availability, provenance, agreement-aware reconciliation and a passing end-to-end test. Cryptographic proof design remains downstream of these requirements.
+
+
+## Update — 17 November 2026: traffic report consistency and retention audit
+
+- Added research/traffic-report-consistency-and-retention.md from direct inspection of PR #111 head source.
+- Confirmed the reader obtains the pruning lower bound first, then performs separate historical counter reads. TrafficReport.scala explicitly warns that pruning can race a request at the retention boundary and produce a wrong total. This is a source-documented time-of-check/time-of-use risk, not evidence of a production misreport.
+- Distinguished the race from logical synchronizer upgrade handling. The PR adds a cross-upgrade test using predecessor and successor sequencer snapshots; this does not establish atomic consistency against concurrent pruning.
+- Confirmed the current PR patch reads counters on demand and removed the proposed report store/trigger because dedicated synchronizer sequencers were not being pruned at the time. Historical availability therefore depends on the operational retention assumption.
+- Clarified that Ok means the reader calculated a value from available counter snapshots. JWT authenticates the API caller, not the report contents; the inspected patch does not establish report-level signatures, durable archival, agreement reconciliation or independent measurement completeness.
+- Proposed mitigations for study: retention safety margin, atomic/snapshot-consistent reads, prune-aware failure handling, durable interval snapshots and independent boundary validation. None is represented as implemented.
+- Next exact task: design a controlled concurrency test that advances pruning between the status check and counter reads, and classify whether the result is an incorrect Ok, explicit CannotProvide/error, or safe retry. Then determine whether a practical consistency guarantee can be specified.
