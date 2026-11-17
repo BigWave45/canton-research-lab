@@ -496,3 +496,12 @@ At the end of each substantial research session, update this file with work comp
 - Includes no-race, pre-pruned, post-read pruning, exact-boundary, multi-member and storage-backend controls.
 - The test is a specification only. No Scala integration test has been implemented or run in this step; the real API outcome remains unresolved.
 - Next execution should be against the actual PR #111 implementation and its compatible Canton revision. Record exact commit, backend and configuration. A wrong Ok would establish a code-level defect in that tested configuration, not production occurrence or financial loss.
+
+
+## Update — 17 November 2026: executable pruning-race test plan grounded in upstream fixtures
+
+- Inspected PR #111's existing TrafficReportReaderTest.scala, TrafficReportTest.scala and SequencerPruningIntegrationTest.scala, plus the underlying DbTrafficConsumedStore implementation.
+- The reader unit test already mocks SequencerAdminConnection and maps NotAtUpgradeTimeOrBeyond to an Undetermined interval. The existing SV pruning integration test exercises real pruning but does not coordinate a report request with pruning.
+- Refined the suspected wrong-Ok path: pruning retains the latest row at/before the pruning timestamp, so a query at an earlier requested timestamp may omit that member. If the start map omits the member but the end map contains it, participantsConsumed counts the end cumulative value from zero. If the RPC instead fails with NotAtUpgradeTimeOrBeyond, the reader emits Undetermined. Actual RPC behaviour remains to be tested.
+- Added research/executable-pruning-race-test-plan.md with a staged implementation: reader unit test for both response shapes, DB-store concurrency test, then real report endpoint integration test. Use barriers/promises, not sleeps.
+- No upstream code was changed and no Scala test was run in this research step. Do not claim confirmed defect or production impact.
