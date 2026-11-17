@@ -1,7 +1,7 @@
 # Settlement Accounting Interface Specification
 
 **Version:** 0.1  
-**Date:** 17 November 2026  
+**Date:** 18 November 2026  
 **Status:** Research specification. Not a Canton CIP, deployed API contract or production implementation.
 
 ## 1. Purpose and boundary
@@ -50,6 +50,8 @@ UNDETERMINED and CANNOT_PROVIDE must not carry a billable consumed_bytes value. 
 
 A version identifier alone does not prove legal or governance authority. The interface requires approval evidence or a governed authoritative registry.
 
+The research prototype uses separate fields for the agreement signer and settlement-binding signer, and checks the corresponding `agreement` and `settlement_binding` roles. The schema does not, by itself, guarantee that these keys belong to different legal principals. If separation of duties is required, the authoritative signer registry must prohibit key/principal overlap for the two roles and define key-rotation, revocation and delegation rules.
+
 ### C. SettlementManifest
 
 | Field | Type / constraint | Purpose | Disclosure |
@@ -67,7 +69,8 @@ A version identifier alone does not prove legal or governance authority. The int
 | manifest_root | Commitment to canonical manifest | Binds full record | Public |
 | binding_authority_reference | Governed reference identifying who approved the report-to-obligation mapping | Establishes mapping authority basis | Auditor; public reference |
 | binding_signer_key_id | Key reference for the actor authorised to attest the mapping | Attribution | Auditor/public verification |
-| report_set_digest | SHA-256 digest over canonical, deterministically ordered report records for the interval, including revisions | Binds the exact report set used | Public commitment |\n| binding_attestation | Separate Ed25519 signature over binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference | Authenticates the mapping and exact report set, not source measurement truth | Auditor/public verification |
+| report_set_digest | SHA-256 digest over canonical, deterministically ordered report records for the interval, including revisions | Binds the exact report set used | Public commitment |
+| binding_attestation | Separate Ed25519 signature over binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version, authority reference and binding signer key ID | Authenticates the mapping and exact report set, not source measurement truth | Auditor/public verification |
 | operator_attestation | Signature over report set and measurement claims | Attribution | Auditor/public verification |
 | paymaster_attestation | Signature over liability and payment claims | Attribution | Auditor/public verification |
 | status | INCOMPLETE, READY, DISPUTED, RECONCILED, SHORT_PAID, OVERPAID | Explicit lifecycle | Public status |
