@@ -615,3 +615,15 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Six unit tests have been authored but not executed in a repository runtime during this step. Do not report them as passing.
 - The model is a requirements matrix, not a cryptographic implementation, formal privacy proof or claim about deployed CIP-0132 features.
 - Next exact task: integrate disclosure requirements with the comparative assurance architectures and add qualitative operational-cost and latency criteria without inventing measured performance.
+
+
+## Update — 17 November 2026: integrated assurance architecture comparison
+
+- Added `analysis/integrated_assurance_comparison.py`, `tests/test_integrated_assurance_comparison.py` and `research/integrated-assurance-architecture-comparison.md`.
+- Integrated the single-obligation, agreement-version, payment-smoothing, portfolio-allocation and disclosure analyses into a common comparison of four architectures: public burn only, signed reconciliation, independent confidential audit and cryptographic proof.
+- Compared ten dimensions: measurement assurance, payment completeness, allocation assurance, reward attribution, public disclosure, auditor disclosure, residual trust, implementation burden, latency and dispute resolution.
+- The comparison deliberately keeps qualitative judgments separate from measured costs or performance. No numerical latency, cost or detection probability is asserted.
+- Preliminary recommendation: staged assurance, beginning with authoritative accounting records and signed reconciliation plus independent confidential audit; add canonical commitments for tamper evidence; use selective cryptographic proofs for deterministic public arithmetic/allocation predicates where justified; consider independent measurement if source completeness remains unresolved.
+- Central unresolved dependency: identify source records that demonstrate completeness of chargeable activity, establish who controls them, and determine how an auditor can validate them without transaction payload access.
+- Five unit tests have been authored but not executed in a repository runtime during this step. Do not report them as passing.
+- Next exact task: write an implementation-neutral settlement accounting interface specification, then map each required field and control to current CIP and implementation evidence as present, proposed, absent or unverified.
