@@ -39,7 +39,7 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
             "bands":[{"upper_units_exclusive":None,"price_cc_per_unit":1}],
             "fixed_fee_cc":0,"discount_basis_points":0,"rounding":"CEILING"}
         signature=base64.b64encode(self.private.sign(canonical_agreement_bytes(self.signed_document))).decode()
-        self.binding=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","agreement-A","v1","agreement-authority:doc-1","key-1",signature)
+        self.binding=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1","agreement-authority:doc-1","key-1",signature)
     def run_case(self,reports=None,bindings=None):
         return reconcile_protocol_evidence(make_case(),self.expected,
             (self.report,) if reports is None else reports,
@@ -54,7 +54,7 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
         self.assertEqual(out["payment_state"],"BLOCKED_SETTLEMENT_BINDING")
         self.assertEqual(out["coverage"]["reason"],"INCOMPLETE_BINDING_COVERAGE")
     def test_ambiguous_multiple_bindings_block(self):
-        second=SettlementBinding("b1",self.expected[0].interval_id,"sync-A","agreement-A","v1","authority:2","key-1",self.binding.signature_b64)
+        second=SettlementBinding("b1",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1","authority:2","key-1",self.binding.signature_b64)
         out=self.run_case(bindings=(self.binding,second))
         self.assertEqual(out["coverage"]["reason"],"AMBIGUOUS_INTERVAL_BINDING")
     def test_non_ok_report_cannot_claim_chargeable_bytes(self):
@@ -68,14 +68,14 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
 
     def test_invalid_signature_blocks_settlement(self):
         bad=SettlementBinding(self.binding.binding_id,self.binding.interval_id,
-            self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_version,
+            self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_id,self.binding.agreement_version,
             self.binding.authority_reference,self.binding.signer_key_id,"AAAA")
         out=self.run_case(bindings=(bad,))
         self.assertEqual(out["payment_state"],"BLOCKED_SETTLEMENT_BINDING")
         self.assertEqual(out["coverage"]["reason"],"AGREEMENT_SIGNATURE_MALFORMED_KEY_SIGNATURE_OR_DOCUMENT")
     def test_unknown_signer_blocks_settlement(self):
         bad=SettlementBinding(self.binding.binding_id,self.binding.interval_id,
-            self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_version,
+            self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_id,self.binding.agreement_version,
             self.binding.authority_reference,"unknown",self.binding.signature_b64)
         out=self.run_case(bindings=(bad,))
         self.assertEqual(out["coverage"]["reason"],"AGREEMENT_SIGNATURE_UNKNOWN_SIGNER_KEY")
