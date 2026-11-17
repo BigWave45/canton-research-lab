@@ -743,3 +743,20 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Added five interface tests and a research note. Tests are authored but not executed.
 - Important limitation: the authority reference is a provenance label only. This implementation does not authenticate the document, signer or authority. Nor does a successful join prove source measurement completeness.
 - Next: add a CI workflow or reproducible local test instructions, run the full suite, and fix all integration failures before extending the comparative assurance experiment. Feature development remains frozen pending validation.
+
+
+## Update — 17 November 2026: agreement-signature verification prototype
+
+- Added `analysis/agreement_verification.py`: deterministic JSON canonicalisation, SHA-256 document fingerprinting and Ed25519 signature verification against an explicit trusted-key registry.
+- Verification checks key authorisation, validity dates and revocation at the supplied verification time. Test keypairs are generated ephemerally; no private keys are committed.
+- Added seven tests covering valid signatures, document alteration, unknown and unauthorised keys, revoked and expired keys, and invalid timezone-naive verification time.
+- Added `research/cryptographic-agreement-verification.md` documenting the trust boundary and limitations.
+- Added GitHub Actions workflow `.github/workflows/research-tests.yml` to run the full unittest suite on pushes, pull requests and manual dispatch, installing the `cryptography` dependency.
+- **Execution status:** files and workflow are committed. The new test suite has not yet been observed running in GitHub Actions; do not describe it as passing.
+- **Important limitation:** the prototype currently verifies an agreement document independently. The settlement-binding path has not yet been changed to require successful signature verification. Integration is the next implementation step.
+- The trusted-key registry is a trust root, not self-authenticating evidence. Its enrolment, authority mapping, rotation and revocation governance remain external assumptions.
+- This mechanism verifies agreement integrity and key-level authorisation only. It does not verify legal capacity, traffic measurement completeness, source-data truth or actual Canton protocol behaviour.
+
+## Next exact task
+
+Integrate successful agreement verification as a mandatory precondition for accepting a settlement binding in the synthetic reconciliation path. Add negative tests proving that unsigned, altered, unknown-key and revoked-key agreements cannot produce a reconciled payment. Then observe the GitHub Actions test run and fix any failures before expanding the model.
