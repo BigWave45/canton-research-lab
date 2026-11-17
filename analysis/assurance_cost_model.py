@@ -89,12 +89,22 @@ def compare_architectures(cost_inputs, baseline="public_burn_only"):
         raise ValueError("Missing architecture cost inputs: " + ", ".join(missing_architectures))
 
     results = {name: cost_breakdown(cost_inputs[name]) for name in ARCHITECTURES}
-    base = results[baseline]["total_cost"]
+    baseline_result = results[baseline]
+    for name, result in results.items():
+        for field in ("currency", "evaluation_period", "interval_count"):
+            if result[field] != baseline_result[field]:
+                raise ValueError(
+                    f"{name} must use the baseline {field} "
+                    "for a valid comparison"
+                )
+    base = baseline_result["total_cost"]
+    comparable_intervals = baseline_result["interval_count"]
     for result in results.values():
         delta = result["total_cost"] - base
-        intervals = result["interval_count"]
         result["delta_vs_baseline"] = delta
-        result["break_even_avoided_loss_per_interval"] = delta / intervals if intervals else None
+        result["break_even_avoided_loss_per_interval"] = (
+            delta / comparable_intervals if comparable_intervals else None
+        )
 
     return {
         "baseline": baseline,
