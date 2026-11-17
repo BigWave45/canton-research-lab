@@ -371,3 +371,14 @@ At the end of each substantial research session, update this file with work comp
 - Missing departure evidence returns incomplete; identical event replay is idempotent; conflicting duplicate event IDs are rejected.
 - Source distinction: CIP-0132 says the dSync tracks traffic consumed and reports ten-minute intervals, while the proposed API says traffic charged to participants. PR #111's implementation explicitly excludes a participant absent from the end-state map. The inspected CIP text does not resolve whether pre-departure traffic remains chargeable. This is a specification/contract ambiguity, not a confirmed defect.
 - Next task: search authoritative agreement/onboarding documentation and code paths for member removal, traffic-counter lifecycle and the paymaster's consumption of report totals. If no normative rule is published, record the ambiguity as an open protocol question and build a proposed invariant that makes the policy explicit.
+
+
+## Update — 17 November 2026: paymaster automation boundary verified
+
+- Checked splice-multi-sync tracking issue #87. It explicitly states the feature enables paymaster automation but does not implement the automation; each paymaster implements its own.
+- CIP-0132 likewise leaves automation that consumes traffic reports and performs burns to the paymaster. The report API PR #111 is not a universal reconciliation engine.
+- Therefore no single upstream paymaster consumer exists in the inspected work to trace for participant departure handling. The executed off-ledger agreement and each paymaster's own automation are necessary evidence to determine the billable population and aggregation policy.
+- Issue #155 confirms the on-ledger purchase path enforces registered paymaster identity and creates burn/activity records for bytes purchased, but does not check the purchased amount against the traffic report.
+- Updated research/participant-departure-mechanism-comparison.md with this implementation boundary. This increases the importance of an explicit report-to-agreement accounting contract, but does not prove any paymaster undercounts departed members.
+- Synthetic lifecycle mechanism arithmetic was independently executed in the local Python runtime: 125 units under end-state/exclusion policy; 165 under a policy including 40 units of departure consumption; missing exit evidence remains incomplete.
+- Next task: formulate the proposed report-to-burn accounting interface and invariants so that each paymaster automation can be independently checked against the applicable agreement, without requiring disclosure of private transaction payloads.
