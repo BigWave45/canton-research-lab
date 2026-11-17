@@ -242,3 +242,17 @@ At the end of each substantial research session, update this file with work comp
 - This PoC was Daml/Daml Script only, with no Scala automation or end-to-end wiring. The tracker says rewards were out of Phase 2 and the machinery was parked as input to Phase 3. Do not describe it as deployed or operational.
 - The comparison reveals an original research opportunity: compare how verification responsibilities are allocated across measurement integrity, payment completeness and reward integrity in the aggregate paymaster model versus the granular Merkle reward model.
 - The research candidate is now a hybrid protocol-economics and mechanism-design study with a formal state-transition model, quantitative reconciliation, and privacy-preserving reward-accounting analysis. Still provisional; verify the current CIP-0132 implementation and official grant eligibility before selecting.
+
+
+## Update — 17 November 2026: interdisciplinary literature-gap review
+
+- Added `research/literature-review-gap-matrix.md`.
+- Compared the Canton case against principal-agent auditing, financial market infrastructure standards, verifiable resource accounting, privacy-preserving commitments/selective disclosure and Merkle proof-of-liabilities literature.
+- Closest conceptual precedent identified so far: ALIBI, “Towards Verifiable Resource Accounting for Outsourced Computation” (2013). This prevents claiming that verifiable resource metering itself is novel.
+- Principal-agent auditing literature supplies a formal framework for hidden information, audit probability, detection accuracy, penalties and limited liability. It shows that “operator could under-report” is not itself a research contribution.
+- CPMI-IOSCO PFMI provides governance, risk, settlement finality, operational resilience and disclosure control objectives; do not claim legal applicability to every Canton synchronizer.
+- Merkle commitments bind disclosed data and support selective disclosure, but do not alone establish source truth or completeness. Proof-of-liabilities literature warns that tree construction and aggregate-binding details matter.
+- Candidate integrated gap: privacy-preserving resource measurement + reconciliation of operator-reported consumption against a separate public payment/burn record + incentive-compatible allocation of audit/challenge responsibilities + cryptographically bounded reward issuance.
+- Proposed research questions cover measurement completeness, payment completeness, incentive compatibility, reward integrity and privacy/accountability trade-offs.
+- Four candidate hypotheses are recorded in the review. They remain to be formalised and tested; they are not findings.
+- Review is a targeted scoping review, not a systematic review. Novelty remains provisional. Next literature pass should cover trusted hardware/remote attestation, verifiable state/counter transitions, proof-of-reserves completeness attacks, accounting reconciliation under partial observability, privacy-preserving telemetry and cross-domain resource billing.
