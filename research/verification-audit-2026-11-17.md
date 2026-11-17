@@ -31,7 +31,7 @@ Sources:
 
 CIP-0132 specifies an operator API returning total synchronizer traffic in aligned ten-minute intervals, within the sequencer pruning window.
 
-The implementation PR #111, “serve traffic reports from the sync operator app”, was still open on 17 November 2026. Its description says it reads participant cumulative extra-traffic counters at interval boundaries, persists interval totals because sequencer history is pruned, uses JWT authentication, and returns `Ok`, `Undetermined` or `CannotProvide` statuses. It also describes logical-synchronizer-upgrade handling.
+The implementation PR #111, “serve traffic reports from the sync operator app”, was still open on 17 November 2026. It replaces PR #103, which was closed unmerged. PR #111 reads participant cumulative extra-traffic counters at interval boundaries, uses JWT authentication, and returns `Ok`, `Undetermined` or `CannotProvide` statuses. Its 17 November review thread records that the author dropped the report store, trigger and migration because dedicated-synchronizer sequencers were not being pruned at that time; the handler reads the sequencer on each request. The PR adds tests for a completed interval and an interval spanning an LSU, but this is still an open PR, not merged/deployed evidence.
 
 The corresponding tracker issue #152 remains open. Its acceptance criteria include:
 - one total per aligned ten-minute interval matching participant-consumed traffic;
@@ -39,7 +39,7 @@ The corresponding tracker issue #152 remains open. Its acceptance criteria inclu
 - all four operator apps on a four-node synchronizer returning identical totals;
 - persistence sufficient to survive pruning and upgrades.
 
-The PR description does not establish that the four-node equality acceptance test has passed. It also notes a successor sequencer does not carry counter history, so an interval spanning an upgrade that was not stored in time can return `CannotProvide`.
+The PR's visible test additions cover a single operator's report calculation and an LSU-spanning interval using predecessor and successor sequencers. They do not establish that all four operator apps on a four-node synchronizer return identical totals, which remains an acceptance criterion in open tracker issue #152. The PR also documents that a successor sequencer does not carry predecessor counter history; an interval spanning an upgrade can be unavailable if not queried while the required predecessor state is accessible.
 
 This is a material research boundary: the report API was work in progress, not a verified production data feed.
 
