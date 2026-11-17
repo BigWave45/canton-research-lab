@@ -13,10 +13,17 @@ class PriorSettlement:
 
 def reconcile_with_interval_coverage(
     case, expected_intervals, interval_reports, prior_settlements=(),
-    allow_late_reports=False, pricing_agreements=None,
+    allow_late_reports=False, pricing_agreements=None, schedule_anchor=None,
+    require_schedule_anchor=False,
 ):
     interval_reports=tuple(interval_reports)
-    coverage=evaluate_coverage(expected_intervals,interval_reports,_parse_time(case.evaluation_time))
+    coverage=evaluate_coverage(
+        expected_intervals,
+        interval_reports,
+        _parse_time(case.evaluation_time),
+        schedule_anchor=schedule_anchor,
+        require_schedule_anchor=require_schedule_anchor,
+    )
     if coverage["state"]=="INVALID":
         return _blocked(coverage,"BLOCKED_INVALID_INTERVAL_EVIDENCE")
     acceptable=coverage["state"]=="COMPLETE" or (

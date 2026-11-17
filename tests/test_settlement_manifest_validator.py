@@ -38,6 +38,18 @@ class SettlementManifestTests(unittest.TestCase):
         self.assertEqual(validate_manifest(self.changed(m, intervals=intervals)).status,
                          "incomplete_or_invalid")
 
+    def test_out_of_order_interval_evidence_is_accepted(self):
+        m = example_manifest()
+        result = validate_manifest(self.changed(m, intervals=tuple(reversed(m.intervals))))
+        self.assertEqual(result.status, "reconciled")
+        self.assertEqual(result.total_reported_bytes, 2500)
+
+    def test_duplicate_temporal_interval_is_rejected(self):
+        m = example_manifest()
+        intervals = m.intervals + (m.intervals[0],)
+        self.assertEqual(validate_manifest(self.changed(m, intervals=intervals)).status,
+                         "incomplete_or_invalid")
+
     def test_duplicate_burn_within_manifest_is_rejected(self):
         m = example_manifest()
         self.assertEqual(validate_manifest(self.changed(m, burns=m.burns * 2)).status,

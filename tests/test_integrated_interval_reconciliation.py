@@ -1,7 +1,7 @@
 import unittest
 from dataclasses import dataclass
 from datetime import datetime,timedelta,timezone
-from interval_coverage import IntervalReport,build_expected_intervals
+from interval_coverage import IntervalReport,ScheduleAnchor,build_expected_intervals
 from reconciliation_state_machine import Allocation,Burn,Case,Obligation,Report
 from integrated_interval_reconciliation import (
     PriorSettlement,reconcile_with_interval_coverage,
@@ -41,6 +41,44 @@ class IntegratedIntervalReconciliationTests(unittest.TestCase):
     def test_complete_coverage_allows_reconciliation(self):
         out=reconcile_with_interval_coverage(setup_case(),self.expected,(self.report,))
         self.assertEqual(out["payment_state"],"RECONCILED")
+        self.assertEqual(out["coverage"]["schedule_validation"]["state"],
+                         "INTERNALLY_CONSISTENT_UNANCHORED")
+    def test_strict_mode_requires_schedule_anchor(self):
+        out=reconcile_with_interval_coverage(
+            setup_case(),self.expected,(self.report,),require_schedule_anchor=True
+        )
+        self.assertEqual(out["payment_state"],"BLOCKED_INVALID_INTERVAL_EVIDENCE")
+        self.assertEqual(out["coverage"]["reason"],"SCHEDULE_ANCHOR_REQUIRED")
+    def test_strict_mode_accepts_matching_schedule_anchor(self):
+        anchor=ScheduleAnchor(START,END,timedelta(minutes=10),timedelta(minutes=5))
+        out=reconcile_with_interval_coverage(
+            setup_case(),self.expected,(self.report,),
+            schedule_anchor=anchor,require_schedule_anchor=True,
+        )
+        self.assertEqual(out["payment_state"],"RECONCILED")
+        self.assertEqual(out["coverage"]["schedule_validation"]["anchor_comparison"],"MATCHED")
+    def test_strict_mode_rejects_truncated_schedule_against_anchor(self):
+        full_end=END+timedelta(minutes=10)
+        anchor=ScheduleAnchor(START,full_end,timedelta(minutes=10),timedelta(minutes=5))
+        full=build_expected_intervals(START,full_end,timedelta(minutes=10),timedelta(minutes=5))
+        truncated=full[:1]
+        report=IntervalReport("r0",truncated[0].interval_id,truncated[0].start,
+                              truncated[0].end,truncated[0].end,"OK")
+        out=reconcile_with_interval_coverage(
+            setup_case(),truncated,(report,),
+            schedule_anchor=anchor,require_schedule_anchor=True,
+        )
+        self.assertEqual(out["payment_state"],"BLOCKED_INVALID_INTERVAL_EVIDENCE")
+        self.assertEqual(out["coverage"]["reason"],"SCHEDULE_ANCHOR_MISMATCH")
+    def test_empty_or_invalid_schedule_never_reaches_payment_reconciliation(self):
+        empty=reconcile_with_interval_coverage(setup_case(),(),())
+        invalid=reconcile_with_interval_coverage(
+            setup_case(),(self.expected[0],self.expected[0]),(self.report,)
+        )
+        self.assertEqual(empty["payment_state"],"BLOCKED_INVALID_INTERVAL_EVIDENCE")
+        self.assertEqual(empty["coverage"]["reason"],"EMPTY_EXPECTED_SCHEDULE")
+        self.assertEqual(invalid["payment_state"],"BLOCKED_INVALID_INTERVAL_EVIDENCE")
+        self.assertEqual(invalid["coverage"]["reason"],"DUPLICATE_EXPECTED_INTERVAL_ID")
     def test_missing_report_blocks_payment(self):
         out=reconcile_with_interval_coverage(setup_case(),self.expected,())
         self.assertEqual(out["payment_state"],"BLOCKED_INTERVAL_COVERAGE")

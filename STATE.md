@@ -38,6 +38,15 @@ The scope-correction note and evidence map control. Older public-observability/s
 - **Signer separation boundary:** the implementation requires a separately identified binding signer key and checks its `settlement_binding` role. It does not enforce that the binding signer is a different legal person or key from the agreement signer if the trust registry grants one key both roles. Strict separation of duties therefore remains a governance/registry policy, not an enforced code invariant.
 - **Security boundary:** the binding attestation authenticates the mapping and exact report content supplied to the verifier. It does not prove that the operator's source meter captured all chargeable traffic, or that the authority reference is legally valid without independently governed trust-registry evidence.
 
+## Update — 17 November 2026: I-01 expected schedule validation strengthened
+
+- Expected schedules are checked before reports: empty schedules/IDs, duplicate IDs or temporal intervals, naive boundaries/deadlines, non-positive intervals, deadlines before interval end, gaps and overlaps return stable invalid reasons. Validation and output rows use chronological order regardless of caller order.
+- Reports must match the expected interval boundaries. Revisions are interpreted by revision number and predecessor IDs, independent of input order; duplicate revisions, missing revisions, broken supersession links and out-of-schedule intervals are rejected.
+- Added `ScheduleAnchor` for caller-supplied settlement window start/end, cadence and reporting grace. The validator reconstructs the canonical schedule and compares it with the supplied expected intervals; a truncated but internally contiguous schedule is detected when an anchor for the full window is supplied.
+- **Trust boundary:** internal continuity proves only consistency of the supplied list. Anchor matching establishes completeness only relative to the supplied window/cadence values; it does not authenticate their source or authority. Source-meter completeness remains outside this prototype's proof.
+- Payment reconciliation keeps compatibility mode by default and marks a schedule without an anchor as `INTERNALLY_CONSISTENT_UNANCHORED`. Explicit strict mode requires an anchor. Empty and internally invalid schedules are blocked before payment reconciliation.
+- **Local execution:** Python 3.14.2; the three requested focused suites passed (27 + 12 + 12 tests), and the complete local unittest suite passed (225 tests) against working-tree changes based on HEAD `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`. No CI workflow was invoked.
+
 ## Current phase: evidence consolidation and validation
 
 The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
