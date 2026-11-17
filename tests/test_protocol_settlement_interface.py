@@ -55,6 +55,16 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
             (self.report,) if reports is None else reports,
             (self.binding,) if bindings is None else bindings,
             {"v1":agreement()},trusted_signers=self.trusted if registry is None else registry)
+    def binding_for(self, reports):
+        digest=protocol_report_set_digest(reports)
+        unsigned=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1",
+            "agreement-authority:doc-1","key-1",self.binding.signature_b64,digest,"")
+        signature=base64.b64encode(self.private.sign(canonical_agreement_bytes(
+            canonical_binding_document(unsigned)))).decode()
+        return SettlementBinding(unsigned.binding_id,unsigned.interval_id,unsigned.synchronizer_id,
+            unsigned.obligation_id,unsigned.agreement_id,unsigned.agreement_version,
+            unsigned.authority_reference,unsigned.signer_key_id,unsigned.signature_b64,
+            digest,signature)
     def altered_binding(self, **changes):
         values={name:getattr(self.binding,name) for name in self.binding.__dataclass_fields__}
         values.update(changes)
@@ -113,11 +123,11 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
     def test_non_ok_report_cannot_claim_chargeable_bytes(self):
         bad=ProtocolTrafficReport("r0",self.expected[0].interval_id,START,END,END,"UNDETERMINED",10)
         # Binding is also rebuilt for this exact report so the status invariant is tested independently.
-        out=self.run_case(reports=(bad,))
-        self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_REPORT_DIGEST_MISMATCH")
+        out=self.run_case(reports=(bad,),bindings=(self.binding_for((bad,)),))
+        self.assertEqual(out["coverage"]["reason"],"NON_OK_REPORT_MUST_NOT_CARRY_CHARGEABLE_BYTES")
     def test_ok_report_requires_nonnegative_integer_bytes(self):
         bad=ProtocolTrafficReport("r0",self.expected[0].interval_id,START,END,END,"OK",None)
-        out=self.run_case(reports=(bad,))
-        self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_REPORT_DIGEST_MISMATCH")
+        out=self.run_case(reports=(bad,),bindings=(self.binding_for((bad,)),))
+        self.assertEqual(out["coverage"]["reason"],"INVALID_TRAFFIC_BYTE_COUNT")
 
 if __name__=="__main__": unittest.main()
