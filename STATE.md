@@ -348,3 +348,14 @@ At the end of each substantial research session, update this file with work comp
 - Tracker issue #155 is closed (12 Nov) but its body explicitly states that nothing checks paid amount against report and a paymaster may pay less than usage; SV archiving is governance enforcement. Treat this as a documented control limitation, not evidence of actual underpayment.
 - Executed the six adversarial-model assertions in the analysis runtime: all passed. They demonstrate a report-to-burn reconciliation can pass despite an omitted participant; digest comparison detects split views only when observers compare; a reward cap blocks over-issuance relative to its budget but cannot prove the budget's input was complete.
 - Next exact task: formalise participant lifecycle accounting and model the size of undercount from departures across interval boundaries; then compare alternative privacy-preserving lifecycle evidence mechanisms. Keep this conditional on the intended chargeability rule.
+
+
+## Update — 17 November 2026: participant lifecycle accounting experiment
+
+- Added analysis/participant_lifecycle_experiment.py, tests/test_participant_lifecycle.py and research/participant-lifecycle-accounting.md.
+- Modelled the source-observed end-state aggregation rule against two possible economic policies: departed participants' pre-exit traffic remains chargeable, or it is explicitly excluded.
+- In a synthetic example with 100 units from a continuing participant, 40 units from a participant who leaves, and 25 units from a participant who joins, the current end-state aggregation returns 125. If pre-exit usage remains chargeable, the economic total is 165 and 40 units are omitted.
+- Sensitivity cases show the difference equals the departed participant's pre-exit usage (10, 40 or 80 units) under the stated assumptions. These are illustrative inputs, not network estimates.
+- Critical unresolved question: the source code defines the aggregation behaviour, but the executed off-ledger agreement and CIP/report semantics must establish whether pre-departure traffic is billable. Do not label this an underpayment defect before that policy is verified.
+- Compared four candidate treatments: signed departure snapshot, carry-forward counter, event-driven boundary settlement and explicit exclusion. No design selected.
+- Next exact task: locate authoritative charging semantics for participant departure and determine whether the paymaster's expected-liability calculation uses this same aggregate. Then quantify privacy and operational trade-offs for only the mechanisms consistent with the agreed rule.
