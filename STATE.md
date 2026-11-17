@@ -145,3 +145,19 @@ At the end of each substantial research session, update this file with work comp
 - Formal Community Research Grant Terms and Conditions remain unverified despite the launch announcement's expected publication date of 15 November. Eligibility, KYC, sanctions, payment, rights and disclosure terms must be confirmed before relying on the grant.
 - No authenticated API request or data extraction has been performed. This is a documentation audit, not a live data validation.
 - Next exact task: inspect exportable fields and metric provenance on public dashboards/explorers, obtain the official grant terms, and build a no-paid-access research design with explicit quantitative outputs.
+
+
+## Update — 17 November 2026: quantitative research design specification
+
+- Added `research/quantitative-research-design.md`.
+- Specified a claim-relative observer-capability model, distinguishing access to transaction payloads from routing/confirmation metadata.
+- Defined a four-level evidence ladder: directly observed, derived, model-dependent inference, and not identifiable.
+- Created a metric-validity framework and data dictionary requirements; explicitly rejected treating public update counts or public CC transfer volume as total network activity or institutional settlement value.
+- Specified a symbolic fee and incentive model for CIP-0129, including list-price fees, CC conversion, volume/collateral/loyalty discount functions, collateral opportunity cost, break-even analysis, and reward allocation.
+- Marked the discount combination formula as an analytical convention, not the approved protocol formula. Deferred/unknown parameters remain variables.
+- Proposed six quantitative exhibits and a no-paid-access baseline deliverable set.
+- No raw data extraction, authenticated API request, or empirical estimate has been performed.
+- New literature/data check: CCView's October 2026 report is a public, no-registration monthly report with public-data metrics and a methodology section. It may provide an accessible historical snapshot; its metric definitions and provenance must be audited before use.
+- Reconfirm CIP-0129 status: approved 23 October 2026; estimated Q1 2027 universal-burn rollout and Q3 2027 volume/commitment pricing are targets, not live implementation. The proposal appendix contains illustrative pricing examples; those must not be confused with final parameters.
+- Official grant Terms and Conditions still not located in the sources checked. Launch announcement remains the only verified official source for programme terms at this point.
+- Next exact task: audit CCView's October report methodology and the full CIP-0129 appendix; build a parameter register separating approved rules, illustrative examples, unknowns and scenario assumptions. Obtain the formal grant terms.
