@@ -38,6 +38,16 @@ The under-reporting case is intentionally constructed so the paymaster burns exa
 | Under-reporting | Cannot detect omission from burn data alone | Passes internal reconciliation; does not detect omitted activity | Detects under-reporting by comparing report with independent source evidence; burn still matches understated liability | Proof passes over submitted inputs; does not detect omitted source activity |
 | Missing interval | Cannot know an interval was required | Detects missing interval from expected schedule and signed coverage manifest | Detects missing interval from schedule and source records | Detects inability to prove complete interval coverage, if expected interval set is bound into the statement |
 
+### Extended scenarios now in the executable model
+
+| Scenario | Public burn only | Signed reconciliation | Independent confidential audit | Cryptographic proof |
+|---|---|---|---|---|
+| Agreement-version mismatch | Cannot identify the applicable agreement from burn data | Detects mismatch against authoritative version reference | Detects mismatch and can separately inspect source evidence | Detects mismatch if authoritative version reference is bound into the proof statement |
+| Smoothing not yet due | Cannot infer liability or due schedule | Treats 4 CC paid against 4 CC due as current | Same payment result, with measurement assurance only under the source-evidence assumption | Treats the due-schedule predicate as satisfied if the schedule is correctly committed |
+| Overdue smoothing shortfall | Cannot infer liability or due schedule | Detects 6 CC overdue against 10 CC due | Detects overdue shortfall; source measurement assurance still depends on independent records | Detects the encoded due-amount shortfall if the schedule and inputs are correctly bound |
+
+The extended rows describe the current model's classifications. They are not additional empirical observations, and the model does not yet quantify the different privacy, latency or implementation-cost properties of signed reconciliation versus cryptographic proof.
+
 ## What the experiment establishes
 
 1. **Payment reconciliation and measurement assurance are separate properties.** In the under-reporting case, the 9 CC burn exactly matches the 9 CC liability calculated from the report. The payment reconciles while the report is wrong relative to the synthetic reference activity.
