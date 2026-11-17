@@ -28,10 +28,10 @@ Do not combine these categories or describe one as another.
 
 ## 3. Repository inventory at the reviewed branch
 
-The initial recursive Git tree contained 132 files. After the evidence-map and documentation-alignment commits, the branch contains 133 files at the latest audit check:
+The initial recursive Git tree contained 132 files. After the evidence-map and documentation-alignment commits, the branch contains 134 files at the latest audit check:
 - 23 Python analysis modules, plus `analysis/README.md`;
 - 25 test files;
-- 72 files under `research/`;
+- 73 files under `research/`;
 - source, data and output directories, plus root project documentation.
 
 The repository is a research workspace, not a finished paper. File counts are inventory facts, not measures of research quality. The current comparative-assurance test file has ten test methods and the model returns 24 scenario/architecture rows. This is test coverage, not proof that the current full suite passed on the latest branch head. The user reported a successful CircleCI run, but its exact commit SHA was not independently verified in this audit.
