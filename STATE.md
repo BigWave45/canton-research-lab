@@ -393,3 +393,14 @@ At the end of each substantial research session, update this file with work comp
 - Added analysis/settlement_manifest_validator.py and tests/test_settlement_manifest_validator.py. The reference validator checks interval coverage, unknown statuses, agreement/digest presence, duplicate/cross-manifest burn claims, settlement attribution and payment residual. It deliberately accepts expected CC as input rather than inventing a universal pricing formula.
 - This is a proposed interface, not a CIP, deployed implementation or verified cryptographic protocol.
 - Next task: test smoothing schedules, multiple synchronizers sharing one paymaster, agreement changes, and burn allocation across obligations; then identify which invariants can be checked from public evidence and which require authorised off-ledger disclosure.
+
+
+## Update — 17 November 2026: portfolio settlement and smoothing model
+
+- Added analysis/portfolio_settlement_model.py and tests/test_portfolio_settlement_model.py.
+- Added research/portfolio-settlement-and-smoothing.md.
+- Refined the burn-attribution invariant: one burn may be partitioned across multiple synchronizer obligations for the same paymaster, but total allocations must not exceed the public burn amount and no allocation may be double-counted.
+- Modelled two synchronizers under one paymaster, three agreement versions across intervals, one 15 CC aggregate burn, and two due tranches for one obligation.
+- At synthetic time 150, the first obligation is not yet due for its final tranche while the second is reconciled. At time 250 both are reconciled. An over-allocation and a post-deadline short payment are detected.
+- The model stores expected CC per interval under its agreement version. It does not invent a universal pricing formula or claim to reproduce a live agreement.
+- Next exact task: determine which manifest evidence can be public, which requires selective disclosure to an authorised auditor, and which must remain confidential. Then build the disclosure matrix and privacy leakage scenarios.
