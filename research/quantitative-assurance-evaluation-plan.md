@@ -186,3 +186,27 @@ Do not build a new benchmark harness yet. First map each proposed metric to an a
 - currently unavailable.
 
 Only implement a benchmark for the first two categories when the measurement changes the architecture decision. For the remaining categories, state the access dependency and bound the paper's claims accordingly.
+
+## 10. Existing-artifact feasibility audit
+
+A source review of the current analysis modules gives the following starting point. These are capabilities of the research prototypes, not claims about Canton production.
+
+| Proposed measurement | Existing artifact | What can be measured now | Boundary |
+|---|---|---|---|
+| Expected interval coverage | `analysis/interval_coverage.py` | Missing, overdue, late, corrected, non-OK and invalid interval states against a supplied expected schedule | The function explicitly returns `measurement_completeness = NOT_ESTABLISHED`; a complete report schedule does not prove source counters captured all chargeable activity. |
+| Report-to-settlement reconciliation | `analysis/integrated_interval_reconciliation.py`, `analysis/protocol_settlement_interface.py` | Deterministic blocking/reconciliation states, agreement-version linkage and correction adjustments on synthetic cases | The current binding signature authenticates the agreement document, not all report-to-obligation binding fields. Model cardinality and authority assumptions are synthetic. |
+| Burn/manifest integrity | `analysis/settlement_manifest_validator.py` | Interval coverage gaps/overlaps, non-OK reports, duplicate burn IDs within a manifest, wrong settlement references, amount mismatch and reuse against a supplied global claimed-ID set | It does not independently query ledger finality, verify a cryptographic report digest, or prove the source report is complete. |
+| Shared-paymaster allocation | `analysis/portfolio_allocation_model.py` | Duplicate allocation IDs, wrong burn references, unknown obligations, allocation totals above burn, shortfalls and overpayments | Constructed scenarios only; no production allocation manifest has been established. |
+| Aggregate disclosure | `analysis/aggregate_disclosure_experiment.py`, `analysis/aggregate_linear_leakage.py` | Nested-cohort differencing and exact participant identifiability for constructed linear release systems | Synthetic participant vectors and release matrices only; no live Canton disclosure or formal differential-privacy guarantee. |
+| Architecture scenario coverage | `analysis/comparative_assurance_model.py`, `analysis/integrated_assurance_comparison.py` | Deterministic outcomes across six accounting scenarios and four capability abstractions | Not a probability model, benchmark, or complete implementation of signing/audit/proof systems. |
+| Implementation cost | No cost dataset or benchmark harness identified in this audit | Nothing defensible yet beyond symbolic cost decomposition | Requires a defined implementation, labour protocol, hardware profile and measured resource consumption. |
+| Proof overhead | No proof circuit or verifier implementation identified | Not measurable yet | Do not estimate proving cost or latency from generic cryptographic literature as if it were this design's performance. |
+| Auditor effort and dispute delay | No time-and-motion or case dataset identified | Not measurable yet | Requires access to a real audit workflow or a clearly labelled tabletop protocol; simulated minutes must not be called observed operations. |
+| Production reporting/settlement latency | Public proposal defines ten-minute report intervals; no end-to-end measured dataset identified | Documentary reporting cadence only | A ten-minute interval is not an observed report-arrival, settlement-finality or dispute-resolution latency. |
+
+### Immediate experiment sequence
+
+1. Run and preserve the existing deterministic outputs for interval coverage, manifest validation, portfolio allocation and linear aggregate leakage. Record the exact repository commit, commands and outputs.
+2. Add no new scenario until the current outputs have been checked against their corresponding invariants and the six-scenario comparative model.
+3. Build a single evidence-to-predicate matrix showing which artifact tests each accounting property and where a property remains untested.
+4. Do not build cost, proof-performance or audit-latency benchmarks until there is an implementation or access path that can produce meaningful measurements.
