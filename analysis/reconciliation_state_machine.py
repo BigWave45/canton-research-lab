@@ -14,6 +14,7 @@ class Report:
     status: str  # OK, UNDETERMINED, CANNOT_PROVIDE
     agreement_version: str
     obligation_id: str
+    synchronizer_id: str
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,12 @@ def reconcile(case: Case) -> dict:
         r.obligation_id for r in case.reports
         if r.obligation_id not in obligation_by_id
     })
+    synchronizer_binding_mismatches = sorted(
+        r.report_id for r in case.reports
+        if r.obligation_id in obligation_by_id
+        and r.synchronizer_id
+            != obligation_by_id[r.obligation_id].synchronizer_id
+    )
     report_version_mismatches = sorted(
         r.report_id for r in case.reports
         if r.status == "OK"
@@ -91,7 +98,10 @@ def reconcile(case: Case) -> dict:
         obligation_id for obligation_id in obligation_by_id
         if not any(r.obligation_id == obligation_id for r in case.reports)
     )
-    binding_invalid = duplicate_obligations or bool(unknown_report_obligations)
+    binding_invalid = (
+        duplicate_obligations or bool(unknown_report_obligations)
+        or bool(synchronizer_binding_mismatches)
+    )
     version_mismatch = bool(report_version_mismatches or obligations_without_reports)
     agreement_state = (
         "INVALID_BINDING" if binding_invalid
@@ -186,6 +196,7 @@ def reconcile(case: Case) -> dict:
         "report_version_mismatches": report_version_mismatches,
         "obligations_without_reports": obligations_without_reports,
         "unknown_report_obligations": unknown_report_obligations,
+        "synchronizer_binding_mismatches": synchronizer_binding_mismatches,
         "allocation_state": allocation_state,
         "overallocated_burns": overallocated_burns,
         "short_obligations": short_obligations,
