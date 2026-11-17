@@ -61,7 +61,7 @@ def protocol_report_set_digest(reports):
     """Digest a deterministic, report-ID-sorted set including corrections."""
     documents = sorted(
         (canonical_report_document(report) for report in reports),
-        key=lambda item: (item["report_id"], item["revision"]),
+        key=lambda item: (item["report_id"], item["revision"], canonical_agreement_bytes(item)),
     )
     payload = canonical_agreement_bytes({"reports": documents})
     return hashlib.sha256(payload).hexdigest()
@@ -138,6 +138,7 @@ def reconcile_protocol_evidence(
         verification = verify_signed_agreement(
             signed_document, binding.signature_b64, binding.signer_key_id,
             trusted_signers, expected_by_id[binding.interval_id].end,
+            required_role="agreement",
         )
         if not verification["verified"]:
             return _blocked("AGREEMENT_SIGNATURE_" + verification["reason"])
