@@ -117,8 +117,19 @@ def allocation_fixture(count):
         "due_by_obligation": obligations,
         "allocations": allocations,
     }
+    duplicate_scenario = {
+        **scenario,
+        "allocations": [dict(item) for item in allocations],
+    }
+    if count >= 2:
+        duplicate_scenario["allocations"][-1]["allocation_id"] = (
+            duplicate_scenario["allocations"][0]["allocation_id"]
+        )
     encoded = json.dumps(scenario, sort_keys=True, separators=(",", ":")).encode()
-    return scenario, len(encoded)
+    duplicate_encoded = json.dumps(
+        duplicate_scenario, sort_keys=True, separators=(",", ":")
+    ).encode()
+    return scenario, len(encoded), duplicate_scenario, len(duplicate_encoded)
 
 
 def privacy_fixture(count):
@@ -130,7 +141,7 @@ def privacy_fixture(count):
 
 def run_size(count, repeats):
     manifest, manifest_bytes = manifest_fixture(count)
-    allocation, allocation_bytes = allocation_fixture(count)
+    allocation, allocation_bytes, duplicate_allocation, duplicate_allocation_bytes = allocation_fixture(count)
     rows, privacy_bytes = privacy_fixture(count)
 
     manifest_result = validate_manifest(manifest)
@@ -140,6 +151,9 @@ def run_size(count, repeats):
         raise AssertionError(f"manifest fixture invalid at size {count}: {manifest_result}")
     if not allocation_result["valid"]:
         raise AssertionError(f"allocation fixture invalid at size {count}: {allocation_result}")
+    duplicate_result = validate_allocations(duplicate_allocation)
+    if duplicate_result["valid"] or not duplicate_result["duplicate_allocation_ids"]:
+        raise AssertionError(f"duplicate allocation fixture was not rejected at size {count}")
     if identified != [0]:
         raise AssertionError(f"privacy fixture did not isolate participant 0: {identified}")
 
@@ -151,7 +165,12 @@ def run_size(count, repeats):
         },
         "allocation": {
             "serialized_bytes": allocation_bytes,
-            "validation": measure(lambda: validate_allocations(allocation), repeats),
+            "valid_manifest_validation": measure(lambda: validate_allocations(allocation), repeats),
+            "duplicate_manifest_serialized_bytes": duplicate_allocation_bytes,
+            "duplicate_detection_validation": measure(
+                lambda: validate_allocations(duplicate_allocation), repeats
+            ),
+            "duplicate_allocation_ids_detected": duplicate_result["duplicate_allocation_ids"],
         },
         "privacy": {
             "matrix_serialized_bytes": privacy_bytes,
