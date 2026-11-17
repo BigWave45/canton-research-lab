@@ -721,3 +721,14 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Added five tests for valid quantity correction and prohibited identity changes, plus a research note documenting the mapping boundary and the evidence needed before supporting split allocations.
 - Tests are authored but not executed.
 - Next: inspect primary Canton documentation and implementation evidence for actual report-to-obligation cardinality and agreement amendment/migration semantics. If no evidence supports split allocation, retain the one-interval/one-obligation model. Then consolidate and execute the full suite before further model expansion.
+
+
+## Update — 17 November 2026: primary-source report-to-obligation mapping review
+
+- Inspected CIP-0132 and the source and tests at the head of splice-multi-sync PR #111. The proposed traffic-report API exposes interval start/end, status and aggregate synchronizer-level bytes. It does not expose commercial obligation IDs, agreement versions, invoice IDs or burn IDs.
+- The API sums participant traffic at the synchronizer level. The inspected source counts participants present at interval end, treating a participant without a start reading as joined-from-zero and excluding a participant absent at interval end. The source test explicitly exercises these semantics. Whether departure consumption should remain chargeable is a policy/accounting question, not resolved by the API.
+- CIP-0132 makes the report-to-burn link off-ledger in Phase 1; discounts and smoothing are defined by off-ledger agreement. Therefore, one-report-to-one-obligation is not a protocol fact. It is a simplifying assumption in our synthetic settlement-binding layer.
+- Added `research/protocol-report-to-commercial-obligation-boundary.md` and revised `research/correction-identity-and-obligation-mapping.md` to distinguish protocol fields from model-side commercial linkage metadata.
+- Confirmed PR #111 remained open at the snapshot. Paymaster purchase PR #100 and Scan/SV handling PR #104 were merged, but those merges do not establish that the traffic-report endpoint or full end-to-end flow was deployed.
+- Research consequence: model protocol reports separately from off-ledger settlement bindings and public burn/reward evidence. The assurance comparison should test the authority, integrity, completeness and auditability of the mapping, rather than assume it is native to the report.
+- Next: revise the synthetic model interface to separate protocol report records from settlement bindings, then freeze feature work and execute a reproducible test suite. The participant departure accounting rule should remain a scenario dimension, not be silently chosen.
