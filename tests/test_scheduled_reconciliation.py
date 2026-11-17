@@ -48,6 +48,19 @@ class ScheduledReconciliationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             reconcile_with_schedules(case, {})
 
+    def test_schedule_version_mismatch_blocks_reconciliation(self):
+        case = self.make_case("2026-11-11T00:00:00Z")
+        stale = Schedule(
+            agreement_version="v0",
+            effective_from="2026-11-01T00:00:00Z",
+            effective_until="2027-01-01T00:00:00Z",
+            tranches=(Tranche("t1", "2026-11-10T00:00:00Z", 4),),
+        )
+        result = reconcile_with_schedules(case, {"sync-a": stale})
+        self.assertEqual(result["agreement_state"], "MISMATCH")
+        self.assertEqual(result["payment_state"], "BLOCKED_AGREEMENT_MISMATCH")
+        self.assertEqual(result["schedule_version_mismatches"], ["sync-a"])
+
     def test_prior_credit_reduces_due_only_when_schedule_allows_it(self):
         case = self.make_case("2026-11-15T00:00:00Z")
         result = reconcile_with_schedules(
