@@ -82,7 +82,7 @@ The repository's constructed examples show that individually thresholded aggrega
 
 ### Finding 6: the assurance architecture comparison is currently qualitative
 
-The four-architecture comparison distinguishes what each mechanism can establish and the trust it leaves behind. Its cost, latency and operational-burden entries are qualitative assessments. No measured production benchmarks or empirical detection rates are currently established.
+The four-architecture comparison distinguishes conceptual capabilities and residual trust assumptions. The signed-reconciliation and cryptographic-proof columns are design abstractions, not implemented report-signing or proof systems. The current code verifies agreement-document signatures only; it does not yet attest report-to-obligation bindings. Cost, latency and operational-burden entries are qualitative assessments, not measured production benchmarks or empirical detection rates.
 
 ### Finding 7: traffic-report participant exit semantics may affect the measured liability population
 
