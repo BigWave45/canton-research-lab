@@ -309,3 +309,17 @@ At the end of each substantial research session, update this file with work comp
 - The experiment is a model, not a Canton protocol implementation or empirical network measurement. It tests the narrow proposition that agreement-aware cumulative reconciliation avoids false alarms from timing/discount treatment while detecting a shortfall at settlement-window close.
 - Important limitation: the synthetic fixture assumes interval-to-burn attribution and a known agreement. Real application requires actual report semantics, settlement windows, pricing terms, burn mapping and missing-data handling.
 - Next task: run and extend the experiment with missing/undetermined intervals, duplicate burns, rounding boundaries, agreement-version changes, logical synchronizer upgrades and report counter resets; then add unit tests and publish a compact results table.
+
+
+## Update — 17 November 2026: reconciliation model expansion and tests
+
+- Replaced the initial interval-tagged toy model with a settlement-window model that separates traffic report status, agreement version, burn event identity and settlement-window membership.
+- Added explicit handling for ok, undetermined and cannot_provide reports. Missing or unavailable intervals now return incomplete; they are never silently interpreted as zero usage.
+- Added idempotent duplicate-burn ingestion. Identical duplicate event IDs are counted once; conflicting records sharing an ID are rejected.
+- Added per-interval agreement-version selection, settlement-window filtering, shortfall detection and a rounding-boundary demonstration.
+- Added tests/test_paymaster_reconciliation.py with ten deterministic unit tests. The experiment and all ten tests passed in the local run.
+- Added research/reconciliation-experiment-results.md with outputs, interpretation, reproduction steps and explicit model boundaries.
+- Rounding example: three 0.005 CC charges yield 0.03 CC if rounded per interval and 0.02 CC if aggregated before rounding. The actual contractual rounding rule remains unknown; neither convention is asserted as Canton policy.
+- Counter reset / logical synchronizer upgrade gaps are represented as cannot_provide and therefore incomplete. This does not reconstruct unavailable historical counters.
+- Research finding is limited: window-level reconciliation can detect injected shortfalls in synthetic conditions when reports, agreement versions and burn-window mapping are complete. It cannot establish actual traffic measurement correctness or report-to-burn linkage in production.
+- Next exact task: formalise the accounting properties and threat model, then add adversarial cases for participant join/leave, report omission/tampering, split views and reward issuance bounds. Preserve the distinction between modelled properties and verified implementation behaviour.
