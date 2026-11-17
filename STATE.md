@@ -382,3 +382,14 @@ At the end of each substantial research session, update this file with work comp
 - Updated research/participant-departure-mechanism-comparison.md with this implementation boundary. This increases the importance of an explicit report-to-agreement accounting contract, but does not prove any paymaster undercounts departed members.
 - Synthetic lifecycle mechanism arithmetic was independently executed in the local Python runtime: 125 units under end-state/exclusion policy; 165 under a policy including 40 units of departure consumption; missing exit evidence remains incomplete.
 - Next task: formulate the proposed report-to-burn accounting interface and invariants so that each paymaster automation can be independently checked against the applicable agreement, without requiring disclosure of private transaction payloads.
+
+
+## Update — 17 November 2026: proposed report-to-burn accounting interface
+
+- Added research/proposed-report-to-burn-accounting-interface.md, a design proposal for a durable settlement manifest linking synchronizer interval reports, versioned off-ledger pricing terms, paymaster calculation, public burn event IDs and reward attribution.
+- Defined eight invariants: complete interval coverage; agreement-version correctness; deterministic liability calculation; unique burn attribution; due-date-aware window reconciliation; reward consistency; explicit participant lifecycle policy; privacy minimisation.
+- Accounted for CIP-0132's permitted smoothing/delays: a not-yet-due burn is not automatically a shortfall.
+- Proposed operator and paymaster attestations. A paymaster-generated hash of an unsigned API response is not source authentication; operator signature over canonical report content is needed for source attribution. Even a signature does not prove meter completeness.
+- Added analysis/settlement_manifest_validator.py and tests/test_settlement_manifest_validator.py. The reference validator checks interval coverage, unknown statuses, agreement/digest presence, duplicate/cross-manifest burn claims, settlement attribution and payment residual. It deliberately accepts expected CC as input rather than inventing a universal pricing formula.
+- This is a proposed interface, not a CIP, deployed implementation or verified cryptographic protocol.
+- Next task: test smoothing schedules, multiple synchronizers sharing one paymaster, agreement changes, and burn allocation across obligations; then identify which invariants can be checked from public evidence and which require authorised off-ledger disclosure.
