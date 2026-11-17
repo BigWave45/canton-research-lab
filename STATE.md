@@ -271,3 +271,15 @@ At the end of each substantial research session, update this file with work comp
 - Revised candidate direction: staged accountability from trusted metering to verifiable report continuity, agreement-aware burn reconciliation and bounded reward attribution.
 - New experiments: omitted interval, split view, participant/upgrade/pruning boundary, discount/smoothing false positives, reward budget versus omitted input, and trust-cost comparison.
 - Remaining work: verify ALIBI primary bibliographic details, study remote-attestation limits, review privacy-preserving telemetry/aggregation, compare current CIP-0132 implementation to proposal, and inspect later-phase design before deciding prototype scope.
+
+
+## Update — 17 November 2026: falsifiable hypothesis and test protocol
+
+- Added `research/hypothesis-and-test-protocol.md`.
+- Formalised five provisional hypotheses: agreement-aware window reconciliation; limits of Merkle commitments for source completeness; aggregate report-to-burn reconciliation under privacy constraints; audit incentive compatibility; and accountability/privacy/operational-cost trade-offs.
+- Specified four experiments: deterministic reconciliation simulation, adversarial report-integrity tests, principal-agent incentive analysis, and comparative privacy/assurance assessment.
+- Defined falsification criteria and measurement outputs for every hypothesis.
+- Explicitly separated actual consumption, reported traffic, CC burned, agreement-implied payment, reward-eligible activity and reward entitlement. They must not be conflated.
+- Added stop conditions: absent actual report schemas, pricing agreements and burn/reward semantics, restrict claims to proposal-level analysis and synthetic scenarios. Do not infer real operator accuracy or underpayment.
+- Novelty claim remains provisional. Existing resource-accounting, Merkle, auditing and attestation methods are precedents; candidate contribution concerns their composition across Canton's private traffic-report → public burn → reward pipeline.
+- Next exact task: trace CIP-0132's current proposal and implementation state end-to-end against the five hypotheses, and obtain/verify the official Community Research Grant terms and eligibility before fixing scope.
