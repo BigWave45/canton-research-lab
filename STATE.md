@@ -80,3 +80,13 @@ At the end of each substantial research session, update this file with work comp
 - Limit: many records still describe awards or intended work. Completed outputs and impact require separate inspection.
 - Next exact task: inspect completed outputs for EF slashing economics, blockspace derivatives, blockchain geometry and anonymity/compliance; inspect Uniswap Doppler and DEX Analytics Portal; locate SDF market microstructure and AMM outputs.
 - Programme terms and applicant eligibility remain unverified and must be checked before submission.
+
+
+## Update — 17 November 2026: completed-output case studies
+
+- Added `research/completed-output-case-studies.md` with six case studies spanning Uniswap, Ethereum and Stellar.
+- Inspected the Allium grant announcement and Doppler whitepaper plus public technical documentation.
+- Confirmed an important distinction: Allium's grant announcement specifies intended deliverables, but completion and downstream adoption still need verification.
+- Doppler has a public whitepaper and technical documentation describing its Dutch-auction dynamic bonding-curve mechanism and Uniswap v4 hook behaviour. Independent comparative performance evidence has not yet been established.
+- EF slashing and blockspace projects, and SDF AMM/perpetual-DEX projects, are currently supported by award records only; completed outputs remain to be located.
+- Next task: locate and inspect completed research outputs for those award-only cases, then verify current Allium portal/data access and independent Doppler evaluations.
