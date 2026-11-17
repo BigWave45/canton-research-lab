@@ -85,11 +85,17 @@ def evaluate_coverage(expected: Iterable[ExpectedInterval], reports: Iterable[In
             rows.append({"interval_id":item.interval_id,"state":state})
             continue
         previous=None
+        original_binding=None
         for n,r in enumerate(versions):
             if r.revision != n:
                 return {"state":"INVALID","reason":"REVISION_GAP","interval_id":item.interval_id}
             if (n==0 and r.supersedes_report_id is not None) or (n>0 and r.supersedes_report_id != previous):
                 return {"state":"INVALID","reason":"BROKEN_CORRECTION_CHAIN","interval_id":item.interval_id}
+            binding=(r.synchronizer_id,r.obligation_id,r.agreement_version)
+            if n==0:
+                original_binding=binding
+            elif binding!=original_binding:
+                return {"state":"INVALID","reason":"CORRECTION_BINDING_CHANGED","interval_id":item.interval_id,"report_id":r.report_id}
             previous=r.report_id
         latest=versions[-1]
         if latest.status!="OK": state="NON_OK"
