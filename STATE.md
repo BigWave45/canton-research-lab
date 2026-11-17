@@ -466,3 +466,12 @@ At the end of each substantial research session, update this file with work comp
 - Clarified that Ok means the reader calculated a value from available counter snapshots. JWT authenticates the API caller, not the report contents; the inspected patch does not establish report-level signatures, durable archival, agreement reconciliation or independent measurement completeness.
 - Proposed mitigations for study: retention safety margin, atomic/snapshot-consistent reads, prune-aware failure handling, durable interval snapshots and independent boundary validation. None is represented as implemented.
 - Next exact task: design a controlled concurrency test that advances pruning between the status check and counter reads, and classify whether the result is an incorrect Ok, explicit CannotProvide/error, or safe retry. Then determine whether a practical consistency guarantee can be specified.
+
+
+## Update — 17 November 2026: controlled pruning-race model
+
+- Added analysis/pruning_race_model.py and tests/test_pruning_race_model.py, plus research/controlled-pruning-race-experiment.md.
+- The model distinguishes correct Ok, CannotProvide, and a hypothetical stale Ok. The stale-Ok branch is a test oracle, not a claim about current Canton behaviour.
+- Five conceptual unit tests cover timing classes and the arithmetic effect of a wrong reported byte total.
+- Source PR #111 documents a pruning race at the retention boundary, but no real Scala concurrency test has been run. The next requirement is a barrier-controlled integration test around pruning-status retrieval and historical counter reads, with an independently captured reference total.
+- Do not claim exploitability, production occurrence, or settlement loss without that implementation-level test and configuration evidence.
