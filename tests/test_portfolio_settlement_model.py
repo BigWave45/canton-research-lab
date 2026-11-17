@@ -18,7 +18,11 @@ class PortfolioSettlementTests(unittest.TestCase):
         self.assertEqual(result["obligations"], {"O-A": "reconciled", "O-B": "reconciled"})
 
     def test_not_yet_due_is_not_short_paid(self):
-        obligations, burns, allocations = example_portfolio()
+        obligations, burns, _ = example_portfolio()
+        allocations = (
+            Allocation("burn-1", "O-A", D("3")),
+            Allocation("burn-1", "O-B", D("6")),
+        )
         result = validate_portfolio(obligations, burns, allocations, 150)
         self.assertEqual(result["obligations"]["O-A"], "not_yet_due")
 
