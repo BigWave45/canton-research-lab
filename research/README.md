@@ -14,7 +14,9 @@ The current project stage is evidence consolidation and validation. The topic ha
 2. [Research scope correction](research-scope-correction.md): defines the thesis and keeps implementation defects subordinate to the accounting question.
 3. [Canton implementation evidence map](canton-implementation-evidence-map.md): distinguishes present, proposed, absent and unverified implementation elements.
 4. [Integrated assurance architecture comparison](integrated-assurance-architecture-comparison.md): compares four assurance designs and records the qualitative nature of the ratings.
-5. [Initial comparative assurance experiment](initial-comparative-assurance-experiment.md): the first explicitly synthetic experiment and its limitations.
+5. [Initial comparative assurance experiment](initial-comparative-assurance-experiment.md): the six-scenario synthetic experiment and its limitations.
+6. [Quantitative assurance evaluation plan](quantitative-assurance-evaluation-plan.md): the evaluation design and existing-artifact feasibility audit.
+7. [Assurance cost model](assurance-cost-model.md): the parameterised calculator, inputs, outputs and limits.
 
 ## Workstream organisation
 
