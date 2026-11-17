@@ -16,13 +16,14 @@ The repository already contains substantial research and model work. Do not expa
 
 ## Verified repository inventory at the base snapshot
 
-At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map and documentation updates, the branch inventory grew to 134 files, including 73 under `research/`. Counts describe repository contents, not quality or validation.
+At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map, documentation and quantitative-cost-model updates, the branch inventory grew to 137 files, including 74 under `research/`. Counts describe repository contents, not quality or validation.
 
 ## Current evidence position
 
 - The comparative assurance model now has six synthetic scenarios across four architectures (24 model outputs). The test file contains ten test methods. The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The exact run URL and tested commit SHA are not recorded, so the pass is not independently tied to this branch head.
 - The original under-reporting counterexample remains central: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
 - The integrated assurance comparison is qualitative. Its cost, latency and operational-burden assessments are not measured benchmarks.
+- Added `analysis/assurance_cost_model.py`, with unit tests and documentation. It calculates cost components and break-even thresholds only from supplied inputs; it contains no Canton cost assumptions or empirical benchmarks. Comparisons reject mismatched currency, evaluation period or interval count.
 - The implementation reviews are dated public-source snapshots, not deployment audits. CIP-0132 remains Proposed; PRs #100/#104 are merged purchase-path changes, while traffic-report PR #111 remains open and ActivityRecorder PR #8449 remains draft/open.
 - PR #111 reads traffic counters on demand; its author dropped report storage because dSync sequencers were not being pruned at the time. The report API is JWT-protected, not a signed report attestation. Its current tests do not establish four-node report equality.
 - PR #111's participant aggregation excludes a participant present at interval start but absent at interval end. This is an observed code semantic whose billing treatment needs clarification, not proof of underbilling.
@@ -37,10 +38,12 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 
 1. Complete the source-to-claim audit, especially report lifecycle semantics, agreement signatures versus binding attestations, and the distinction between API authentication and report attestation.
 2. Reconcile the remaining research models and tests against the selected accounting question; do not add another model unless a specific measurable gap remains.
-3. Turn the existing comparative experiment into an economic, privacy and operational comparison with explicit measurable outputs and transparent assumptions. Do not invent empirical costs or probabilities.
-4. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
-5. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
-6. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
+3. Populate the new assurance cost calculator from measured prototype data or explicitly labelled scenarios; do not present test fixtures as Canton cost estimates.
+4. Run the new cost-model tests and the existing deterministic model commands, then record the exact commit and outputs.
+5. Build the evidence-to-predicate matrix and complete the economic, privacy and operational comparison without inventing empirical costs or probabilities.
+6. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
+7. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
+8. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
 
 **Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
 
