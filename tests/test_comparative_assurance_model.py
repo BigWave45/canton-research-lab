@@ -1,6 +1,6 @@
 import unittest
 
-from comparative_assurance_model import assess, comparison_matrix
+from comparative_assurance_model import ARCHITECTURES, assess, comparison_matrix
 
 
 class ComparativeAssuranceModelTests(unittest.TestCase):
