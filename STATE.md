@@ -475,3 +475,14 @@ At the end of each substantial research session, update this file with work comp
 - Five conceptual unit tests cover timing classes and the arithmetic effect of a wrong reported byte total.
 - Source PR #111 documents a pruning race at the retention boundary, but no real Scala concurrency test has been run. The next requirement is a barrier-controlled integration test around pruning-status retrieval and historical counter reads, with an independently captured reference total.
 - Do not claim exploitability, production occurrence, or settlement loss without that implementation-level test and configuration evidence.
+
+
+## Update — 17 November 2026: underlying sequencer pruning semantics
+
+- Added research/underlying-sequencer-pruning-semantics.md after direct inspection of Digital Asset Canton source.
+- DbTrafficConsumedStore stores a per-member traffic-consumption journal and historical lookup returns the latest row at or before a timestamp.
+- pruneBelowExclusive selects the latest row at or before the pruning timestamp per member, then deletes older rows in batched non-transactional operations.
+- PR #111 checks pruning status separately from later historical state reads; its own TrafficReport.scala comment explicitly warns that pruning before lower-bound movement can race a report and produce a wrong total.
+- Derived the exact possible interleaving: report checks old bound; pruning advances beyond a requested boundary and deletes that member's last row at/before it; report then queries that timestamp and cannot retrieve the later retained row because it is after the requested timestamp.
+- This establishes a source-supported consistency risk, not an observed incorrect API response or production loss. Need real integration test with deterministic barriers to establish whether API returns incorrect Ok, explicit unavailable/error, or safe retry.
+- Next: design the deterministic Scala integration test around status check, pruning completion, historical read and final API result; do not treat synthetic race model as proof of production behaviour.
