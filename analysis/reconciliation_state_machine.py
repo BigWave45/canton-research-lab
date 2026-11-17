@@ -13,6 +13,7 @@ class Report:
     report_id: str
     status: str  # OK, UNDETERMINED, CANNOT_PROVIDE
     agreement_version: str
+    obligation_id: str
 
 
 @dataclass(frozen=True)
@@ -35,6 +36,7 @@ class Obligation:
     due_cc: int
     authoritative_agreement_version: str
     tolerance_cc: int = 0
+    synchronizer_id: str = ""
 
 
 @dataclass(frozen=True)
@@ -72,17 +74,30 @@ def reconcile(case: Case) -> dict:
     else:
         report_state = "COMPLETE"
 
-    obligation_versions = {
-        o.authoritative_agreement_version for o in case.obligations
-    }
-    report_versions = {
-        r.agreement_version for r in case.reports if r.status == "OK"
-    }
-    version_mismatch = bool(
-        report_versions - obligation_versions
-        or obligation_versions - report_versions
+    obligation_by_id = {o.obligation_id: o for o in case.obligations}
+    duplicate_obligations = len(obligation_by_id) != len(case.obligations)
+    unknown_report_obligations = sorted({
+        r.obligation_id for r in case.reports
+        if r.obligation_id not in obligation_by_id
+    })
+    report_version_mismatches = sorted(
+        r.report_id for r in case.reports
+        if r.status == "OK"
+        and r.obligation_id in obligation_by_id
+        and r.agreement_version
+            != obligation_by_id[r.obligation_id].authoritative_agreement_version
     )
-    agreement_state = "MISMATCH" if version_mismatch else "MATCHED"
+    obligations_without_reports = sorted(
+        obligation_id for obligation_id in obligation_by_id
+        if not any(r.obligation_id == obligation_id for r in case.reports)
+    )
+    binding_invalid = duplicate_obligations or bool(unknown_report_obligations)
+    version_mismatch = bool(report_version_mismatches or obligations_without_reports)
+    agreement_state = (
+        "INVALID_BINDING" if binding_invalid
+        else "MISMATCH" if version_mismatch
+        else "MATCHED"
+    )
 
     burn_by_id = {b.burn_event_id: b for b in case.burns}
     duplicate_burn_ids = len(burn_by_id) != len(case.burns)
@@ -136,6 +151,8 @@ def reconcile(case: Case) -> dict:
     # authoritative amount due at evaluation_time.
     if report_state != "COMPLETE":
         payment_state = "BLOCKED_INCOMPLETE_REPORTS"
+    elif agreement_state == "INVALID_BINDING":
+        payment_state = "DISPUTED_REPORT_BINDING"
     elif agreement_state != "MATCHED":
         payment_state = "BLOCKED_AGREEMENT_MISMATCH"
     elif allocation_invalid:
@@ -166,6 +183,9 @@ def reconcile(case: Case) -> dict:
         "non_ok_reports": non_ok,
         "unexpected_reports": unexpected,
         "agreement_state": agreement_state,
+        "report_version_mismatches": report_version_mismatches,
+        "obligations_without_reports": obligations_without_reports,
+        "unknown_report_obligations": unknown_report_obligations,
         "allocation_state": allocation_state,
         "overallocated_burns": overallocated_burns,
         "short_obligations": short_obligations,
