@@ -640,3 +640,16 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Confirmed upstream Splice PR #8449 remains draft/open, tracker issue #163 remains open, and end-to-end issue #159 remains open. Do not claim the report-to-burn-to-reward path is demonstrated end-to-end.
 - The mapping is a public-source snapshot as of 17 November 2026; merged code does not establish live deployment. No real commercial or traffic data was used.
 - Next exact task: implement a minimum viable synthetic reconciliation state machine covering complete/missing/non-OK reports, agreement-version mismatch, due/not-yet-due smoothing, short payment, duplicate allocation and missing reward records. Keep source measurement truth explicitly outside what synthetic reconciliation can prove.
+
+
+## Update — 17 November 2026: minimum viable reconciliation state machine
+
+- Added `analysis/reconciliation_state_machine.py`, `tests/test_reconciliation_state_machine.py` and `research/minimum-viable-reconciliation-state-machine.md`.
+- Implemented four independent checks: expected report coverage/status, agreement-version consistency, burn/allocation validity and coverage against amount due, and reward-record presence.
+- Added explicit payment states: BLOCKED_INCOMPLETE_REPORTS, BLOCKED_AGREEMENT_MISMATCH, DISPUTED_ALLOCATION, SHORT_PAID and RECONCILED. Reward status is separate; a missing reward record after reconciled payment yields REWARD_PENDING.
+- Modelled missing and UNDETERMINED reports as incomplete, never as zero activity.
+- Modelled smoothing by accepting the amount due at the evaluation time as an input. A 4 CC allocation against 10 CC gross liability is reconciled when only 4 CC is due, but short-paid when 10 CC is due.
+- Modelled portfolio allocations: a 10 CC burn may be split 6+4 across obligations; allocations totalling 11 CC against that burn are disputed.
+- Ten unit tests are authored but have not been executed in a repository runtime. Do not report them as passing.
+- Explicit limitation: the state machine does not prove source-meter truth/completeness, legal agreement authority, public burn finality, correctness of the upstream due calculation or reward arithmetic.
+- Next exact task: implement and test a separate deterministic agreement-schedule calculator for effective dates, instalment deadlines, timezone handling, grace periods, tolerances and carry-forward rules; then feed its due amounts into this state machine.
