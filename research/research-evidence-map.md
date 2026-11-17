@@ -34,7 +34,7 @@ The initial recursive Git tree contained 132 files. After the evidence-map and d
 - 73 files under `research/`;
 - source, data and output directories, plus root project documentation.
 
-The repository is a research workspace, not a finished paper. File counts are inventory facts, not measures of research quality. The current comparative-assurance test file has ten test methods and the model returns 24 scenario/architecture rows. This is test coverage, not proof that the current full suite passed on the latest branch head. The user reported a successful CircleCI run, but its exact commit SHA was not independently verified in this audit.
+The repository is a research workspace, not a finished paper. File counts are inventory facts, not measures of research quality. The current comparative-assurance test file has ten test methods and the model returns 24 scenario/architecture rows. The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The exact run URL and tested commit SHA were not captured in this record, so the pass is recorded as user-confirmed rather than independently tied to branch head `83c02e68e4f511aa34f3b736653249ac9c51177d`.
 
 ## 4. Evidence-to-claim map
 
@@ -100,7 +100,7 @@ No incorrect `Ok` report has been demonstrated. Treat this as an unresolved conc
 
 The synthetic adapter in `analysis/protocol_settlement_interface.py` verifies a signature over the canonical pricing-agreement document. The signed payload contains agreement terms and effective dates, but does not contain the `SettlementBinding` fields that map a protocol interval to a synchronizer, obligation and agreement version. The `authority_reference` is only checked for non-empty content.
 
-Therefore, the current prototype verifies agreement-document integrity against a supplied key registry; it does not cryptographically authenticate the report-to-obligation mapping or establish mapping-specific signer authority. This is a limitation of the research prototype, not a Canton production finding. A new checked-in test changes the authority reference while retaining the valid agreement signature and asserts that reconciliation still succeeds. This demonstrates the unsigned-field gap in the prototype; the test has not yet been verified by a full-suite run on the latest branch head.
+Therefore, the current prototype verifies agreement-document integrity against a supplied key registry; it does not cryptographically authenticate the report-to-obligation mapping or establish mapping-specific signer authority. This is a limitation of the research prototype, not a Canton production finding. A new checked-in test changes the authority reference while retaining the valid agreement signature and asserts that reconciliation still succeeds. This demonstrates the unsigned-field gap in the prototype. The user subsequently confirmed that the CircleCI research-test pipeline passed, but the exact tested commit SHA was not captured here; do not claim that this particular test was included in that run unless the run's commit and test discovery are confirmed.
 
 The paper must distinguish agreement content integrity, signer authority, mapping integrity and measurement completeness. A candidate schema now specifies a separate binding attestation over the report digest and mapping fields; this is a proposed requirement, not an implemented feature.
 
@@ -133,21 +133,19 @@ These are evidence gaps, not negative findings.
 
 ## 8. Documentation conflicts found in this audit
 
-The following repository-level conflicts must be resolved:
-- Root `README.md` still says Phase 1 grant-winner landscape review and says not to select a topic, while `STATE.md` and `research/research-scope-correction.md` establish the Paymaster accounting question.
-- `research/README.md` still says not to begin the paper until the landscape and hypothesis comparison are complete. That instruction is stale as a project-stage instruction; the topic has been selected. Literature review and evidence verification still continue as paper work.
-- `research/quantitative-research-design.md` retains a broader public-network-observability research question and describes the Paymaster topic as a working question rather than the selected scope. It should be labelled as an earlier alternative/design note, not silently treated as current scope.
-- `STATE.md` contains duplicated historical checkpoint headings and older "next exact task" instructions. Preserve the historical log, but put one current checkpoint at the top and label the remainder as history.
-- Test and CI claims must be tied to a specific commit and run. The user reported the latest CircleCI pipeline succeeded, but the GitHub connector did not expose a status for the current head during this audit. Do not imply that every later-added test has been executed solely from that report.
+The following repository-level documentation issues remain:
+- `research/quantitative-research-design.md` retains a broader public-network-observability research question and describes the Paymaster topic as a working question rather than the selected scope. Treat it as an earlier alternative/design note, not as the controlling thesis.
+- `STATE.md` retains a long chronological history with older checkpoint headings and next-task instructions. The top checkpoint is authoritative; older entries are historical records and must not be followed as current instructions.
+- The CircleCI pass is user-confirmed, but its exact run URL and tested commit SHA are not recorded. The GitHub Actions workflow-runs endpoint returned zero runs for this branch; this is a separate CI system and does not invalidate the CircleCI result.
 
 ## 9. Prioritised work remaining
 
 1. **Freeze scope and reconcile documentation.** Use the controlling research question above. Retain older research as supporting context, not parallel theses.
 2. **Verify source claims.** Recheck current CIP status, PR merge status, tracker issue status and exact upstream code revision. Record access dates and immutable commit references.
-3. **Validate the exact repository test suite.** Run the checked-in suite from a reproducible checkout/CI run and record the exact commit and result. Do not rely on a reconstructed subset as full-suite validation.
-4. **Turn the comparative experiment into a quantitative design.** Define measurable outputs for disclosure, reconciliation detection, implementation burden and operational delay. Only report numeric costs or probabilities when data or a transparent parameterised model supports them.
-5. **Decide whether a bounded public-data case study is feasible.** Do not require paid analytics. If no reproducible public extract is accessible, keep the paper's empirical claims bounded to documentary evidence and synthetic experiments.
-6. **Draft the paper from the evidence.** Each result should point to a source, model, test or data extract and carry its evidence classification and limitation.
+3. **Quantify the existing assurance comparison.** Define measurable outputs for disclosure, reconciliation detection, implementation burden and operational delay. Only report numeric costs or probabilities when data or a transparent parameterised model supports them.
+4. **Decide whether a bounded public-data case study is feasible.** Do not require paid analytics. If no reproducible public extract is accessible, keep empirical claims bounded to documentary evidence and synthetic experiments.
+5. **Draft the paper from the evidence.** Each result should point to a source, model, test or data extract and carry its evidence classification and limitation.
+6. **Record CI provenance.** Preserve the successful CircleCI run URL and commit SHA if available; rerun only when subsequent code changes or a concrete validation gap justify it.
 
 ## 10. Publication rule
 
