@@ -602,3 +602,16 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Public burn-only evidence cannot verify private obligation-level allocation. Signed manifests, confidential audit and cryptographic proofs can check allocation constraints under their respective evidence and input-trust assumptions.
 - Eight unit tests have been authored but were not executed in a repository runtime during this step. Do not report them as passing.
 - Next exact task: integrate portfolio allocation with the earlier single-obligation scenarios, then compare privacy disclosure and operational requirements across the resulting assurance architectures.
+
+
+## Update — 17 November 2026: privacy disclosure requirements model
+
+- Added `analysis/disclosure_tiers.py`, `tests/test_disclosure_tiers.py` and `research/privacy-disclosure-requirements.md`.
+- Defined three functional roles: public verifier, independent auditor and operator.
+- Mapped six claims to required evidence: burn existence, allocation constraints, agreement-version correctness, per-synchronizer payment reconciliation, measurement-to-source consistency, and private payload contents.
+- The proposed public tier includes public burn evidence, a settlement-manifest commitment, proof of allocation constraints and an agreement-version reference, but excludes exact per-synchronizer amounts, detailed measurement records, source records and private transaction payloads.
+- The auditor tier receives controlled access to exact obligations, agreement history, interval reports and source measurement evidence. Auditor independence remains an institutional assumption.
+- The model highlights that payload confidentiality does not guarantee metadata confidentiality; timing, party identities and activity patterns may still leak through measurement records.
+- Six unit tests have been authored but not executed in a repository runtime during this step. Do not report them as passing.
+- The model is a requirements matrix, not a cryptographic implementation, formal privacy proof or claim about deployed CIP-0132 features.
+- Next exact task: integrate disclosure requirements with the comparative assurance architectures and add qualitative operational-cost and latency criteria without inventing measured performance.
