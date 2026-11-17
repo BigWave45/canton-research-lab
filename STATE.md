@@ -27,12 +27,13 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 - PR #111 reads traffic counters on demand; its author dropped report storage because dSync sequencers were not being pruned at the time. The report API is JWT-protected, not a signed report attestation. Its current tests do not establish four-node report equality.
 - PR #111's participant aggregation excludes a participant present at interval start but absent at interval end. This is an observed code semantic whose billing treatment needs clarification, not proof of underbilling.
 - The PR's source comment warns of a pruning-boundary race. A separate harness audit finds that retained boundary rows may preserve correct reads; only the stale-pruning-status concurrency case remains an untested hypothesis. No incorrect `Ok` report has been demonstrated.
+- The research prototype verifies the signature over agreement terms but does not sign the report-to-obligation `SettlementBinding` metadata. The mapping's authority reference is not authenticated. This is a prototype assurance gap, not a Canton production finding; a dedicated note and proposed binding-attestation requirement have been added.
 - The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
 - The user reported a successful CircleCI run. During this audit, the GitHub integration did not permit retrieval of the combined status for the branch head (403). Therefore this checkpoint does not independently certify the latest branch's full-suite CI status. The earlier reconstructed 29-case harness is not a full repository test run.
 
 ## Immediate next actions
 
-1. Complete the source-to-claim audit, including traffic-report lifecycle semantics and the distinction between report status, API authentication and report attestation.
+1. Complete the source-to-claim audit, including traffic-report lifecycle semantics, agreement-document signatures versus binding attestations, and the distinction between report status, API authentication and report attestation.
 2. Obtain a reproducible full-suite run for the exact branch head and record the SHA and result.
 3. Audit the remaining models and tests for stale descriptions, duplicated assumptions and unsupported claims. The assurance model is six scenarios × four architectures; the test file has ten methods. Verify this against an actual full-suite run.
 4. Define measurable experimental outcomes before adding any new model.
