@@ -201,11 +201,14 @@ def reconcile_with_schedules(
 
     schedule_results = {}
     scheduled_obligations = []
+    schedule_version_mismatches = []
     for obligation in case.obligations:
         if obligation.obligation_id not in schedules:
             raise ValueError(
                 f"Missing agreement schedule for {obligation.obligation_id}"
             )
+        if schedules[obligation.obligation_id].agreement_version != obligation.authoritative_agreement_version:
+            schedule_version_mismatches.append(obligation.obligation_id)
         result = calculate_due(
             schedules[obligation.obligation_id],
             case.evaluation_time,
@@ -220,6 +223,11 @@ def reconcile_with_schedules(
     scheduled_case = replace(case, obligations=tuple(scheduled_obligations))
     result = reconcile(scheduled_case)
     result["schedule_results"] = schedule_results
+    result["schedule_version_mismatches"] = schedule_version_mismatches
+    if schedule_version_mismatches:
+        result["agreement_state"] = "MISMATCH"
+        result["payment_state"] = "BLOCKED_AGREEMENT_MISMATCH"
+        result["overall_state"] = result["payment_state"]
 
     # Preserve higher-priority evidence failures. Only refine a valid-record
     # payment shortfall into within-grace versus past-grace.
