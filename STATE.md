@@ -2,7 +2,7 @@
 
 **Repository:** private  
 **Reviewed branch:** `circleci-project-setup`  
-**Reviewed base snapshot:** `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0` (the evidence-map and documentation-alignment commits follow this snapshot).
+**Reviewed base snapshot:** `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0` (subsequent commits below update the evidence map and documentation).
 
 ## Controlling research question
 
@@ -16,11 +16,12 @@ The repository already contains substantial research and model work. Do not expa
 
 ## Verified repository inventory at the base snapshot
 
-The recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files, 62 files under `research/`, and the remaining root/source/data/output documentation. Counts describe repository contents, not quality or validation.
+At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map and documentation updates, the branch inventory grew to 133 files, including 72 under `research/`. Counts describe repository contents, not quality or validation.
 
 ## Current evidence position
 
-- The initial comparative assurance experiment is explicitly synthetic. It demonstrates a logical counterexample: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
+- The comparative assurance model now has six synthetic scenarios across four architectures (24 model outputs). The test file contains ten test methods. The experiment note has been aligned with the current model. This does not certify that all ten tests passed on the latest branch head.
+- The original under-reporting counterexample remains central: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
 - The integrated assurance comparison is qualitative. Its cost, latency and operational-burden assessments are not measured benchmarks.
 - The implementation reviews are dated public-source snapshots, not deployment audits. PR, issue and deployment states must be rechecked before publication.
 - The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
@@ -28,11 +29,11 @@ The recursive Git tree contained 132 files: 23 Python analysis modules, 25 test 
 
 ## Immediate next actions
 
-1. Verify the public CIP, Splice PRs, tracker issues and relevant source revisions against current upstream state; preserve dates and commit references.
+1. Complete the source-to-claim audit, including traffic-report lifecycle semantics and the distinction between report status, API authentication and report attestation.
 2. Obtain a reproducible full-suite run for the exact branch head and record the SHA and result.
-3. Audit the model-to-test mapping and check for duplicated or unsupported research claims.
+3. Audit the remaining models and tests for stale descriptions, duplicated assumptions and unsupported claims.
 4. Define measurable experimental outcomes before adding any new model.
-5. Confirm current Canton grant terms, eligibility, publication rules and submission requirements from the official source.
+5. Confirm the final Canton grant Terms and Conditions. The official 4 November announcement expected them by 15 November; final terms have not been independently verified in this audit.
 6. Draft the paper only from evidence that has passed these checks.
 
 **Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
