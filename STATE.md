@@ -691,3 +691,14 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Static inspection found the scheduled test fixtures and base reconciliation fixtures now carry synchronizer IDs. Tests have not been executed after this schema change; the earlier 29-case reconstructed harness does not validate this new revision.
 - Remaining limitation: report_id is currently treated as interval identity, but the model does not yet validate interval start/end timestamps, overlap, cadence or the completeness of the expected interval schedule.
 - Next exact task: formalise expected interval coverage and late/corrected report handling; then run the exact checked-in tests in a real checkout or CI. Do not claim tests pass until that execution occurs.
+
+
+## Update — 17 November 2026: agreement-aware correction pricing
+
+- Extended interval reports with optional agreement version, consumed units, obligation ID and synchronizer ID fields while preserving existing positional fields. Added ISO timestamp properties for pricing.
+- Integrated the pricing calculator into interval reconciliation. When pricing agreements are supplied, the latest valid report is priced against its named agreement version; the resulting liability is bound to the relevant obligation.
+- Corrected reports now generate append-only settlement adjustments from the recalculated liability. The original settlement remains unchanged; positive or negative deltas are explicitly marked for separate settlement handling.
+- Added synchronizer-to-obligation binding checks in the pricing path.
+- Added three integration tests for original report pricing, upward correction with a +2 CC adjustment, and incorrect synchronizer binding. Added an end-to-end research note.
+- New tests are authored but have not been executed. This update is synthetic and does not establish actual Canton tariffs, source measurement completeness or production integration.
+- Next exact task: review the new integration for multi-interval/multi-obligation cases and downward corrections, then run the exact checked-in test suite in a reproducible checkout or CI environment. Do not report unexecuted tests as passing.
