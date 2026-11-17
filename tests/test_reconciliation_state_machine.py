@@ -56,6 +56,7 @@ class ReconciliationStateMachineTests(unittest.TestCase):
     def test_not_yet_due_tranche_is_not_misclassified_as_shortfall(self):
         # Gross liability may be 10, but only 4 is due at evaluation time.
         case = base_case(
+            reports=(Report("r1", "OK", "v1", "sync-a", "synchronizer-a"),),
             obligations=(Obligation("sync-a", 4, "v1", synchronizer_id="synchronizer-a"),),
             allocations=(Allocation("a1", "burn-1", "sync-a", 4),),
         )
@@ -64,6 +65,7 @@ class ReconciliationStateMachineTests(unittest.TestCase):
 
     def test_overdue_amount_is_short_paid(self):
         case = base_case(
+            reports=(Report("r1", "OK", "v1", "sync-a", "synchronizer-a"),),
             obligations=(Obligation("sync-a", 10, "v1", synchronizer_id="synchronizer-a"),),
             allocations=(Allocation("a1", "burn-1", "sync-a", 4),),
         )
