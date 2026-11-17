@@ -576,3 +576,17 @@ At the end of each substantial research session, update this file with work comp
 ## Research direction correction — 17 November 2026
 
 The project is an interdisciplinary study of verifiable economic accounting for privacy-preserving financial infrastructure, using the proposed Dedicated Synchronizer Paymaster Model as a case study. It is not a vulnerability hunt or general security audit. The pruning race is a bounded implementation-audit subtask only: establish whether the interleaving is reachable, classify the response, record its implication for measurement assurance/availability, then stop. Resume the central work on comparing assurance mechanisms across measurement integrity, payment completeness, reward attribution, privacy, residual trust, cost, latency and dispute resolution. See research/research-scope-correction.md.
+
+
+## Update — 17 November 2026: agreement-version and payment-smoothing experiment
+
+- Extended `analysis/comparative_assurance_model.py` and its tests with three scenarios: agreement-version mismatch, a smoothed instalment not yet due, and an overdue smoothed instalment.
+- Expanded the comparison from 12 to 24 scenario/architecture combinations.
+- Added the authoritative agreement version, applied agreement version, evaluation-time amount due and allocated burn as explicit model inputs.
+- Added `research/agreement-version-and-smoothing-experiment.md`.
+- Main result: the stale agreement case can produce a burn that matches the stale calculation but is below the liability under the authoritative agreement. Reconciliation must bind the applicable agreement version.
+- Main result: a 4 CC burn against a 10 CC total liability is current when only 4 CC is due, but is 6 CC short when all 10 CC is overdue. Reconciliation must compare payment with the due amount at the evaluation time, not blindly with total liability.
+- Important assumption: signed reconciliation, audit and proof can detect a version mismatch only if the authoritative agreement version is available through a trusted version record. A proof cannot independently establish legal authority of a version identifier.
+- Nine unit tests have been authored for the expanded model. They have not been executed in the repository runtime during this step; do not report them as passing.
+- All scenarios remain synthetic and do not describe actual Canton billing events.
+- Next exact task: extend the model to multiple synchronizer obligations sharing one paymaster, with aggregate burns, partial allocations, duplicate claims and over-allocation.
