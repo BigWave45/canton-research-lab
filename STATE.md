@@ -442,3 +442,16 @@ At the end of each substantial research session, update this file with work comp
 - Preliminary recommendation is staged: exact auditor reconciliation first; public commitments for tamper-evidence second; selective cryptographic proofs only if a specific public verification gap justifies their cost; independent measurement only if source completeness remains a material risk.
 - Cost ratings are qualitative analytical estimates, not measured costs or performance claims.
 - Next: verify the actual report/API and paymaster implementation evidence against the fields this design assumes, then identify which parts are implementable now and which remain proposed.
+
+
+## Update — 17 November 2026: implementation evidence audit
+
+- Added research/implementation-evidence-audit.md and research/learning-note-implementation-chain.md.
+- Reviewed public source and tracker state for splice-multi-sync PRs #100, #104 and #111; upstream Splice PR #8449; and tracker issues #152, #155, #159 and #163.
+- Confirmed PR #100 (paymaster purchase logic) merged 11 Nov and PR #104 (Scan/SV handling) merged 12 Nov 2026.
+- Confirmed PR #111 (traffic report API) remained open on the audit date. Its current patch reads sequencer cumulative counters on demand, returns Ok/Undetermined/CannotProvide, uses JWT caller authentication and has interval/LSU tests. The review thread says persistent storage/trigger/migration were dropped because dedicated synchronizer sequencers were not being pruned at that time. Historical availability therefore depends on that operational assumption.
+- The report API is described in an internal OpenAPI specification. JWT authenticates the caller; no report-level operator signature or public commitment is established by the inspected patch.
+- The traffic calculation counts participants present at interval end, treating new joiners as starting from zero and excluding participants absent at interval end. This lifecycle billing policy requires agreement-level confirmation.
+- PR #100's purchase checks establish registered-paymaster eligibility and synchronizer/weight constraints, but do not reconcile the burn amount against reported liability. Tracker #155 explicitly identifies that gap; this is not evidence of actual underpayment.
+- ActivityRecorder PR #8449 remained draft/open and tracker #163 remained open. The full register-transact-report-pay-reward end-to-end test in #159 remained open.
+- Research conclusion: the complete traffic-to-payment-to-reward chain is not yet demonstrated. Immediate priority is report availability, provenance, agreement-aware reconciliation and a passing end-to-end test. Cryptographic proof design remains downstream of these requirements.
