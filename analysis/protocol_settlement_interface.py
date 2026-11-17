@@ -6,10 +6,12 @@ Commercial identity and tariff metadata live in SettlementBinding.
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Iterable, Mapping
+import hashlib
+import json
 
 from interval_coverage import IntervalReport
 from integrated_interval_reconciliation import reconcile_with_interval_coverage
-from agreement_verification import verify_signed_agreement
+from agreement_verification import verify_signed_agreement, canonical_agreement_bytes, agreement_digest
 
 
 @dataclass(frozen=True)
@@ -36,6 +38,47 @@ class SettlementBinding:
     authority_reference: str
     signer_key_id: str
     signature_b64: str
+    report_set_digest: str = ""
+    binding_signature_b64: str = ""
+
+
+def canonical_report_document(report):
+    """Canonical fields whose integrity is committed by a settlement binding."""
+    return {
+        "report_id": report.report_id,
+        "interval_id": report.interval_id,
+        "start": report.start.isoformat(),
+        "end": report.end.isoformat(),
+        "received_at": report.received_at.isoformat(),
+        "status": report.status,
+        "traffic_consumed_bytes": report.traffic_consumed_bytes,
+        "revision": report.revision,
+        "supersedes_report_id": report.supersedes_report_id,
+    }
+
+
+def protocol_report_set_digest(reports):
+    """Digest a deterministic, report-ID-sorted set including corrections."""
+    documents = sorted(
+        (canonical_report_document(report) for report in reports),
+        key=lambda item: (item["report_id"], item["revision"]),
+    )
+    payload = canonical_agreement_bytes({"reports": documents})
+    return hashlib.sha256(payload).hexdigest()
+
+
+def canonical_binding_document(binding):
+    """Fields that bind a report set to its commercial obligation."""
+    return {
+        "binding_id": binding.binding_id,
+        "report_set_digest": binding.report_set_digest,
+        "interval_id": binding.interval_id,
+        "synchronizer_id": binding.synchronizer_id,
+        "obligation_id": binding.obligation_id,
+        "agreement_id": binding.agreement_id,
+        "agreement_version": binding.agreement_version,
+        "authority_reference": binding.authority_reference,
+    }
 
 
 def reconcile_protocol_evidence(
@@ -111,6 +154,18 @@ def reconcile_protocol_evidence(
         if interval_id not in by_interval:
             return _blocked("MISSING_SETTLEMENT_BINDING")
         binding = by_interval[interval_id]
+        if not binding.report_set_digest or not binding.binding_signature_b64:
+            return _blocked("SETTLEMENT_BINDING_ATTESTATION_REQUIRED")
+        actual_report_digest = protocol_report_set_digest(versions)
+        if actual_report_digest != binding.report_set_digest:
+            return _blocked("SETTLEMENT_BINDING_REPORT_DIGEST_MISMATCH")
+        binding_verification = verify_signed_agreement(
+            canonical_binding_document(binding), binding.binding_signature_b64,
+            binding.signer_key_id, trusted_signers,
+            expected_by_id[interval_id].end, required_role="settlement_binding",
+        )
+        if not binding_verification["verified"]:
+            return _blocked("SETTLEMENT_BINDING_SIGNATURE_" + binding_verification["reason"])
         for report in versions:
             if report.status == "OK":
                 if not isinstance(report.traffic_consumed_bytes, int) or report.traffic_consumed_bytes < 0:
