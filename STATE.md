@@ -69,3 +69,14 @@ Official announcement: https://canton.foundation/introducing-the-canton-communit
 ## Update protocol
 
 At the end of each substantial research session, update this file with work completed, sources added, verified findings, unresolved questions, decisions made, and the next exact action.
+
+
+## Update — 17 November 2026: comparative grant research
+
+- Added `research/comparative-grant-winner-analysis.md`, an initial source-backed comparison of Ethereum Foundation, Stellar Development Foundation, Uniswap Foundation, and Canton's adjacent Protocol Development Fund.
+- Expanded `sources/source-index.md` with Canton's Protocol Development Fund first report.
+- Key distinction: Canton Community Research Grants launched in November 2026, so there is no previous winner cohort for that exact programme in its launch announcement. Canton's Protocol Development Fund is a separate programme and must not be represented as a prior Community Research Grant winner list.
+- Initial observed patterns: bounded research questions; visible methods/deliverables; interdisciplinary integration around one question; reusable datasets/tools in some programmes. These are observations from public project descriptions, not proven causes of selection.
+- Limit: many records still describe awards or intended work. Completed outputs and impact require separate inspection.
+- Next exact task: inspect completed outputs for EF slashing economics, blockspace derivatives, blockchain geometry and anonymity/compliance; inspect Uniswap Doppler and DEX Analytics Portal; locate SDF market microstructure and AMM outputs.
+- Programme terms and applicant eligibility remain unverified and must be checked before submission.
