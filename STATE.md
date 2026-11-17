@@ -10,6 +10,15 @@
 
 The scope-correction note and evidence map control. Older public-observability/synchronizer-economics material is retained as supporting background, not a parallel thesis.
 
+## Latest update — 18 November 2026: Scan API access check
+
+- The official Canton Foundation SV directory opened in the user's mobile browser; the user supplied its 13 TestNet SV entries and Scan URLs.
+- The Global Synchronizer Foundation `/api/scan/v0/scans` endpoint returned user-observed HTTP 403 on both MainNet and TestNet. No response metadata was captured; the cause is unknown and this does not establish universal API inaccessibility.
+- No live Scan records were retrieved. The directory is not transaction or traffic data.
+- Official Scan documentation describes a DSO-party view and a traffic-status endpoint, but these do not establish completeness of CIP-0132's private interval traffic reports.
+- Detailed record: [research/scan-api-access-check-2026-11-18.md](research/scan-api-access-check-2026-11-18.md). Evidence map updated accordingly.
+- Next route: stop retrying identical endpoints from the same browser context; continue source-to-invariant validation and local reproducible experiments. No validator onboarding or CI workflow is required for this step.
+
 ## Current phase: evidence consolidation and validation
 
 The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
