@@ -299,3 +299,13 @@ At the end of each substantial research session, update this file with work comp
 - No separate official Terms and Conditions document was located in this pass despite the announcement's expected publication date of Nov 15. Jurisdictional eligibility, payment rails, tax, IP/licensing and detailed contractual terms remain unverified. Do not assume Nigeria-based applicant eligibility either way.
 - Updated hypothesis status: H1/H2 are model-testable; H3 is unestablished and needs a disclosure/identifiability test; H4 is theoretical; H5 needs architecture comparison and benchmarks. No empirical results exist yet.
 - Next exact task: obtain actual terms/eligibility confirmation; freeze source snapshots; build an end-to-end state-transition diagram and executable synthetic reconciliation experiment.
+
+
+## Update — 17 November 2026: state-transition model and first synthetic experiment
+
+- Proceeding on the user's instruction to treat grant eligibility/terms as settled; no further grant-terms work is a blocker for the technical research sequence.
+- Added `research/paymaster-state-transition-model.md`: separates metering, reporting, off-ledger agreement calculation, paymaster purchase/burn, ActivityRecorder, reward calculation and reconciliation. Documents candidate invariants, non-invariants and unresolved implementation questions.
+- Added `analysis/paymaster_reconciliation_experiment.py`: dependency-free Decimal-based synthetic model with three cases: smoothed aggregate settlement, injected 4 CC shortfall, and valid discounted payment.
+- The experiment is a model, not a Canton protocol implementation or empirical network measurement. It tests the narrow proposition that agreement-aware cumulative reconciliation avoids false alarms from timing/discount treatment while detecting a shortfall at settlement-window close.
+- Important limitation: the synthetic fixture assumes interval-to-burn attribution and a known agreement. Real application requires actual report semantics, settlement windows, pricing terms, burn mapping and missing-data handling.
+- Next task: run and extend the experiment with missing/undetermined intervals, duplicate burns, rounding boundaries, agreement-version changes, logical synchronizer upgrades and report counter resets; then add unit tests and publish a compact results table.
