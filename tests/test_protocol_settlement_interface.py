@@ -29,42 +29,51 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
     def setUp(self):
         self.expected=build_expected_intervals(START,END,timedelta(minutes=10),timedelta(minutes=5))
         self.report=ProtocolTrafficReport("r0",self.expected[0].interval_id,START,END,END,"OK",10)
-        self.private=Ed25519PrivateKey.generate()
-        public=self.private.public_key().public_bytes(
+        self.agreement_private=Ed25519PrivateKey.generate()
+        agreement_public=self.agreement_private.public_key().public_bytes(
             encoding=serialization.Encoding.Raw,format=serialization.PublicFormat.Raw)
-        self.trusted={"key-1":{"public_key_b64":base64.b64encode(public).decode(),
-            "authorised":True,"roles":["agreement","settlement_binding"],
+        self.binding_private=Ed25519PrivateKey.generate()
+        binding_public=self.binding_private.public_key().public_bytes(
+            encoding=serialization.Encoding.Raw,format=serialization.PublicFormat.Raw)
+        self.trusted={
+            "key-agreement":{"public_key_b64":base64.b64encode(agreement_public).decode(),
+            "authorised":True,"roles":["agreement"],
+            "valid_from":"2026-01-01T00:00:00+00:00",
+            "valid_until":"2027-01-01T00:00:00+00:00"},
+            "key-binding":{"public_key_b64":base64.b64encode(binding_public).decode(),
+            "authorised":True,"roles":["settlement_binding"],
             "valid_from":"2026-01-01T00:00:00+00:00",
             "valid_until":"2027-01-01T00:00:00+00:00"}}
         self.signed_document={"agreement_id":"agreement-A","version":"v1",
             "effective_from":"2026-11-01T00:00:00+00:00","effective_until":None,
             "bands":[{"upper_units_exclusive":None,"price_cc_per_unit":1}],
             "fixed_fee_cc":0,"discount_basis_points":0,"rounding":"CEILING"}
-        signature=base64.b64encode(self.private.sign(canonical_agreement_bytes(self.signed_document))).decode()
+        signature=base64.b64encode(self.agreement_private.sign(canonical_agreement_bytes(self.signed_document))).decode()
         unsigned=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1",
-            "agreement-authority:doc-1","key-1",signature,
-            protocol_report_set_digest((self.report,)),"")
-        binding_signature=base64.b64encode(self.private.sign(canonical_agreement_bytes(
+            "agreement-authority:doc-1","key-agreement",signature,
+            protocol_report_set_digest((self.report,)),"","key-binding")
+        binding_signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
             canonical_binding_document(unsigned)))).decode()
         self.binding=SettlementBinding(unsigned.binding_id,unsigned.interval_id,unsigned.synchronizer_id,
             unsigned.obligation_id,unsigned.agreement_id,unsigned.agreement_version,
             unsigned.authority_reference,unsigned.signer_key_id,unsigned.signature_b64,
-            unsigned.report_set_digest,binding_signature)
-    def run_case(self,reports=None,bindings=None,registry=None):
+            unsigned.report_set_digest,binding_signature,unsigned.binding_signer_key_id)
+    def run_case(self,reports=None,bindings=None,registry=None,pricing_agreements=None):
         return reconcile_protocol_evidence(make_case(),self.expected,
             (self.report,) if reports is None else reports,
             (self.binding,) if bindings is None else bindings,
-            {"v1":agreement()},trusted_signers=self.trusted if registry is None else registry)
+            {"v1":agreement()} if pricing_agreements is None else pricing_agreements,
+            trusted_signers=self.trusted if registry is None else registry)
     def binding_for(self, reports):
         digest=protocol_report_set_digest(reports)
         unsigned=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1",
-            "agreement-authority:doc-1","key-1",self.binding.signature_b64,digest,"")
-        signature=base64.b64encode(self.private.sign(canonical_agreement_bytes(
+            "agreement-authority:doc-1","key-agreement",self.binding.signature_b64,digest,"","key-binding")
+        signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
             canonical_binding_document(unsigned)))).decode()
         return SettlementBinding(unsigned.binding_id,unsigned.interval_id,unsigned.synchronizer_id,
             unsigned.obligation_id,unsigned.agreement_id,unsigned.agreement_version,
             unsigned.authority_reference,unsigned.signer_key_id,unsigned.signature_b64,
-            digest,signature)
+            digest,signature,unsigned.binding_signer_key_id)
     def altered_binding(self, **changes):
         values={name:getattr(self.binding,name) for name in self.binding.__dataclass_fields__}
         values.update(changes)
@@ -83,7 +92,14 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
         out=self.run_case(bindings=(self.altered_binding(synchronizer_id="other-sync"),))
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_INVALID_SIGNATURE")
     def test_agreement_version_tampering_blocks(self):
-        out=self.run_case(bindings=(self.altered_binding(agreement_version="other-version"),))
+        pricing_agreements={
+            "v1":agreement(),
+            "v2":PricingAgreement("agreement-B","v2","2026-11-01T00:00:00+00:00",None,(PriceBand(None,1),)),
+        }
+        out=self.run_case(
+            bindings=(self.altered_binding(agreement_version="v2"),),
+            pricing_agreements=pricing_agreements,
+        )
         self.assertEqual(out["coverage"]["reason"],"AGREEMENT_BINDING_MISMATCH")
     def test_report_digest_substitution_blocks(self):
         out=self.run_case(bindings=(self.altered_binding(report_set_digest="0"*64),))
@@ -99,14 +115,36 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
         out=self.run_case(bindings=(self.altered_binding(binding_signature_b64="AAAA"),))
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_INVALID_SIGNATURE")
     def test_unknown_binding_signer_blocks(self):
-        out=self.run_case(bindings=(self.altered_binding(signer_key_id="unknown"),))
+        out=self.run_case(bindings=(self.altered_binding(binding_signer_key_id="unknown"),))
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_UNKNOWN_SIGNER_KEY")
+    def test_legacy_binding_without_binding_signer_is_rejected(self):
+        legacy=SettlementBinding(
+            self.binding.binding_id,self.binding.interval_id,self.binding.synchronizer_id,
+            self.binding.obligation_id,self.binding.agreement_id,self.binding.agreement_version,
+            self.binding.authority_reference,self.binding.signer_key_id,self.binding.signature_b64,
+            self.binding.report_set_digest,self.binding.binding_signature_b64,
+        )
+        registry={
+            "key-agreement":{
+                **self.trusted["key-agreement"],
+                "roles":["agreement","settlement_binding"],
+            },
+            "key-binding":self.trusted["key-binding"],
+        }
+        out=self.run_case(bindings=(legacy,),registry=registry)
+        self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNER_ID_MISSING")
     def test_signer_without_binding_role_blocks(self):
-        registry={"key-1":{**self.trusted["key-1"],"roles":["agreement"]}}
+        registry={
+            "key-agreement":self.trusted["key-agreement"],
+            "key-binding":{**self.trusted["key-binding"],"roles":["agreement"]},
+        }
         out=self.run_case(registry=registry)
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_SIGNER_ROLE_NOT_AUTHORISED")
     def test_revoked_binding_signer_blocks(self):
-        registry={"key-1":{**self.trusted["key-1"],"revoked_at":"2026-11-17T12:05:00+00:00"}}
+        registry={
+            "key-agreement":self.trusted["key-agreement"],
+            "key-binding":{**self.trusted["key-binding"],"revoked_at":"2026-11-17T12:05:00+00:00"},
+        }
         out=self.run_case(registry=registry)
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_SIGNER_KEY_REVOKED")
     def test_duplicate_binding_id_blocks(self):

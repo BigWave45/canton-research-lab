@@ -40,6 +40,7 @@ class SettlementBinding:
     signature_b64: str
     report_set_digest: str = ""
     binding_signature_b64: str = ""
+    binding_signer_key_id: str = ""
 
 
 def canonical_report_document(report):
@@ -78,6 +79,7 @@ def canonical_binding_document(binding):
         "agreement_id": binding.agreement_id,
         "agreement_version": binding.agreement_version,
         "authority_reference": binding.authority_reference,
+        "binding_signer_key_id": binding.binding_signer_key_id,
     }
 
 
@@ -160,9 +162,11 @@ def reconcile_protocol_evidence(
         actual_report_digest = protocol_report_set_digest(versions)
         if actual_report_digest != binding.report_set_digest:
             return _blocked("SETTLEMENT_BINDING_REPORT_DIGEST_MISMATCH")
+        if not binding.binding_signer_key_id:
+            return _blocked("SETTLEMENT_BINDING_SIGNER_ID_MISSING")
         binding_verification = verify_signed_agreement(
             canonical_binding_document(binding), binding.binding_signature_b64,
-            binding.signer_key_id, trusted_signers,
+            binding.binding_signer_key_id, trusted_signers,
             expected_by_id[interval_id].end, required_role="settlement_binding",
         )
         if not binding_verification["verified"]:
