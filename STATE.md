@@ -678,3 +678,16 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Static review identified a model limitation: base report/agreement consistency compares sets of version identifiers and does not yet bind each report interval to a specific synchronizer/obligation. The schedule-integrated path checks the schedule version per obligation, but the report input schema still needs an explicit obligation/synchronizer identity.
 - Added `research/reconciliation-model-validation-results.md` documenting the execution qualification, test coverage, review findings and next step.
 - Next exact task: revise report and obligation identity so every interval report is bound to its synchronizer/obligation and agreement version, then test multi-synchronizer cases with distinct agreement versions. After that, run the exact checked-in suite from a real checkout or CI environment.
+
+
+## Update — 17 November 2026: per-obligation report and synchronizer binding
+
+- Extended `Report` with explicit `obligation_id` and `synchronizer_id`; retained `report_id` as the stable interval identifier and `agreement_version` as the report's pricing-rule reference.
+- Extended `Obligation` with `synchronizer_id`.
+- Replaced global set-based agreement-version comparison with per-report comparison against the specific obligation's authoritative agreement version. Distinct synchronizers may therefore use distinct valid agreement versions.
+- Added binding checks: unknown obligation, duplicate obligation identity, and report/synchronizer mismatch. Invalid identity binding yields `DISPUTED_REPORT_BINDING`; per-obligation agreement-version mismatch yields `BLOCKED_AGREEMENT_MISMATCH`.
+- Updated base and scheduled test fixtures to include synchronizer identity. Added tests for distinct agreement versions, wrong synchronizer binding and wrong per-obligation agreement version.
+- Added `research/per-obligation-report-binding.md`, documenting the record schema, predicates, example and remaining interval-coverage limitations.
+- Static inspection found the scheduled test fixtures and base reconciliation fixtures now carry synchronizer IDs. Tests have not been executed after this schema change; the earlier 29-case reconstructed harness does not validate this new revision.
+- Remaining limitation: report_id is currently treated as interval identity, but the model does not yet validate interval start/end timestamps, overlap, cadence or the completeness of the expected interval schedule.
+- Next exact task: formalise expected interval coverage and late/corrected report handling; then run the exact checked-in tests in a real checkout or CI. Do not claim tests pass until that execution occurs.
