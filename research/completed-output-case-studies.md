@@ -139,3 +139,10 @@ We should not assume that Canton transaction-level data is public or that networ
 4. Verify current Allium portal functionality and accessible schemas; distinguish public documentation from paid data access.
 5. Search for independent empirical evaluations of Doppler rather than relying only on its design documents.
 6. Add a completion-status and evidence-strength field to the master project register.
+
+
+## Follow-up verification — SDF AMM grant status
+
+A University at Buffalo research-project record identifies **Automated Market Maker Design to Optimize Liquidity Providers' Returns** as an active project, with an effective period of 1 September 2025 to 31 August 2027 and USD 37,500 in funding from the Stellar Development Foundation. As of this research date (17 November 2026), it is still within the recorded project period. Therefore, the absence of a completed public paper should not be interpreted as a failure to deliver; the project may still be underway.
+
+Source: https://researchconnect.buffalo.edu/en/projects/automated-market-maker-design-to-optimize-liquidity-providers-ret-2/
