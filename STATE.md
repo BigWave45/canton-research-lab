@@ -323,3 +323,15 @@ At the end of each substantial research session, update this file with work comp
 - Counter reset / logical synchronizer upgrade gaps are represented as cannot_provide and therefore incomplete. This does not reconstruct unavailable historical counters.
 - Research finding is limited: window-level reconciliation can detect injected shortfalls in synthetic conditions when reports, agreement versions and burn-window mapping are complete. It cannot establish actual traffic measurement correctness or report-to-burn linkage in production.
 - Next exact task: formalise the accounting properties and threat model, then add adversarial cases for participant join/leave, report omission/tampering, split views and reward issuance bounds. Preserve the distinction between modelled properties and verified implementation behaviour.
+
+
+## Update — 17 November 2026: accounting properties and adversarial counterexamples
+
+- Added research/accounting-properties-and-threat-model.md, defining the system boundary, actors, adversary capabilities, eight candidate accounting/privacy properties, required evidence and explicit non-claims.
+- Separated report continuity, measurement integrity, agreement-correct liability, payment completeness, burn attribution uniqueness, reward bounds, observer-view consistency and privacy preservation.
+- Added analysis/adversarial_accounting_tests.py and tests/test_adversarial_accounting.py.
+- Added an omitted-participant counterexample: reported traffic of 10 units at 1 CC/unit with a 10% discount is fully paid at 9 CC, while hypothetical actual traffic of 16 units implies 14.40 CC. Report-to-burn reconciliation passes despite a 5.40 CC hidden difference. This demonstrates a logical limitation of report-based reconciliation, not production omission.
+- Added split-view demonstration: digest comparison detects conflicting report content when two observers compare the same synchronizer/interval/version; one observer's self-consistent digest cannot reveal an omission.
+- Added abstract reward-budget invariant: it rejects issuance above the authorised budget but does not prove the budget was derived from complete activity.
+- Added research/adversarial-accounting-experiments.md with results, implications and limits.
+- Next exact task: inspect whether the actual report API exposes stable report identity/version and interval coverage, then trace the concrete reward cap/attribution code. Replace abstract assumptions with implementation facts where source evidence permits. Only after that decide whether a cryptographic or trusted-metering prototype is justified.
