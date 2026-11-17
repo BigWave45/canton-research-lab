@@ -1,6 +1,6 @@
 # Integrated Assurance Architecture Comparison
 
-**Status:** Research assessment and design recommendation. Qualitative ratings are analytical judgments, not measured cost, latency, detection probability or Canton production performance.
+**Status:** Preliminary research assessment and candidate design recommendation. Qualitative ratings are analytical judgments, not measured cost, latency, detection probability or Canton production performance. This is not the final paper recommendation; it must be tested against the completed evidence map and quantitative design.
 
 ## 1. Purpose
 
