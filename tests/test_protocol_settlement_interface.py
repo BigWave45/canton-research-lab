@@ -49,6 +49,13 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
         out=self.run_case()
         self.assertEqual(out["payment_state"],"RECONCILED")
         self.assertEqual(out["pricing_results"]["r0"]["consumed_units"],10)
+    def test_agreement_signature_does_not_authenticate_binding_metadata(self):
+        altered=SettlementBinding(self.binding.binding_id,self.binding.interval_id,
+            self.binding.synchronizer_id,self.binding.obligation_id,self.binding.agreement_id,
+            self.binding.agreement_version,"unverified-authority-reference",
+            self.binding.signer_key_id,self.binding.signature_b64)
+        out=self.run_case(bindings=(altered,))
+        self.assertEqual(out["payment_state"],"RECONCILED")
     def test_missing_binding_blocks(self):
         out=self.run_case(bindings=())
         self.assertEqual(out["payment_state"],"BLOCKED_SETTLEMENT_BINDING")
