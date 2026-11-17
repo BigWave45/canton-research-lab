@@ -83,6 +83,16 @@ class AgreementScheduleTests(unittest.TestCase):
         )
         self.assertEqual(result["due_cc"], 0)
 
+    def test_excess_payment_is_reported_not_silently_carried_forward(self):
+        result = calculate_due(
+            schedule(tranches=(Tranche("t1", "2026-11-10T00:00:00Z", 4),)),
+            "2026-11-15T00:00:00Z",
+            7,
+        )
+        self.assertEqual(result["due_unpaid_cc"], 0)
+        self.assertEqual(result["unapplied_payment_cc"], 3)
+        self.assertEqual(result["remaining_carry_forward_credit_cc"], 0)
+
     def test_naive_timestamps_are_rejected(self):
         with self.assertRaises(ValueError):
             calculate_due(schedule(), "2026-11-15T00:00:00", 0)
