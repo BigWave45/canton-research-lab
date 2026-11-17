@@ -101,7 +101,8 @@ No incorrect `Ok` report has been demonstrated. Treat this as an unresolved conc
 The implementation evidence map records different maturity states for traffic reporting, paymaster purchase, activity recording and end-to-end testing. The paper must preserve those distinctions. A second source-level pass corrected the PR history: PR #103 was closed unmerged and superseded by PR #111, which remains open in the 17 November snapshot. PR #111's review thread confirms that its database store, trigger and migration were dropped because dedicated-synchronizer sequencers were not being pruned at that time; the handler reads sequencer counters on demand. Its visible tests cover a single operator report and an interval spanning an LSU, but do not establish the four-node equality criterion still listed in open tracker #152.
 
 In particular:
-- Paymaster purchase authorisation is not the same as checking whether the amount paid covers the complete traffic liability.
+- Phase 1 has no traffic enforcement: the CIP says messages are not rejected because a node runs out of traffic. Payment is post-hoc, so an accounting shortfall is not automatically prevented by traffic admission control.
+- Paymaster purchase authorisation is not the same as checking whether the amount paid covers the complete traffic liability. Tracker #155 explicitly says no purchase check compares paid amount with the report.
 - A traffic-report API proposal is not a merged or deployed endpoint merely because its design and code were inspected. PR #111 is open; it is not the closed-unmerged PR #103.
 - A merged purchase or Scan/SV change does not establish a complete report-to-burn-to-reward chain.
 - A public burn record does not independently reveal the private activity or contractual liability that should have generated it.
