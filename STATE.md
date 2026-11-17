@@ -590,3 +590,15 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Nine unit tests have been authored for the expanded model. They have not been executed in the repository runtime during this step; do not report them as passing.
 - All scenarios remain synthetic and do not describe actual Canton billing events.
 - Next exact task: extend the model to multiple synchronizer obligations sharing one paymaster, with aggregate burns, partial allocations, duplicate claims and over-allocation.
+
+
+## Update — 17 November 2026: shared-paymaster portfolio allocation experiment
+
+- Added `analysis/portfolio_allocation_model.py`, `tests/test_portfolio_allocation_model.py` and `research/shared-paymaster-portfolio-allocation-experiment.md`.
+- Modelled one 10 CC burn allocated across two synchronizer obligations, with four scenarios: valid 6+4 partition, duplicate allocation identifier, 12 CC claimed against a 10 CC burn, and a 2 CC shortfall on the second obligation.
+- Defined two core constraints: total allocations against a burn cannot exceed its public amount; allocations credited to each obligation must cover the amount due by the evaluation time.
+- Distinguished legitimate one-to-many burn allocation from duplicate claims. A single burn may validly fund several obligations if allocations are unique, correctly referenced and bounded by the burn amount.
+- Demonstrated in the synthetic model that a portfolio can have a visible aggregate burn while one synchronizer remains underpaid or another is over-allocated.
+- Public burn-only evidence cannot verify private obligation-level allocation. Signed manifests, confidential audit and cryptographic proofs can check allocation constraints under their respective evidence and input-trust assumptions.
+- Eight unit tests have been authored but were not executed in a repository runtime during this step. Do not report them as passing.
+- Next exact task: integrate portfolio allocation with the earlier single-obligation scenarios, then compare privacy disclosure and operational requirements across the resulting assurance architectures.
