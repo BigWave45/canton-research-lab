@@ -177,3 +177,70 @@ def reconcile(case: Case) -> dict:
             "Reward presence is checked, not reward amount or downstream distribution correctness.",
         ],
     }
+
+
+
+def reconcile_with_schedules(
+    case: Case,
+    schedules: dict,
+    prior_credits: dict | None = None,
+) -> dict:
+    """Calculate due amounts from schedules, then reconcile current allocations.
+
+    schedules maps obligation_id to agreement_schedule.Schedule.
+    prior_credits maps obligation_id to eligible prior carry-forward credit.
+    """
+    from collections import defaultdict
+    from dataclasses import replace
+    from agreement_schedule import calculate_due
+
+    prior_credits = prior_credits or {}
+    allocated = defaultdict(int)
+    for allocation in case.allocations:
+        allocated[allocation.obligation_id] += allocation.amount_cc
+
+    schedule_results = {}
+    scheduled_obligations = []
+    for obligation in case.obligations:
+        if obligation.obligation_id not in schedules:
+            raise ValueError(
+                f"Missing agreement schedule for {obligation.obligation_id}"
+            )
+        result = calculate_due(
+            schedules[obligation.obligation_id],
+            case.evaluation_time,
+            allocated[obligation.obligation_id],
+            prior_credits.get(obligation.obligation_id, 0),
+        )
+        schedule_results[obligation.obligation_id] = result
+        scheduled_obligations.append(
+            replace(obligation, due_cc=result["due_cc"])
+        )
+
+    scheduled_case = replace(case, obligations=tuple(scheduled_obligations))
+    result = reconcile(scheduled_case)
+    result["schedule_results"] = schedule_results
+
+    # Preserve higher-priority evidence failures. Only refine a valid-record
+    # payment shortfall into within-grace versus past-grace.
+    if result["payment_state"] == "SHORT_PAID":
+        overdue = [
+            obligation_id
+            for obligation_id, schedule_result in schedule_results.items()
+            if schedule_result["past_grace_unpaid_cc"] > schedule_result["tolerance_cc"]
+        ]
+        if overdue:
+            result["payment_state"] = "PAST_GRACE_UNPAID"
+            result["overdue_obligations"] = sorted(overdue)
+        else:
+            result["payment_state"] = "WITHIN_GRACE"
+            result["within_grace_obligations"] = sorted(
+                obligation_id
+                for obligation_id, schedule_result in schedule_results.items()
+                if schedule_result["due_unpaid_cc"] > schedule_result["tolerance_cc"]
+            )
+
+        result["overall_state"] = result["payment_state"]
+
+    result["due_calculation"] = "CALCULATED_FROM_AGREEMENT_SCHEDULE"
+    return result
