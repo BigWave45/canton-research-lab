@@ -486,3 +486,13 @@ At the end of each substantial research session, update this file with work comp
 - Derived the exact possible interleaving: report checks old bound; pruning advances beyond a requested boundary and deletes that member's last row at/before it; report then queries that timestamp and cannot retrieve the later retained row because it is after the requested timestamp.
 - This establishes a source-supported consistency risk, not an observed incorrect API response or production loss. Need real integration test with deterministic barriers to establish whether API returns incorrect Ok, explicit unavailable/error, or safe retry.
 - Next: design the deterministic Scala integration test around status check, pruning completion, historical read and final API result; do not treat synthetic race model as proof of production behaviour.
+
+
+## Update — 17 November 2026: controlled integration-test specification
+
+- Added research/controlled-pruning-integration-test-spec.md.
+- Specifies a deterministic database-backed Scala integration test with barriers after pruning-status evaluation and before historical counter lookup; pruning must complete before the read is released.
+- Uses an independently captured expected aggregate and explicit outcome classes: correct Ok, explicit unavailable/error, safe retry, or incorrect Ok.
+- Includes no-race, pre-pruned, post-read pruning, exact-boundary, multi-member and storage-backend controls.
+- The test is a specification only. No Scala integration test has been implemented or run in this step; the real API outcome remains unresolved.
+- Next execution should be against the actual PR #111 implementation and its compatible Canton revision. Record exact commit, backend and configuration. A wrong Ok would establish a code-level defect in that tested configuration, not production occurrence or financial loss.
