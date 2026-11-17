@@ -1,6 +1,6 @@
 # Comparative Assurance Experiment: Initial and Extended Scenarios
 
-**Status:** Synthetic model and experiment. The original three-scenario baseline was executed; the current six-scenario extension is checked in, but its full-suite execution on the latest branch head has not been independently verified. This is not an empirical study of Canton traffic or paymaster behaviour.  
+**Status:** Synthetic model and experiment. The original three-scenario baseline was executed, and the user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The exact CircleCI run URL and tested commit SHA are not recorded here, so this note does not assert that the run tested the current branch head. This is not an empirical study of Canton traffic or paymaster behaviour.  
 **Model:** `analysis/comparative_assurance_model.py`  
 **Tests:** `tests/test_comparative_assurance_model.py`
 
@@ -68,7 +68,7 @@ The extended rows describe the current model's classifications. They are not add
 
 ## Model validation
 
-The checked-in test file currently contains ten test methods. They check the 24-row matrix, report/payment reconciliation versus source measurement, under-reporting under the independent-audit assumption, missing-interval detection, public burn-only limits, proof/input limits, agreement-version mismatch, and the distinction between smoothing not yet due and an overdue shortfall. The experiment note describes model coverage; it does not certify that all ten tests passed on the current branch head. Record an actual CI run SHA before making that claim.
+The checked-in test file currently contains ten test methods. They check the 24-row matrix, report/payment reconciliation versus source measurement, under-reporting under the independent-audit assumption, missing-interval detection, public burn-only limits, proof/input limits, agreement-version mismatch, and the distinction between smoothing not yet due and an overdue shortfall. The user-confirmed CircleCI pass is the current reported suite status. Because the run URL and tested commit SHA were not captured, do not attribute that pass to a specific branch head or claim independent verification of this test file's inclusion without checking the CircleCI run details.
 
 Run from the repository root:
 
