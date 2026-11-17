@@ -199,14 +199,15 @@ A source review of the current analysis modules gives the following starting poi
 | Shared-paymaster allocation | `analysis/portfolio_allocation_model.py` | Duplicate allocation IDs, wrong burn references, unknown obligations, allocation totals above burn, shortfalls and overpayments | Constructed scenarios only; no production allocation manifest has been established. |
 | Aggregate disclosure | `analysis/aggregate_disclosure_experiment.py`, `analysis/aggregate_linear_leakage.py` | Nested-cohort differencing and exact participant identifiability for constructed linear release systems | Synthetic participant vectors and release matrices only; no live Canton disclosure or formal differential-privacy guarantee. |
 | Architecture scenario coverage | `analysis/comparative_assurance_model.py`, `analysis/integrated_assurance_comparison.py` | Deterministic outcomes across six accounting scenarios and four capability abstractions | Not a probability model, benchmark, or complete implementation of signing/audit/proof systems. |
-| Implementation cost | No cost dataset or benchmark harness identified in this audit | Nothing defensible yet beyond symbolic cost decomposition | Requires a defined implementation, labour protocol, hardware profile and measured resource consumption. |
+| Implementation cost | `analysis/assurance_cost_model.py`, `tests/test_assurance_cost_model.py`, `research/assurance-cost-model.md` | Calculates one-time, recurring and incremental costs from explicitly supplied inputs; computes a conditional break-even avoided-loss threshold | Executable parameterised model + synthetic unit tests | No Canton costs are populated or measured. The model rejects missing inputs and requires matching currency, period and interval count. |
 | Proof overhead | No proof circuit or verifier implementation identified | Not measurable yet | Do not estimate proving cost or latency from generic cryptographic literature as if it were this design's performance. |
 | Auditor effort and dispute delay | No time-and-motion or case dataset identified | Not measurable yet | Requires access to a real audit workflow or a clearly labelled tabletop protocol; simulated minutes must not be called observed operations. |
 | Production reporting/settlement latency | Public proposal defines ten-minute report intervals; no end-to-end measured dataset identified | Documentary reporting cadence only | A ten-minute interval is not an observed report-arrival, settlement-finality or dispute-resolution latency. |
 
 ### Immediate experiment sequence
 
-1. Run and preserve the existing deterministic outputs for interval coverage, manifest validation, portfolio allocation and linear aggregate leakage. Record the exact repository commit, commands and outputs.
-2. Add no new scenario until the current outputs have been checked against their corresponding invariants and the six-scenario comparative model.
-3. Build a single evidence-to-predicate matrix showing which artifact tests each accounting property and where a property remains untested.
-4. Do not build cost, proof-performance or audit-latency benchmarks until there is an implementation or access path that can produce meaningful measurements.
+1. Run and preserve deterministic outputs for interval coverage, manifest validation, portfolio allocation and linear aggregate leakage. Record the exact repository commit, commands and outputs.
+2. Populate the cost calculator only with measured or explicitly scenario-labelled inputs. Keep the result separate from assurance effectiveness and privacy results.
+3. Add no new accounting scenario until existing outputs have been checked against their invariants and the six-scenario comparative model.
+4. Build a single evidence-to-predicate matrix showing which artifact tests each accounting property and where a property remains untested.
+5. Do not build proof-performance or audit-latency benchmarks until there is an implementation or access path that can produce meaningful measurements.
