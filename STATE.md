@@ -410,3 +410,14 @@ At the end of each substantial research session, update this file with work comp
 
 - Corrected the portfolio example so the early payment status matches the actual allocation: first 9 CC burn allocates 3 CC to O-A and 6 CC to O-B; a later 6 CC burn pays O-A's second tranche. At t=150, O-A is not yet due for the final 6 CC; at t=250 both obligations are reconciled.
 - Added/updated tests to enforce this due-date interpretation. The prior draft example allocated the full 9 CC liability to O-A immediately while labelling it not-yet-due; that was inconsistent and has been corrected.
+
+
+## Update — 17 November 2026: privacy disclosure matrix and aggregate leakage test
+
+- Added research/privacy-disclosure-matrix-and-leakage-experiment.md.
+- Added analysis/aggregate_disclosure_experiment.py and tests/test_aggregate_disclosure_experiment.py.
+- Distinguished Canton transaction-payload privacy from the separate disclosure risks of CIP-0132 aggregate traffic accounting.
+- Created a proposed evidence classification across public, auditor-restricted, operator/paymaster-confidential and excluded transaction data.
+- Constructed a synthetic differencing counterexample: two overlapping cohort aggregates of 100 and 60 bytes reveal one participant's 40-byte usage, even though both cohorts satisfy k=3. This disproves the sufficiency of a minimum cohort threshold alone; it does not show that the current synchronizer-wide CIP report leaks individual usage.
+- Proposed separate exact auditor evidence and privacy-protected public analytics. Rounding/noise should not be silently applied to contractual billing evidence.
+- Next task: broaden the leakage analysis to linear combinations and repeated releases, then define a verifiable public proof surface that does not expose exact restricted reports or agreement terms.
