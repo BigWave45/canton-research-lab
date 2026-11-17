@@ -20,7 +20,7 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 
 ## Current evidence position
 
-- The comparative assurance model now has six synthetic scenarios across four architectures (24 model outputs). The test file contains ten test methods. The experiment note has been aligned with the current model. This does not certify that all ten tests passed on the latest branch head.
+- The comparative assurance model now has six synthetic scenarios across four architectures (24 model outputs). The test file contains ten test methods. The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The exact run URL and tested commit SHA are not recorded, so the pass is not independently tied to this branch head.
 - The original under-reporting counterexample remains central: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
 - The integrated assurance comparison is qualitative. Its cost, latency and operational-burden assessments are not measured benchmarks.
 - The implementation reviews are dated public-source snapshots, not deployment audits. CIP-0132 remains Proposed; PRs #100/#104 are merged purchase-path changes, while traffic-report PR #111 remains open and ActivityRecorder PR #8449 remains draft/open.
