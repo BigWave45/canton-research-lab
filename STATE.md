@@ -1,4 +1,4 @@
-# Current checkpoint — 17 November 2026
+# Current checkpoint — 18 November 2026
 
 **Repository:** private  
 **Reviewed branch:** `circleci-project-setup`  
@@ -34,8 +34,9 @@ The scope-correction note and evidence map control. Older public-observability/s
 - Added role-scoped signer checks: agreement signatures require the `agreement` role; mapping attestations require `settlement_binding`. The trusted signer registry must explicitly carry those roles.
 - Expanded protocol-interface tests for authority-reference tampering, obligation/synchronizer/version tampering, report-digest substitution, report-content tampering, missing/invalid attestation, unknown/revoked signer and missing signer role. Existing status/byte-count tests now re-sign the altered report set so they isolate those invariants rather than failing earlier on digest mismatch.
 - Updated the settlement interface specification to include the report-set digest and distinct binding attestation.
-- **Execution status:** these newly committed tests have not yet been run in Codespaces. This is implementation work, not a validated result. No CI workflow was invoked.
-- **Security boundary:** the binding attestation authenticates the mapping and exact report content supplied to the verifier. It still does not prove that the operator's source meter captured all chargeable traffic, nor does a signer role establish legal authority unless the trust registry and role assignment are governed independently.
+- **Validation status:** the targeted `tests/test_protocol_settlement_interface.py` suite was run in Codespaces after commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`; all 18 tests passed, including the legacy-binding fail-closed regression. `git diff --check` passed. These are user-reported local execution results, not CI results. No CI workflow was invoked.
+- **Signer separation boundary:** the implementation requires a separately identified binding signer key and checks its `settlement_binding` role. It does not enforce that the binding signer is a different legal person or key from the agreement signer if the trust registry grants one key both roles. Strict separation of duties therefore remains a governance/registry policy, not an enforced code invariant.
+- **Security boundary:** the binding attestation authenticates the mapping and exact report content supplied to the verifier. It does not prove that the operator's source meter captured all chargeable traffic, or that the authority reference is legally valid without independently governed trust-registry evidence.
 
 ## Current phase: evidence consolidation and validation
 
@@ -55,7 +56,7 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 - PR #111 reads traffic counters on demand; its author dropped report storage because dSync sequencers were not being pruned at the time. The report API is JWT-protected, not a signed report attestation. Its current tests do not establish four-node report equality.
 - PR #111's participant aggregation excludes a participant present at interval start but absent at interval end. This is an observed code semantic whose billing treatment needs clarification, not proof of underbilling.
 - The PR's source comment warns of a pruning-boundary race. A separate harness audit finds that retained boundary rows may preserve correct reads; only the stale-pruning-status concurrency case remains an untested hypothesis. No incorrect `Ok` report has been demonstrated.
-- The research prototype verifies the signature over agreement terms but does not sign the report-to-obligation `SettlementBinding` metadata. The mapping's authority reference is not authenticated. A new test demonstrates that changing this reference while retaining the agreement signature still reconciles. This is a prototype assurance gap, not a Canton production finding; a dedicated note and proposed binding-attestation requirement have been added.
+- The prototype now verifies two separate cryptographic objects: the pricing-agreement document and the report-to-obligation `SettlementBinding`. The latter binds the canonical report-set digest and mapping metadata to a separately identified signer key with the `settlement_binding` role. The 18-test targeted suite passed locally in Codespaces at commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`; no CI was run. This closes the previously demonstrated unsigned-mapping-field gap in the prototype. It does not prove source-meter completeness, legal authority, or independent control by distinct principals.
 - The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
 - **CI status:** The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The successful result is accepted as the current project update. The exact CircleCI run URL and tested commit SHA were not captured in this repository checkpoint, so this record does not claim independent verification that the run tested branch head `83c02e68e4f511aa34f3b736653249ac9c51177d` or any later documentation commit. Do not reopen the resolved failures without new evidence.
 - The GitHub Actions endpoint shows no workflow runs for this branch; that is separate from CircleCI and does not contradict the user's CircleCI update.
@@ -63,8 +64,8 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 
 ## Immediate next actions
 
-1. Complete the source-to-claim audit, especially report lifecycle semantics, agreement signatures versus binding attestations, and the distinction between API authentication and report attestation.
-2. Reconcile the remaining research models and tests against the selected accounting question; do not add another model unless a specific measurable gap remains.
+1. Validate interval completeness (I-01): inspect the existing expected-interval builder and report-coverage logic, then test missing, duplicate, overlapping, misaligned, adjacent, partial-window and non-OK interval cases. Preserve the requirement that the verifier has an independently known expected schedule.
+2. Validate unique burn allocation and double counting (I-08/I-09), then corrections and reward attribution. Keep each test tied to a stated accounting invariant.
 3. Replace the illustrative cost inputs with measured prototype data, scoped engineering estimates or confidential operator data where obtainable; do not present synthetic ICU values as Canton estimates.
 4. Execute `analysis/research_benchmark.py` on a local machine when code execution is available; preserve full JSON output, exact commit SHA, Python version and hardware context. Until then, no timings or memory figures may be claimed.
 5. When execution is available, run the cost-model tests and existing deterministic model commands, then record the exact commit and outputs. Until then, treat the tests as unexecuted.
@@ -79,7 +80,7 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 
 # Project State
 
-**Last updated:** 2026-11-17  
+**Last updated:** 2026-11-18  
 **Repository:** private  
 **Project:** Canton Community Research Grants research preparation
 
