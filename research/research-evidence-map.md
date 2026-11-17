@@ -1,7 +1,8 @@
 # Research Evidence Map
 
 **Prepared:** 17 November 2026  
-**Repository snapshot:** `circleci-project-setup` at `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0`  
+**Initial repository snapshot:** `circleci-project-setup` at `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0`  
+**Evidence refresh:** 17 November 2026; upstream PR #111 review and tracker states rechecked  
 **Purpose:** Reconcile the research record, identify what each body of work can support, and separate established findings from hypotheses and unresolved evidence.
 
 ## 1. Controlling research question
@@ -27,10 +28,10 @@ Do not combine these categories or describe one as another.
 
 ## 3. Repository inventory at the reviewed branch
 
-The recursive Git tree at the snapshot contains 132 files:
+The initial recursive Git tree contained 132 files. After the evidence-map and documentation-alignment commits, the branch contains 133 files at the latest audit check:
 - 23 Python analysis modules, plus `analysis/README.md`;
 - 25 test files;
-- 62 files under `research/`, including this map once added;
+- 72 files under `research/`;
 - source, data and output directories, plus root project documentation.
 
 The repository is a research workspace, not a finished paper. File counts are inventory facts, not measures of research quality.
@@ -85,11 +86,11 @@ The four-architecture comparison distinguishes what each mechanism can establish
 
 ## 6. Important implementation boundary
 
-The implementation evidence map records different maturity states for traffic reporting, paymaster purchase, activity recording and end-to-end testing. The paper must preserve those distinctions.
+The implementation evidence map records different maturity states for traffic reporting, paymaster purchase, activity recording and end-to-end testing. The paper must preserve those distinctions. A second source-level pass corrected the PR history: PR #103 was closed unmerged and superseded by PR #111, which remains open in the 17 November snapshot. PR #111's review thread confirms that its database store, trigger and migration were dropped because dedicated-synchronizer sequencers were not being pruned at that time; the handler reads sequencer counters on demand. Its visible tests cover a single operator report and an interval spanning an LSU, but do not establish the four-node equality criterion still listed in open tracker #152.
 
 In particular:
 - Paymaster purchase authorisation is not the same as checking whether the amount paid covers the complete traffic liability.
-- A traffic-report API proposal is not a merged or deployed endpoint merely because its design and code were inspected.
+- A traffic-report API proposal is not a merged or deployed endpoint merely because its design and code were inspected. PR #111 is open; it is not the closed-unmerged PR #103.
 - A merged purchase or Scan/SV change does not establish a complete report-to-burn-to-reward chain.
 - A public burn record does not independently reveal the private activity or contractual liability that should have generated it.
 
@@ -130,3 +131,38 @@ The following repository-level conflicts must be resolved:
 ## 10. Publication rule
 
 The paper should stand on its own. The GitHub repository is its reproducibility and evidence companion, not a substitute for explaining the method and results in the paper. The public version of the repository should be released only after secrets, private data, licensing, source provenance and test reproducibility have been checked.
+
+
+## 11. Upstream refresh: 17 November 2026
+
+The following primary-source states were checked directly after the initial evidence map was written:
+
+| Source | State observed | Research consequence |
+|---|---|---|
+| CIP-0132 | Status field says **Proposed**; created 9 November 2026 | The paymaster model remains a proposal in this source snapshot, not an approved or deployed protocol fact. |
+| splice-multi-sync PR #103 | Closed 13 November, `merged=false`; explicitly superseded by #111 | Do not treat #103 as the current report implementation. |
+| splice-multi-sync PR #111 | Open, not merged; last observed review activity 17 November | Report API remains proposed/in review. It reads sequencer counters on demand. |
+| PR #111 review thread | Author states store, trigger and migration were dropped because no dSync sequencer pruning exists today | No durable report archive in the current patch. Historical availability depends on counter-history retention. |
+| PR #111 tests | Single-operator interval test and LSU-spanning predecessor/successor read test are present in the patch | Useful implementation-test evidence, but not merged CI or deployment evidence. Four-node equality remains unverified. |
+| ChainSafe issue #152 | Open | Its original durable-storage and four-node acceptance requirements remain unresolved in the tracker; the PR's on-demand design narrows the storage approach under a current no-pruning assumption. |
+| splice-multi-sync PRs #100 and #104 | Both merged (11 and 12 November respectively) | Registered-paymaster purchase and Scan/SV handling are present in merged source; deployment remains unverified. |
+| ChainSafe issue #155 | Closed | Purchase-choice deliverable closed. Its text explicitly says no check compares paid amount with report and paymaster may pay less than usage. Closure does not resolve that accounting gap. |
+| Splice PR #8449 | Open and draft | ActivityRecorder integration remains incomplete in public source. |
+| ChainSafe issue #163 | Open | Purchase-side ActivityRecorder work remains outstanding. |
+| ChainSafe issue #159 | Open | Full registration → traffic → report → payment → activity-record end-to-end test is not demonstrated. |
+| Canton Community Research Grants announcement | Official announcement dated 4 November says Terms and Conditions expected by 15 November | This audit has not independently verified the final terms. Do not assume eligibility, payment, KYC or publication conditions. |
+
+The PR #111 patch includes an integration test for a completed interval and a test querying an interval across an LSU. It does **not** prove the four operator apps on a four-node synchronizer return identical values. That remains in issue #152 acceptance criteria. The report API is JWT-protected; JWT authorises a caller but is not a report-level digital signature or public attestation.
+
+Primary links:
+- CIP-0132: https://github.com/canton-foundation/cips/blob/main/cip-0132/cip-0132.md
+- PR #103: https://github.com/canton-network/splice-multi-sync/pull/103
+- PR #111: https://github.com/canton-network/splice-multi-sync/pull/111
+- Tracker #152: https://github.com/ChainSafe/canton-extending-mainnet/issues/152
+- PR #100: https://github.com/canton-network/splice-multi-sync/pull/100
+- PR #104: https://github.com/canton-network/splice-multi-sync/pull/104
+- Tracker #155: https://github.com/ChainSafe/canton-extending-mainnet/issues/155
+- ActivityRecorder PR #8449: https://github.com/canton-network/splice/pull/8449
+- Tracker #163: https://github.com/ChainSafe/canton-extending-mainnet/issues/163
+- End-to-end test #159: https://github.com/ChainSafe/canton-extending-mainnet/issues/159
+- Grant announcement: https://canton.foundation/introducing-the-canton-community-research-grants/
