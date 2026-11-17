@@ -7,8 +7,13 @@ START=datetime(2026,11,17,12,0,tzinfo=UTC)
 END=START+timedelta(hours=1)
 
 def make_reports(expected,received=None):
-    received=received or END
-    return tuple(IntervalReport(f"r{i}",x.interval_id,x.start,x.end,received,"OK") for i,x in enumerate(expected))
+    return tuple(
+        IntervalReport(
+            f"r{i}",x.interval_id,x.start,x.end,
+            received if received is not None else x.end,"OK"
+        )
+        for i,x in enumerate(expected)
+    )
 
 class IntervalCoverageTests(unittest.TestCase):
     def setUp(self):
@@ -31,8 +36,9 @@ class IntervalCoverageTests(unittest.TestCase):
         self.assertEqual(evaluate_coverage(self.expected,make_reports(self.expected,t),t)["state"],"COMPLETE_WITH_LATE_REPORTS")
     def test_valid_correction_chain(self):
         rs=list(make_reports(self.expected)); r=rs[0]
-        rs.append(IntervalReport("r0-c1",r.interval_id,r.start,r.end,END+timedelta(minutes=2),"OK",1,"r0"))
-        out=evaluate_coverage(self.expected,rs,END+timedelta(minutes=3))
+        correction_time=r.end+timedelta(minutes=2)
+        rs.append(IntervalReport("r0-c1",r.interval_id,r.start,r.end,correction_time,"OK",1,"r0"))
+        out=evaluate_coverage(self.expected,rs,correction_time+timedelta(minutes=1))
         self.assertEqual(out["intervals"][0]["state"],"CORRECTED")
         self.assertEqual(out["intervals"][0]["latest_report_id"],"r0-c1")
     def test_broken_correction_chain_invalid(self):
