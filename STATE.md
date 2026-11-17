@@ -186,3 +186,15 @@ At the end of each substantial research session, update this file with work comp
 - This creates a sharper candidate research avenue: privacy-preserving reward attribution and incentive integrity. It connects mechanism design, privacy engineering, distributed systems and network economics, with a quantifiable misallocation model.
 - It is not selected yet. Implementation schemas, reward contracts, validation logic, and the actual enforcement of the aggregate cap must be inspected. No claim is made that Canton lacks cryptographic controls or that any operator has misreported.
 - Next task: inspect the CIP-0129-related implementation in Canton repositories, identify the actual report and reward contracts, and determine whether the proposed risk is already mitigated in code. Then decide whether this narrower topic offers a stronger contribution than the broader observability/measurement study.
+
+
+## Update — 17 November 2026: implementation-level code audit
+
+- Added `research/implementation-code-audit.md`.
+- Inspected the public Canton Splice repository at commit `408f7ed9e742707f0d6fe080ca386aedc742d977`.
+- Found an existing decentralized-synchronizer extra-traffic purchase path: `AmuletRules_BuyMemberTraffic` validates synchronizer support and minimum top-up, burns Amulet, and creates a `MemberTraffic` contract.
+- The `MemberTraffic` contract records sequencer member ID, synchronizer ID, migration ID, purchased traffic bytes, purchase count, Amulet spent and USD spent. SV automation aggregates these records by member and synchronizer.
+- Important distinction: this existing member-level traffic-purchase accounting is not evidence that CIP-0129's proposed per-party reward-attribution reports are implemented. Do not conflate the two.
+- This gives us an implementation baseline and a concrete comparison: current member-level purchased-byte accounting versus CIP-0129's proposed party-level attribution for reward allocation.
+- The code inspected does not establish the actual enforcement of CIP-0129's aggregate cap or its dedicated-synchronizer report-validation mechanism. Those remain unresolved.
+- Next exact task: inspect the relevant reward coupon and reward-accounting implementation, then compare the current code path with the CIP-0129 framework. After that, decide whether the narrower reward-attribution integrity study is sufficiently original and feasible.
