@@ -9,10 +9,10 @@ def base_case(**changes):
     values = dict(
         expected_report_ids=("r1", "r2"),
         reports=(
-            Report("r1", "OK", "v1"),
-            Report("r2", "OK", "v1"),
+            Report("r1", "OK", "v1", "sync-a"),
+            Report("r2", "OK", "v1", "sync-b"),
         ),
-        obligations=(Obligation("sync-a", 6, "v1"), Obligation("sync-b", 4, "v1")),
+        obligations=(Obligation("sync-a", 6, "v1", synchronizer_id="synchronizer-a"), Obligation("sync-b", 4, "v1", synchronizer_id="synchronizer-b")),
         burns=(Burn("burn-1", 10),),
         allocations=(
             Allocation("a1", "burn-1", "sync-a", 6),
@@ -40,15 +40,15 @@ class ReconciliationStateMachineTests(unittest.TestCase):
     def test_undetermined_interval_is_not_zero_activity(self):
         result = reconcile(base_case(reports=(
             Report("r1", "OK", "v1"),
-            Report("r2", "UNDETERMINED", "v1"),
+            Report("r2", "UNDETERMINED", "v1", "sync-b"),
         )))
         self.assertEqual(result["report_state"], "INCOMPLETE")
         self.assertIn("r2", result["non_ok_reports"])
 
     def test_agreement_version_mismatch_blocks_payment(self):
         result = reconcile(base_case(reports=(
-            Report("r1", "OK", "v0"),
-            Report("r2", "OK", "v0"),
+            Report("r1", "OK", "v0", "sync-a"),
+            Report("r2", "OK", "v0", "sync-b"),
         )))
         self.assertEqual(result["agreement_state"], "MISMATCH")
         self.assertEqual(result["payment_state"], "BLOCKED_AGREEMENT_MISMATCH")
@@ -56,7 +56,7 @@ class ReconciliationStateMachineTests(unittest.TestCase):
     def test_not_yet_due_tranche_is_not_misclassified_as_shortfall(self):
         # Gross liability may be 10, but only 4 is due at evaluation time.
         case = base_case(
-            obligations=(Obligation("sync-a", 4, "v1"),),
+            obligations=(Obligation("sync-a", 4, "v1", synchronizer_id="synchronizer-a"),),
             allocations=(Allocation("a1", "burn-1", "sync-a", 4),),
         )
         result = reconcile(case)
@@ -64,7 +64,7 @@ class ReconciliationStateMachineTests(unittest.TestCase):
 
     def test_overdue_amount_is_short_paid(self):
         case = base_case(
-            obligations=(Obligation("sync-a", 10, "v1"),),
+            obligations=(Obligation("sync-a", 10, "v1", synchronizer_id="synchronizer-a"),),
             allocations=(Allocation("a1", "burn-1", "sync-a", 4),),
         )
         result = reconcile(case)
