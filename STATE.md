@@ -256,3 +256,18 @@ At the end of each substantial research session, update this file with work comp
 - Proposed research questions cover measurement completeness, payment completeness, incentive compatibility, reward integrity and privacy/accountability trade-offs.
 - Four candidate hypotheses are recorded in the review. They remain to be formalised and tested; they are not findings.
 - Review is a targeted scoping review, not a systematic review. Novelty remains provisional. Next literature pass should cover trusted hardware/remote attestation, verifiable state/counter transitions, proof-of-reserves completeness attacks, accounting reconciliation under partial observability, privacy-preserving telemetry and cross-domain resource billing.
+
+
+## Update — 17 November 2026: deeper literature and accountability-design review
+
+- Added `research/deeper-literature-review-accountability-design.md`.
+- Verified CIP-0132 directly from the Canton CIPs repository. It is marked Proposed, created 9 Nov and proposed 16 Nov 2026. It explicitly describes Phase 1 as an interim trust model: the dSync operator reports traffic, the paymaster burns CC post-hoc, the report-to-burn link is off-ledger, and operator/paymaster are trusted to report and burn according to their agreement.
+- Important modelling correction: CIP-0132 explicitly permits off-ledger discounts and burn smoothing (including weekly/rolling windows and delays). A naïve ten-minute report-to-burn equality test would produce false underpayment findings. Reconciliation must be cumulative and agreement-aware.
+- CIP-0132 says on-ledger controls ensure rewards are commensurate with the burn actually made. This is narrower than proving every byte consumed was correctly reported and paid for.
+- CIP-0104 is Approved (27 Oct 2026) and defines sequencer/mediator-derived activity and a DSO-controlled ActivityRecorder extension for activity not directly visible from those sources. It supplies the app-reward context for the dSync extension.
+- Added VeriCount (Tople et al., ACNS 2018) as a stronger direct precedent than relying only on ALIBI. VeriCount uses SGX plus software fault isolation to measure CPU, memory, I/O and bandwidth and supports refutable billing. Its assumptions include trusting the SGX/VeriCount components and non-colluding provider/client; it is not a Canton-specific solution.
+- Added RFC 9162 Certificate Transparency v2 as a model for signed tree heads, inclusion and append-only consistency proofs. The RFC explicitly notes that logs may show inconsistent views; monitoring/gossip are needed. Append-only commitments do not prove all eligible source events were submitted.
+- Added Hu et al. (2019) proof-of-liabilities attack as evidence that summation Merkle trees require globally consistent proofs and completeness assumptions, not just hash integrity.
+- Revised candidate direction: staged accountability from trusted metering to verifiable report continuity, agreement-aware burn reconciliation and bounded reward attribution.
+- New experiments: omitted interval, split view, participant/upgrade/pruning boundary, discount/smoothing false positives, reward budget versus omitted input, and trust-cost comparison.
+- Remaining work: verify ALIBI primary bibliographic details, study remote-attestation limits, review privacy-preserving telemetry/aggregation, compare current CIP-0132 implementation to proposal, and inspect later-phase design before deciding prototype scope.
