@@ -39,7 +39,7 @@ class ReconciliationStateMachineTests(unittest.TestCase):
 
     def test_undetermined_interval_is_not_zero_activity(self):
         result = reconcile(base_case(reports=(
-            Report("r1", "OK", "v1"),
+            Report("r1", "OK", "v1", "sync-a", "synchronizer-a"),
             Report("r2", "UNDETERMINED", "v1", "sync-b", "synchronizer-b"),
         )))
         self.assertEqual(result["report_state"], "INCOMPLETE")
