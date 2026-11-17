@@ -667,3 +667,14 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Test inventory: 12 standalone schedule tests and 6 scheduled-integration tests are authored. They have not been executed in a repository runtime; do not report them as passing.
 - Remaining assumptions: supplied agreement authority, source report completeness, burn finality and allocation authenticity are external inputs. This is synthetic research code, not production Canton functionality.
 - Next exact task: review the combined model for edge cases and run the full Python test suite in a reproducible runtime. If execution remains unavailable, continue static review and clearly preserve the unexecuted status; do not invent test results.
+
+
+## Update — 17 November 2026: focused validation of reconciliation model
+
+- Added `unapplied_payment_cc` to the agreement schedule output. Excess current payment is now explicit and is not silently treated as carry-forward credit.
+- Added a test for excess current payment and updated the schedule research note. Standalone schedule test inventory is now 13; scheduled integration test inventory is 6; base reconciliation test inventory is 10.
+- Executed a 29-case focused test harness assembled from the current repository source and test logic retrieved through GitHub. Result: 29 passed, 0 failed.
+- Important qualification: a direct shallow clone of the private repository failed because the execution environment could not resolve github.com. The 29-case run used an isolated local harness reconstructed from retrieved source/test logic. It is not a checkout-based run of the repository's complete test suite. Do not claim the full repository suite passed.
+- Static review identified a model limitation: base report/agreement consistency compares sets of version identifiers and does not yet bind each report interval to a specific synchronizer/obligation. The schedule-integrated path checks the schedule version per obligation, but the report input schema still needs an explicit obligation/synchronizer identity.
+- Added `research/reconciliation-model-validation-results.md` documenting the execution qualification, test coverage, review findings and next step.
+- Next exact task: revise report and obligation identity so every interval report is bound to its synchronizer/obligation and agreement version, then test multi-synchronizer cases with distinct agreement versions. After that, run the exact checked-in suite from a real checkout or CI environment.
