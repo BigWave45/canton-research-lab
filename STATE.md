@@ -712,3 +712,12 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Added `research/multi-interval-correction-edge-review.md`.
 - Tests are authored but not executed. No validation claim is made.
 - Next exact task: inspect whether multiple obligations can share a single interval/report and whether the data model supports that mapping unambiguously; then consolidate and execute the full test suite. Avoid adding further features until this review and validation are complete.
+
+
+## Update — 17 November 2026: correction identity invariant
+
+- Confirmed current model cardinality: one report-version chain per expected interval; each report version identifies one synchronizer, one obligation and one agreement version. Multiple intervals may accumulate into one obligation. A single interval split across multiple obligations is not currently represented and is not assumed without supporting evidence.
+- Added an invariant to reject corrections that change synchronizer ID, obligation ID or agreement version from the original report. A correction may revise measured quantity, but cannot silently redirect the accounting identity.
+- Added five tests for valid quantity correction and prohibited identity changes, plus a research note documenting the mapping boundary and the evidence needed before supporting split allocations.
+- Tests are authored but not executed.
+- Next: inspect primary Canton documentation and implementation evidence for actual report-to-obligation cardinality and agreement amendment/migration semantics. If no evidence supports split allocation, retain the one-interval/one-obligation model. Then consolidate and execute the full suite before further model expansion.
