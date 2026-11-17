@@ -10,7 +10,7 @@ The traffic-report implementation history has two relevant pull requests:
 - PR #103 introduced a database-backed interval-report trigger and store.
 - PR #111 explicitly replaces #103, carrying its history from before a squash. Its current description specifies an on-demand reader using sequencer counter snapshots and an internal OpenAPI spec.
 
-The mapping below treats PR #111 as the current reviewed report-API proposal, not PR #103's earlier persistent-store design. Do not infer durable archival from the superseded PR.
+The mapping below treats PR #111 as the current reviewed report-API proposal. PR #103 was closed unmerged and explicitly superseded by #111. Do not infer durable archival from #103: the current #111 design uses on-demand sequencer-counter reads and does not store interval totals in an app database.
 
 ## 2. Field-by-field evidence matrix
 
