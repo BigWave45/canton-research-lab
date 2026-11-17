@@ -65,6 +65,9 @@ A version identifier alone does not prove legal or governance authority. The int
 | calculation_version | Deterministic calculator version | Reproducibility | Public |
 | calculation_digest | Commitment to calculation inputs/output | Tamper evidence | Public |
 | manifest_root | Commitment to canonical manifest | Binds full record | Public |
+| binding_authority_reference | Governed reference identifying who approved the report-to-obligation mapping | Establishes mapping authority basis | Auditor; public reference |
+| binding_signer_key_id | Key reference for the actor authorised to attest the mapping | Attribution | Auditor/public verification |
+| binding_attestation | Signature over canonical report digest, interval, synchronizer, obligation, agreement version and authority reference | Authenticates the mapping, not source measurement truth | Auditor/public verification |
 | operator_attestation | Signature over report set and measurement claims | Attribution | Auditor/public verification |
 | paymaster_attestation | Signature over liability and payment claims | Attribution | Auditor/public verification |
 | status | INCOMPLETE, READY, DISPUTED, RECONCILED, SHORT_PAID, OVERPAID | Explicit lifecycle | Public status |
@@ -134,7 +137,7 @@ Do not collapse missing, undetermined, zero, not-yet-due and disputed into one n
 1. **Interval coverage:** expected intervals form a complete, contiguous, non-overlapping partition of the settlement window.
 2. **Status correctness:** only OK reports contribute measured bytes; non-OK reports block final reconciliation.
 3. **Report provenance:** the operator signature binds canonical report content, status, interval and synchronizer.
-4. **Agreement authority:** every priced interval resolves to an authorised agreement version effective at that time.
+4. **Agreement authority and binding authority:** every priced interval resolves to an authorised agreement version effective at that time, and the report-to-obligation mapping is separately attested by an actor authorised for that synchronizer and obligation. An agreement signature alone does not authenticate the mapping.
 5. **Deterministic calculation:** an independent implementation can reproduce liability from report data and versioned pricing rules.
 6. **Due-date correctness:** payment is compared to the amount due at evaluation time, not automatically to gross liability.
 7. **Burn uniqueness:** burn event references and allocation IDs are globally deduplicated.
@@ -159,7 +162,7 @@ A proof over committed inputs does not establish that all source events were inc
 
 ## 6. Minimum audit package
 
-For each audit period, retain all expected interval IDs and statuses; canonical signed reports and digests; source counter provenance, retention/availability metadata and correction history; executed agreement versions, approvals and effective-time history; calculator version, inputs, outputs and reproduction instructions; settlement manifests and every allocation version; public ledger references for burns and activity records; reward rule version, epochs and reward issuance/distribution evidence; and dispute notices, auditor workpapers, resolutions and appeal records.
+For each audit period, retain all expected interval IDs and statuses; canonical signed reports and digests; source counter provenance, retention/availability metadata and correction history; executed agreement versions, approvals and effective-time history; separately attested report-to-obligation mappings and signer-authority evidence; calculator version, inputs, outputs and reproduction instructions; settlement manifests and every allocation version; public ledger references for burns and activity records; reward rule version, epochs and reward issuance/distribution evidence; and dispute notices, auditor workpapers, resolutions and appeal records.
 
 ## 7. Non-goals
 
