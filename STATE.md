@@ -132,3 +132,16 @@ At the end of each substantial research session, update this file with work comp
 - Recorded data, metric-validity, cross-source, policy-implementation, literature-novelty, and programme-eligibility gates.
 - Important: literature review is targeted and preliminary, not systematic. No claim of first-ever research is made. CIP-0129 approval is not evidence of implementation or policy impact.
 - Next exact task: verify the formal grant terms and eligibility; test actual public API/explorer fields and historical depth; then expand Canton-specific literature searches and assess the five candidate avenues against evidence feasibility.
+
+
+## Update — 17 November 2026: public-data access feasibility audit
+
+- Added `research/data-access-feasibility-audit.md`.
+- Reviewed Noves API documentation, endpoint pagination, analytics add-on requirements, published pricing, and available public explorer/dashboard alternatives.
+- Confirmed the public network updates endpoint is documented but requires an API key; its feed covers public updates, not the full private ledger.
+- Confirmed network-wide analytics endpoints, including public/private verdict aggregates and several supply, burn, reward and usage series, require the Canton Analytics add-on. No subscription or privileged access is assumed.
+- Documented a two-layer research design: a baseline executable without paid access, plus an optional empirical extension only if access is confirmed.
+- Corrected CIP-0129 treatment: Phase 1 universal burn is estimated for Q1 2027 and Phase 2 volume pricing/commitment discounts for Q3 2027 in the approved proposal. These are estimates, not implementation facts; November work can only model the policy ex ante.
+- Formal Community Research Grant Terms and Conditions remain unverified despite the launch announcement's expected publication date of 15 November. Eligibility, KYC, sanctions, payment, rights and disclosure terms must be confirmed before relying on the grant.
+- No authenticated API request or data extraction has been performed. This is a documentation audit, not a live data validation.
+- Next exact task: inspect exportable fields and metric provenance on public dashboards/explorers, obtain the official grant terms, and build a no-paid-access research design with explicit quantitative outputs.
