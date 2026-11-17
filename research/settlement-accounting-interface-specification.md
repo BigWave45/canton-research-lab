@@ -67,7 +67,7 @@ A version identifier alone does not prove legal or governance authority. The int
 | manifest_root | Commitment to canonical manifest | Binds full record | Public |
 | binding_authority_reference | Governed reference identifying who approved the report-to-obligation mapping | Establishes mapping authority basis | Auditor; public reference |
 | binding_signer_key_id | Key reference for the actor authorised to attest the mapping | Attribution | Auditor/public verification |
-| binding_attestation | Signature over canonical report digest, interval, synchronizer, obligation, agreement version and authority reference | Authenticates the mapping, not source measurement truth | Auditor/public verification |
+| report_set_digest | SHA-256 digest over canonical, deterministically ordered report records for the interval, including revisions | Binds the exact report set used | Public commitment |\n| binding_attestation | Separate Ed25519 signature over binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference | Authenticates the mapping and exact report set, not source measurement truth | Auditor/public verification |
 | operator_attestation | Signature over report set and measurement claims | Attribution | Auditor/public verification |
 | paymaster_attestation | Signature over liability and payment claims | Attribution | Auditor/public verification |
 | status | INCOMPLETE, READY, DISPUTED, RECONCILED, SHORT_PAID, OVERPAID | Explicit lifecycle | Public status |
@@ -137,7 +137,7 @@ Do not collapse missing, undetermined, zero, not-yet-due and disputed into one n
 1. **Interval coverage:** expected intervals form a complete, contiguous, non-overlapping partition of the settlement window.
 2. **Status correctness:** only OK reports contribute measured bytes; non-OK reports block final reconciliation.
 3. **Report provenance:** the operator signature binds canonical report content, status, interval and synchronizer.
-4. **Agreement authority and binding authority:** every priced interval resolves to an authorised agreement version effective at that time, and the report-to-obligation mapping is separately attested by an actor authorised for that synchronizer and obligation. An agreement signature alone does not authenticate the mapping.
+4. **Agreement authority and binding authority:** every priced interval resolves to an authorised agreement version effective at that time, and the report-to-obligation mapping is separately attested by an actor authorised for that synchronizer and obligation. The binding attestation commits to the canonical report-set digest as well as the mapping metadata. An agreement signature alone does not authenticate the mapping.
 5. **Deterministic calculation:** an independent implementation can reproduce liability from report data and versioned pricing rules.
 6. **Due-date correctness:** payment is compared to the amount due at evaluation time, not automatically to gross liability.
 7. **Burn uniqueness:** burn event references and allocation IDs are globally deduplicated.
