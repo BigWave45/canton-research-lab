@@ -54,14 +54,20 @@ def reconcile_with_interval_coverage(
             if obligation_id is None:
                 return _blocked(coverage,"BLOCKED_REPORT_BINDING")
             obligation_for_interval[interval_id]=obligation_id
-            if report.synchronizer_id is not None:
-                obligation=next((o for o in case.obligations if o.obligation_id==obligation_id),None)
-                if obligation is None or obligation.synchronizer_id!=report.synchronizer_id:
-                    return _blocked(coverage,"BLOCKED_REPORT_BINDING")
+            if report.synchronizer_id is None:
+                return _blocked(coverage,"BLOCKED_REPORT_BINDING")
+            obligation=next((o for o in case.obligations if o.obligation_id==obligation_id),None)
+            if obligation is None or obligation.synchronizer_id!=report.synchronizer_id:
+                return _blocked(coverage,"BLOCKED_REPORT_BINDING")
 
+        # Multiple expected intervals may contribute to one obligation.
+        # Sum their separately priced liabilities instead of overwriting them.
         priced_by_obligation={}
         for interval_id,obligation_id in obligation_for_interval.items():
-            priced_by_obligation[obligation_id]=liabilities[latest_by_interval[interval_id]]
+            priced_by_obligation[obligation_id]=(
+                priced_by_obligation.get(obligation_id,0)
+                + liabilities[latest_by_interval[interval_id]]
+            )
         case=replace(case,obligations=tuple(
             replace(o,due_cc=priced_by_obligation.get(o.obligation_id,o.due_cc))
             for o in case.obligations
