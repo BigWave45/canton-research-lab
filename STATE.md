@@ -198,3 +198,17 @@ At the end of each substantial research session, update this file with work comp
 - This gives us an implementation baseline and a concrete comparison: current member-level purchased-byte accounting versus CIP-0129's proposed party-level attribution for reward allocation.
 - The code inspected does not establish the actual enforcement of CIP-0129's aggregate cap or its dedicated-synchronizer report-validation mechanism. Those remain unresolved.
 - Next exact task: inspect the relevant reward coupon and reward-accounting implementation, then compare the current code path with the CIP-0129 framework. After that, decide whether the narrower reward-attribution integrity study is sufficiently original and feasible.
+
+
+## Update — 17 November 2026: corrected reward architecture after CIP-0132 discovery
+
+- Added `research/cip-0104-0129-0132-architecture-comparison.md`.
+- Revised `research/reward-attribution-integrity.md` with an explicit scope correction. The earlier per-party misallocation model is provisional and describes a possible later granular-attribution regime, not the proposed Phase 1 design.
+- Verified CIP-0104 is approved (27 Oct 2026). It bases Global Synchronizer app rewards on sequencer and mediator data. Its activity computation uses accepted verdicts, transaction views, confirming parties, Featured App rights at round opening and envelope traffic costs. The public Splice implementation contains this path in `AppActivityComputation.scala`.
+- CIP-0104 includes the `ActivityRecorder_DsoRecordActivity` extension hook for activity not visible to the sequencer/mediator and explicitly anticipates dedicated synchronizer integration.
+- Verified CIP-0132 is **Proposed**, created 9 Nov and proposed 16 Nov 2026; it requires CIP-0104 and CIP-0129. It specifies Phase 1 of universal burn using a dedicated synchronizer operator's aggregate traffic API (10-minute intervals), a designated paymaster, off-ledger report-to-burn coordination, CC burn on the Global Synchronizer and activity records through the CIP-0104 hook.
+- In CIP-0132 Phase 1, the paymaster receives the corresponding app and validator rewards. More granular attribution to participants is explicitly deferred to later states.
+- CIP-0132 trusts the dSync operator and paymaster to report traffic and burn accordingly. It acknowledges possible under- or over-reporting. Its stated on-chain protection ties rewards to CC burned; this does not independently prove that the burn matches actual traffic consumed.
+- Therefore the immediate research question is now: what economic and verification properties should the trusted paymaster model satisfy when converting private synchronizer traffic reports into public CC burns and reward entitlements, and how should these properties evolve toward granular attribution?
+- Research method now centres on traffic measurement, report-to-burn reconciliation, discount and CC-price conversion, burn/reward consistency, delay/smoothing, operator/paymaster incentives, privacy and independent auditability. Do not claim a live per-party reward misallocation vulnerability.
+- Next task: locate the CIP-0132 implementation branch / PR and inspect the exact RegisteredSynchronizer contracts, traffic-report API, purchase path, ActivityRecorder hook integration and reward accounting. CIP-0132 is still proposed in this snapshot; no deployment claim is permitted.
