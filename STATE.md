@@ -16,7 +16,7 @@ The repository already contains substantial research and model work. Do not expa
 
 ## Verified repository inventory at the base snapshot
 
-At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map, documentation and quantitative-cost-model updates, the branch inventory grew to 137 files, including 74 under `research/`. Counts describe repository contents, not quality or validation.
+At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map, documentation, quantitative-cost-model and benchmark-harness updates, the branch has grown beyond the last exact inventory of 137 files. A fresh recursive inventory has not been run. Counts describe repository contents, not quality or validation.
 
 ## Current evidence position
 
@@ -39,11 +39,12 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 1. Complete the source-to-claim audit, especially report lifecycle semantics, agreement signatures versus binding attestations, and the distinction between API authentication and report attestation.
 2. Reconcile the remaining research models and tests against the selected accounting question; do not add another model unless a specific measurable gap remains.
 3. Replace the illustrative cost inputs with measured prototype data, scoped engineering estimates or confidential operator data where obtainable; do not present synthetic ICU values as Canton estimates.
-4. When CI execution is available again, run the eight cost-model tests and existing deterministic model commands, then record the exact commit and outputs. Until then, treat the tests as unexecuted.
-5. Build the evidence-to-predicate matrix and complete the economic, privacy and operational comparison without inventing empirical costs or probabilities.
-6. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
-7. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
-8. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
+4. Execute `analysis/research_benchmark.py` on a local machine when code execution is available; preserve full JSON output, exact commit SHA, Python version and hardware context. Until then, no timings or memory figures may be claimed.
+5. When execution is available, run the cost-model tests and existing deterministic model commands, then record the exact commit and outputs. Until then, treat the tests as unexecuted.
+6. Build the evidence-to-predicate matrix and complete the economic, privacy and operational comparison without inventing empirical costs or probabilities.
+7. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
+8. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
+9. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
 
 **Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
 
