@@ -37,7 +37,7 @@ Grace does not rewrite the contractual due date. It changes the late-payment cla
 - Tranche identifiers must be unique; amounts and grace/tolerance values cannot be negative.
 - Current allocated payments are applied FIFO to the oldest due tranches.
 - Prior credit is ignored unless carry-forward is explicitly enabled.
-- When enabled, prior credit offsets due tranches first; unused credit is reported separately.
+- When enabled, prior credit offsets due tranches first; unused prior credit is reported separately. Current payment in excess of all due tranches is returned as `unapplied_payment_cc`; it is not silently converted into carry-forward credit.
 - Tolerance is explicit and does not silently change the underlying due amount.
 - The supplied agreement version is assumed authoritative; the calculator cannot establish legal authority.
 
@@ -54,7 +54,7 @@ The reconciliation state machine should compare allocations with `due_cc` for ac
 
 ## 5. Synthetic test coverage
 
-Twelve tests cover future tranches, due dates, grace expiry, FIFO allocation, partial payment, carry-forward enabled/disabled, excess credit, tolerance, timezone offsets, naive timestamps, agreement effective periods and duplicate tranche IDs.
+Thirteen tests cover future tranches, due dates, grace expiry, FIFO allocation, partial payment, carry-forward enabled/disabled, excess credit, tolerance, timezone offsets, naive timestamps, agreement effective periods and duplicate tranche IDs, and explicit reporting of payment not applied to currently due tranches.
 
 Tests are authored; execution status must be recorded separately. All data is synthetic.
 
