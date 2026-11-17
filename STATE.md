@@ -120,3 +120,15 @@ At the end of each substantial research session, update this file with work comp
 - Recorded CIP-0129 (Universal Burn and Synchronizer Pricing), approved 23 October 2026, as a possible future policy-analysis candidate. Implementation date and actual adoption still require verification.
 - Five candidate research avenues recorded, none selected: public observability; Canton Coin incentives; universal burn policy; institutional settlement/capital efficiency; privacy and institutional observability.
 - Next exact task: verify API access and actual schemas, obtain dated data samples, cross-check explorer metrics, confirm CIP-0129 implementation status, and complete the literature gap search before selecting hypotheses.
+
+
+## Update — 17 November 2026: first-pass literature-gap matrix
+
+- Added `research/literature-gap-matrix.md`.
+- Mapped broader academic and institutional work on blockchain information provision, atomic settlement, tokenised-market design, financial-market infrastructure, tokenisation frictions, and Canton's own protocol/economic documentation.
+- Developed five candidate avenues without selecting one: public observability; Canton Coin incentives; universal burn/synchronizer pricing; settlement and collateral economics; privacy and institutional accountability.
+- Identified a possible synthesis around independently measuring the public economics of a privacy-preserving institutional network. This remains a candidate, not a novelty claim or topic decision.
+- Proposed an evidence-led hybrid output: paper, observer-capability/metric-validity matrix, documented public-data panel where feasible, reproducible calculations, and clearly labelled policy scenarios.
+- Recorded data, metric-validity, cross-source, policy-implementation, literature-novelty, and programme-eligibility gates.
+- Important: literature review is targeted and preliminary, not systematic. No claim of first-ever research is made. CIP-0129 approval is not evidence of implementation or policy impact.
+- Next exact task: verify the formal grant terms and eligibility; test actual public API/explorer fields and historical depth; then expand Canton-specific literature searches and assess the five candidate avenues against evidence feasibility.
