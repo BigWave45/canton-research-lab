@@ -20,6 +20,16 @@ class IntervalReport:
     status: str
     revision: int = 0
     supersedes_report_id: str | None = None
+    agreement_version: str | None = None
+    consumed_units: int | None = None
+
+    @property
+    def interval_start(self):
+        return self.start.isoformat()
+
+    @property
+    def interval_end(self):
+        return self.end.isoformat()
 
 def _aware(value):
     return value.tzinfo is not None and value.utcoffset() is not None
