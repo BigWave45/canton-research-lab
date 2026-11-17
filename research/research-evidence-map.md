@@ -143,7 +143,7 @@ The following repository-level documentation issues remain:
 
 1. **Freeze scope and reconcile documentation.** Use the controlling research question above. Retain older research as supporting context, not parallel theses.
 2. **Verify source claims.** Recheck current CIP status, PR merge status, tracker issue status and exact upstream code revision. Record access dates and immutable commit references.
-3. **Quantify the existing assurance comparison.** Define measurable outputs for disclosure, reconciliation detection, implementation burden and operational delay. Only report numeric costs or probabilities when data or a transparent parameterised model supports them.
+3. **Apply the quantitative assurance plan.** Map each proposed metric to existing code, documentary evidence or a clearly identified access dependency. Implement only measurements that can change the architecture decision; keep unavailable costs and probabilities symbolic or explicitly unknown.
 4. **Decide whether a bounded public-data case study is feasible.** Do not require paid analytics. If no reproducible public extract is accessible, keep empirical claims bounded to documentary evidence and synthetic experiments.
 5. **Draft the paper from the evidence.** Each result should point to a source, model, test or data extract and carry its evidence classification and limitation.
 6. **Record CI provenance.** Preserve the successful CircleCI run URL and commit SHA if available; rerun only when subsequent code changes or a concrete validation gap justify it.
