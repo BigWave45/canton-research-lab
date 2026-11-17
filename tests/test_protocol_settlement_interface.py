@@ -52,7 +52,7 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
     def test_missing_binding_blocks(self):
         out=self.run_case(bindings=())
         self.assertEqual(out["payment_state"],"BLOCKED_SETTLEMENT_BINDING")
-        self.assertEqual(out["coverage"]["reason"],"INCOMPLETE_BINDING_COVERAGE")
+        self.assertEqual(out["coverage"]["reason"],"MISSING_SETTLEMENT_BINDING")
     def test_ambiguous_multiple_bindings_block(self):
         second=SettlementBinding("b1",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1","authority:2","key-1",self.binding.signature_b64)
         out=self.run_case(bindings=(self.binding,second))
@@ -86,8 +86,8 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
             (self.binding,),{"v1":agreement()},trusted_signers=registry)
         self.assertEqual(out["coverage"]["reason"],"AGREEMENT_SIGNATURE_SIGNER_KEY_REVOKED")
     def test_missing_registry_blocks_settlement(self):
-        out=reconcile_protocol_evidence(make_case(),self.expected,(self.report,),
-            (self.binding,),{"v1":agreement()})
+        out=reconcile_protocol_evidence(make_case(),self.expected,
+            (self.report,),(self.binding,),{"v1":agreement()})
         self.assertEqual(out["coverage"]["reason"],"TRUSTED_SIGNER_REGISTRY_REQUIRED")
 
 if __name__=="__main__": unittest.main()
