@@ -45,9 +45,9 @@ The repository now implements this separation in `analysis/protocol_settlement_i
 2. **SettlementBinding:** synchronizer, obligation, agreement ID/version, authority reference and signer metadata.
 3. **Public payment evidence:** supplied separately through the reconciliation case as burn and allocation records.
 
-The adapter rejects missing, duplicate, ambiguous and incomplete bindings, verifies the signed agreement document against a supplied trusted-key registry, and blocks non-OK reports carrying billable bytes. The checked-in tests cover these interface conditions.
+The adapter rejects missing, duplicate, ambiguous and incomplete bindings, verifies the signed agreement document against a supplied trusted-key registry, and blocks non-OK reports carrying billable bytes. However, the signature verifies the agreement document only; it does not cover the binding's interval, synchronizer, obligation or authority-reference fields. The mapping itself is not cryptographically attested in the current prototype. See [Settlement Binding Attestation Gap](settlement-binding-attestation-gap.md).
 
-Important limitations remain: the current synthetic model requires exactly one binding per expected interval; it does not support split interval allocation. The `authority_reference` is only a provenance label and is not itself authenticated. The agreement signature verifies document integrity and a key's status in the supplied registry, but does not prove legal authority or enforceability. The model also does not establish source measurement completeness.
+Important limitations remain: the current synthetic model requires exactly one binding per expected interval; it does not support split interval allocation. The `authority_reference` is only a provenance label and is not itself authenticated. The agreement signature verifies document integrity and a key's status in the supplied registry, but does not sign the mapping or prove legal authority or enforceability. The model also does not establish source measurement completeness.
 
 This is an implemented research prototype, not a production Canton interface or a native CIP-0132 feature.
 
