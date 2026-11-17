@@ -34,6 +34,7 @@ class Obligation:
     obligation_id: str
     due_cc: int
     authoritative_agreement_version: str
+    tolerance_cc: int = 0
 
 
 @dataclass(frozen=True)
@@ -108,13 +109,15 @@ def reconcile(case: Case) -> dict:
     )
     short_obligations = sorted(
         o.obligation_id for o in case.obligations
-        if allocated_by_obligation[o.obligation_id] < o.due_cc
+        if allocated_by_obligation[o.obligation_id] + o.tolerance_cc < o.due_cc
     )
     invalid_amounts = any(
         x.amount_cc < 0 for x in case.burns
     ) or any(
         a.amount_cc < 0 for a in case.allocations
-    ) or any(o.due_cc < 0 for o in case.obligations)
+    ) or any(
+        o.due_cc < 0 or o.tolerance_cc < 0 for o in case.obligations
+    )
 
     allocation_invalid = (
         duplicate_burn_ids or duplicate_allocation_ids or bool(unknown_burns)
@@ -217,7 +220,11 @@ def reconcile_with_schedules(
         )
         schedule_results[obligation.obligation_id] = result
         scheduled_obligations.append(
-            replace(obligation, due_cc=result["due_cc"])
+            replace(
+                obligation,
+                due_cc=result["due_cc"],
+                tolerance_cc=result["tolerance_cc"],
+            )
         )
 
     scheduled_case = replace(case, obligations=tuple(scheduled_obligations))
