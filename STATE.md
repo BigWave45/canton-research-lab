@@ -627,3 +627,16 @@ The project is an interdisciplinary study of verifiable economic accounting for 
 - Central unresolved dependency: identify source records that demonstrate completeness of chargeable activity, establish who controls them, and determine how an auditor can validate them without transaction payload access.
 - Five unit tests have been authored but not executed in a repository runtime during this step. Do not report them as passing.
 - Next exact task: write an implementation-neutral settlement accounting interface specification, then map each required field and control to current CIP and implementation evidence as present, proposed, absent or unverified.
+
+
+## Update — 17 November 2026: settlement accounting interface and implementation evidence map
+
+- Added `research/settlement-accounting-interface-specification.md`, defining five linked record types: IntervalReport, AgreementVersion, SettlementManifest, BurnAllocation and RewardAttribution.
+- Specified report status semantics, due-date-aware settlement states, signatures/digests, agreement authority, expected interval coverage, burn allocation bounds, reward traceability and public proof predicates.
+- Added `research/canton-implementation-evidence-map.md`, mapping requirements to the reviewed CIP, PR and tracker evidence with explicit Present / Proposed / Absent / Unverified distinctions.
+- Corrected an earlier repository audit reference: the traffic-report API proposal is splice-multi-sync PR #103, not PR #111. PR #103 was closed on 13 November 2026 without merge; tracker issue #152 remains open. Do not describe the durable report endpoint as merged or deployed.
+- Confirmed in the reviewed snapshot that splice-multi-sync PRs #100 and #104 are merged purchase/Scan/SV changes. They provide registered-paymaster purchase handling and activity-weight plumbing, but do not reconcile paid amount against reported traffic.
+- Confirmed issue #155 explicitly documents the absence of an on-ledger paid-amount-versus-report check. Its closure is not evidence that this accounting gap was resolved.
+- Confirmed upstream Splice PR #8449 remains draft/open, tracker issue #163 remains open, and end-to-end issue #159 remains open. Do not claim the report-to-burn-to-reward path is demonstrated end-to-end.
+- The mapping is a public-source snapshot as of 17 November 2026; merged code does not establish live deployment. No real commercial or traffic data was used.
+- Next exact task: implement a minimum viable synthetic reconciliation state machine covering complete/missing/non-OK reports, agreement-version mismatch, due/not-yet-due smoothing, short payment, duplicate allocation and missing reward records. Keep source measurement truth explicitly outside what synthetic reconciliation can prove.
