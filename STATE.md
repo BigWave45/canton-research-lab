@@ -107,3 +107,16 @@ At the end of each substantial research session, update this file with work comp
 - Confirmed the SDF AMM project remains active through 31 August 2027; no final output should be expected yet.
 - The EF blockspace derivatives and SDF perpetual-DEX completed outputs remain unlocated in this pass.
 - Next exact task: complete the remaining project-output searches, then create a Canton-specific literature and public-data inventory. Do not generate or select hypotheses before this inventory.
+
+
+## Update — 17 November 2026: Canton literature and public-data inventory
+
+- Added `research/canton-literature-data-inventory.md`.
+- Mapped official Canton protocol, Global Synchronizer, FAQ, Splice documentation, Canton Coin whitepaper, CIPs, Noves public API/dashboard, and CCView explorer.
+- Key limitation: public Canton data is not a complete network ledger view. Public APIs cover publicly observable activity; private activity is restricted to entitled parties/witnesses.
+- Documented that Noves API requires an API key and some analytics endpoints require an enabled paid analytics add-on. Do not assume unrestricted free bulk data access.
+- Identified measurable public-data areas: public CC transfers, public updates, supply/burn, rewards, validators, Featured Apps, and governance/CIP chronology, subject to access and field verification.
+- Identified unavailable or unverified network-wide variables: private asset transfers, actual institutional settlement times, collateral utilisation, capital efficiency, and complete counterparty exposure.
+- Recorded CIP-0129 (Universal Burn and Synchronizer Pricing), approved 23 October 2026, as a possible future policy-analysis candidate. Implementation date and actual adoption still require verification.
+- Five candidate research avenues recorded, none selected: public observability; Canton Coin incentives; universal burn policy; institutional settlement/capital efficiency; privacy and institutional observability.
+- Next exact task: verify API access and actual schemas, obtain dated data samples, cross-check explorer metrics, confirm CIP-0129 implementation status, and complete the literature gap search before selecting hypotheses.
