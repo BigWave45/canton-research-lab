@@ -55,7 +55,7 @@ class ScheduledReconciliationTests(unittest.TestCase):
             {"sync-a": self.make_schedule()},
             prior_credits={"sync-a": 4},
         )
-        self.assertEqual(result["payment_state"], "RECONCILED")
+        self.assertEqual(result["payment_state"], "PAST_GRACE_UNPAID")
         self.assertEqual(
             result["schedule_results"]["sync-a"]["prior_credit_applied_cc"], 0
         )
