@@ -40,7 +40,13 @@ The code includes lifecycle behaviour:
 - a participant present at the end but absent at the start counts from zero;
 - a participant present at the start but absent at the end is not counted.
 
-The test explicitly encodes the second rule as a participant who left during the interval and is not counted. This is a billing-policy question to verify against CIP-0132 and the eventual operator/paymaster agreement. The test proves the implementation's chosen behaviour, not that the policy is economically correct for every agreement.
+The test explicitly encodes the second rule as a participant who left during the interval and is not counted. The implementation's `participantsConsumed` function iterates over members present at the end reading; a participant present only at the start contributes no delta. This is a concrete metering-boundary question: does a participant that leaves partway through an interval owe for traffic consumed before departure, and if so, where is that usage retained and included? The current test proves the implementation's chosen behaviour, not that the billing policy is economically correct or consistent with every operator/paymaster agreement.
+
+### Pruning-boundary race noted in the implementation
+
+The PR #111 `TrafficReport.firstReadableStart` source comment states that the sequencer prunes its journal before moving the pruning lower bound, and that a request at the edge of the retention period can race a prune and report a wrong total. The reader obtains pruning status and then performs counter reads, so the source itself identifies a possible time-of-check/time-of-use boundary condition. The reviewed tests cover alignment, paging, participant joins/leaves and LSU reads; they do not demonstrate a test for this concurrent pruning race.
+
+This is a source-level risk observation, not evidence that a wrong report has occurred in production. It should be treated as an unresolved implementation assurance question: can the report reader distinguish a complete interval from a counter snapshot affected by concurrent pruning, and what retry/locking/version mechanism, if any, prevents an incorrect `Ok` result?
 
 ## 4. Report storage was removed from the current PR
 
@@ -102,6 +108,7 @@ Do not write that the complete paymaster traffic-to-reward pipeline is implement
 - Daml purchase constraints and registered-paymaster purchase paths in merged PR #100.
 - Scan/SV registration and contract handling in merged PR #104.
 - Proposed traffic report calculation, status model, JWT-protected handler and single-operator/LSU tests in open PR #111. These remain proposed until merged and deployed.
+- Source-level edge cases in the same PR: participants present at interval start but absent at interval end are excluded from the computed interval delta; the source comment also acknowledges a possible race between pruning and reading the pruning lower bound. Neither is evidence of actual production misbilling, but both require explicit treatment in the accounting assurance analysis.
 - Specific participant join/leave calculation behaviour in TrafficReport.scala and its tests.
 
 **Open or draft**
