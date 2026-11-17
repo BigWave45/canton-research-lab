@@ -183,3 +183,14 @@ Primary links:
 - Tracker #163: https://github.com/ChainSafe/canton-extending-mainnet/issues/163
 - End-to-end test #159: https://github.com/ChainSafe/canton-extending-mainnet/issues/159
 - Grant announcement: https://canton.foundation/introducing-the-canton-community-research-grants/
+
+
+## 12. Scan API access check: 18 November 2026
+
+A bounded access check was performed from the user's iPhone browser after the official Canton Foundation SV network-status directory opened successfully. The user supplied the directory's 13 TestNet SV names, Scan URLs and advertised versions. Two requests to `GET /api/scan/v0/scans` returned user-observed HTTP 403: one at the Global Synchronizer Foundation MainNet Scan host and one at its TestNet Scan host. No response bodies, headers or request IDs were captured. The cause is therefore unknown; these two failures do not prove that all SV endpoints or all API routes are inaccessible.
+
+The access-check record is [research/scan-api-access-check-2026-11-18.md](scan-api-access-check-2026-11-18.md). Official Scan documentation describes a DSO-party view that includes CC transfers and governance operations but excludes most application transactions not involving the DSO party. The documented traffic-status endpoint reports sequencer traffic-credit state, including consumed and purchased totals; it is not the proposed CIP-0132 private ten-minute traffic report and does not independently establish meter completeness.
+
+**Evidence classification:** user-supplied SV directory transcription; user-observed 403 responses; official documentation for endpoint semantics and visibility boundaries. No live Scan records were retrieved. The earlier statement that authenticated API extraction had not been performed remains correct. Do not claim public empirical data from this attempt.
+
+**Research consequence:** stop repeating the same API request across SV hosts from the same browser context. Continue source-to-invariant validation using public CIPs, Splice code, PRs, issues and local reproducible models. Revisit live Scan extraction only if an SV/operator provides an authorised access path or export.
