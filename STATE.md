@@ -29,16 +29,18 @@ At the base snapshot, the recursive Git tree contained 132 files: 23 Python anal
 - The PR's source comment warns of a pruning-boundary race. A separate harness audit finds that retained boundary rows may preserve correct reads; only the stale-pruning-status concurrency case remains an untested hypothesis. No incorrect `Ok` report has been demonstrated.
 - The research prototype verifies the signature over agreement terms but does not sign the report-to-obligation `SettlementBinding` metadata. The mapping's authority reference is not authenticated. A new test demonstrates that changing this reference while retaining the agreement signature still reconciles. This is a prototype assurance gap, not a Canton production finding; a dedicated note and proposed binding-attestation requirement have been added.
 - The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
-- The user reported a successful CircleCI run. During this audit, the GitHub integration did not permit retrieval of the combined status for the branch head (403). Therefore this checkpoint does not independently certify the latest branch's full-suite CI status. The earlier reconstructed 29-case harness is not a full repository test run.
+- **CI status:** The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The successful result is accepted as the current project update. The exact CircleCI run URL and tested commit SHA were not captured in this repository checkpoint, so this record does not claim independent verification that the run tested branch head `83c02e68e4f511aa34f3b736653249ac9c51177d` or any later documentation commit. Do not reopen the resolved failures without new evidence.
+- The GitHub Actions endpoint shows no workflow runs for this branch; that is separate from CircleCI and does not contradict the user's CircleCI update.
+- The earlier reconstructed 29-case harness is not a substitute for the repository's full CI run.
 
 ## Immediate next actions
 
-1. Complete the source-to-claim audit, including traffic-report lifecycle semantics, agreement-document signatures versus binding attestations, and the distinction between report status, API authentication and report attestation.
-2. Obtain a reproducible full-suite run for the exact branch head and record the SHA and result.
-3. Audit the remaining models and tests for stale descriptions, duplicated assumptions and unsupported claims. The assurance model is six scenarios × four architectures; the test file has ten methods. Verify this against an actual full-suite run.
-4. Define measurable experimental outcomes before adding any new model.
-5. Confirm the final Canton grant Terms and Conditions. The official 4 November announcement expected them by 15 November; final terms have not been independently verified in this audit.
-6. Draft the paper only from evidence that has passed these checks.
+1. Complete the source-to-claim audit, especially report lifecycle semantics, agreement signatures versus binding attestations, and the distinction between API authentication and report attestation.
+2. Reconcile the remaining research models and tests against the selected accounting question; do not add another model unless a specific measurable gap remains.
+3. Turn the existing comparative experiment into an economic, privacy and operational comparison with explicit measurable outputs and transparent assumptions. Do not invent empirical costs or probabilities.
+4. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
+5. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
+6. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
 
 **Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
 
@@ -68,9 +70,9 @@ The project studies the chain from private synchronizer activity to measurement,
 
 The repository contains the comparative grant-winner research, Canton literature/data mapping, technical architecture and implementation analysis, accounting invariants, synthetic experiments and tests, privacy-disclosure analysis, and the comparative assurance specification. Detailed chronological records are retained below.
 
-## Current phase
+## Historical checkpoint — superseded by the current checkpoint above
 
-**Comparative assurance experiments.**
+**Phase at the time of this entry: comparative assurance experiments.**
 
 The formal specification defines four architectures:
 1. Public burn records only.
