@@ -421,3 +421,14 @@ At the end of each substantial research session, update this file with work comp
 - Constructed a synthetic differencing counterexample: two overlapping cohort aggregates of 100 and 60 bytes reveal one participant's 40-byte usage, even though both cohorts satisfy k=3. This disproves the sufficiency of a minimum cohort threshold alone; it does not show that the current synchronizer-wide CIP report leaks individual usage.
 - Proposed separate exact auditor evidence and privacy-protected public analytics. Rounding/noise should not be silently applied to contractual billing evidence.
 - Next task: broaden the leakage analysis to linear combinations and repeated releases, then define a verifiable public proof surface that does not expose exact restricted reports or agreement terms.
+
+
+## Update — 17 November 2026: linear leakage and public verification surface
+
+- Added analysis/aggregate_linear_leakage.py and tests/test_aggregate_linear_leakage.py.
+- Added research/linear-composition-and-public-verification-surface.md.
+- Extended privacy analysis from pairwise nested-set differencing to exact linear identifiability across a history of aggregate releases, using dependency-free exact rational matrix-rank calculations.
+- Specified four evidence layers: public verification, authorised auditor, confidential operator/paymaster evidence, and transaction data excluded from ordinary accounting audit.
+- Defined conceptual assurance tiers from public burn only through signed reconciliation and proof-carrying settlement to independently measured source evidence.
+- Key limitation: a commitment or zero-knowledge proof can establish integrity or arithmetic over committed inputs, but cannot prove source-meter completeness unless the measurement mechanism is independently justified.
+- Next task: compare assurance tiers against concrete trust assumptions, operational cost, latency and privacy leakage; then decide whether the strongest defensible recommendation is auditor-based reconciliation, public cryptographic proofs, or a staged combination.
