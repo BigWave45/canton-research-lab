@@ -12,6 +12,72 @@
 - Working method: comparative study of funded research programmes and completed outputs, followed by Canton landscape mapping and original hypothesis development.
 - Repository visibility: private.
 
+## Current research objective
+
+What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?
+
+The project studies the chain from private synchronizer activity to measurement, off-ledger liability, CC burn, reward attribution and independent reconciliation. It is not a general security audit or vulnerability hunt.
+
+## Completed work
+
+The repository contains the comparative grant-winner research, Canton literature/data mapping, technical architecture and implementation analysis, accounting invariants, synthetic experiments and tests, privacy-disclosure analysis, and the comparative assurance specification. Detailed chronological records are retained below.
+
+## Current phase
+
+**Comparative assurance experiments.**
+
+The formal specification defines four architectures:
+1. Public burn records only.
+2. Signed reports plus agreement-aware reconciliation.
+3. Independent confidential audit.
+4. Cryptographic proofs over private accounting data.
+
+The initial executable comparison now covers three synthetic scenarios: accurate accounting, under-reporting where payment matches the understated report, and a missing interval.
+
+## Latest update — 17 November 2026: initial comparative assurance experiment
+
+- Added `analysis/comparative_assurance_model.py`, `tests/test_comparative_assurance_model.py` and `research/initial-comparative-assurance-experiment.md`.
+- Modelled 12 scenario/architecture combinations (three scenarios across four architectures).
+- Ran six unit tests successfully.
+- Main result: a signed report or cryptographic proof can reconcile or prove arithmetic over submitted inputs while failing to detect activity omitted before those inputs were created.
+- Independent confidential audit detects the synthetic under-reporting case only under the explicit assumption that the auditor can inspect complete, sufficiently reliable and independent source evidence.
+- Missing-interval detection depends on a verifier-known expected interval schedule. Without it, absence cannot reliably be distinguished from an interval that was never required.
+- Public burn-only evidence cannot establish the private activity, contractual liability or whether a report interval is missing.
+- All values are synthetic. The experiment does not estimate real-world detection probabilities, establish current CIP-0132 implementation features, or allege actual Canton under-reporting.
+- The model currently abstracts operational cost, privacy leakage and latency. These will be quantified or explicitly scored in later comparisons.
+
+## Next exact task
+
+Add agreement-version mismatch and contractual smoothing/due-date scenarios. Ensure the model distinguishes a genuine overdue shortfall from an amount that is not yet due. Then extend to burn misallocation across multiple obligations.
+
+## Scope and evidence rules
+
+- Treat CIP-0132 as a proposal unless its status is re-verified.
+- Do not treat public CC transfers as total Canton settlement volume.
+- Do not infer private transaction counts from public updates.
+- Do not present synthetic inputs as observed network activity.
+- Distinguish measurement integrity, calculation integrity, payment reconciliation and reward attribution.
+- Missing or undetermined reports are not zero activity.
+- The pruning-race investigation remains a bounded implementation subtask, not the research thesis.
+
+## Historical research log
+
+The following prior research entries remain part of the project record. They document the grant research, technical audits, accounting models, experiments, and scope corrections completed earlier.
+
+# Project State
+
+**Last updated:** 2026-11-17  
+**Repository:** private  
+**Project:** Canton Community Research Grants research preparation
+
+## Confirmed direction
+
+- Research orientation: interdisciplinary.
+- Quantitative analysis: central where appropriate, not decorative.
+- Deliverable: hybrid research package consisting of a substantial paper supported by reproducible calculations, documented data, models, and visualisations.
+- Working method: comparative study of funded research programmes and completed outputs, followed by Canton landscape mapping and original hypothesis development.
+- Repository visibility: private.
+
 ## Completed
 
 - Repository created and confirmed private.
