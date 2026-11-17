@@ -75,6 +75,18 @@ class AssuranceCostModelTests(unittest.TestCase):
                 for name in ARCHITECTURES[:-1]
             })
 
+    def test_comparison_rejects_incomparable_evaluation_period(self):
+        inputs = {name: synthetic_inputs() for name in ARCHITECTURES}
+        inputs["cryptographic_proof"]["evaluation_period"] = "different-period"
+        with self.assertRaisesRegex(ValueError, "evaluation_period"):
+            compare_architectures(inputs)
+
+    def test_comparison_rejects_different_interval_counts(self):
+        inputs = {name: synthetic_inputs() for name in ARCHITECTURES}
+        inputs["independent_confidential_audit"]["interval_count"] = 11
+        with self.assertRaisesRegex(ValueError, "interval_count"):
+            compare_architectures(inputs)
+
 
 if __name__ == "__main__":
     unittest.main()
