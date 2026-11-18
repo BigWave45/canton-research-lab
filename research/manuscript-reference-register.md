@@ -153,25 +153,43 @@ https://github.com/BigWave45/canton-research-lab/tree/ecd8e8bdccbe6dc2556d54e8a0
 | 2. Protocol model | [1]–[3], [5]–[7], [12] | Separate CIP design from implementation evidence |
 | 3. Threat model and invariants | [3], [9], [18] | Protocol trust assumptions and research-defined threats/invariants |
 | 4. Measurement assurance | [3], [5], [10], [11], [18] | Reporting contract, implementation observations and synthetic omission example |
-| 5. Settlement assurance | [3], [7], [9], [11], [15], [18] | Off-ledger linkage, settlement properties, prototype checks and evidence limits |
-| 6. Reward attribution and privacy | [1]–[4], [6], [13], [14], [16], [17] | Reward hook, Phase 1 attribution, privacy model and synthetic leakage experiments |
-| 7. Economic and operational trade-offs | [3], [15], [19] | Assurance architecture assumptions and scenario comparison; ICU model still needs a reproducible source |
+| 5. Settlement assurance | [3], [7], [9], [11], [15], [18], [25], [26] | Off-ledger linkage, settlement properties, prototype checks and evidence limits |
+| 6. Reward attribution and privacy | [1]–[4], [6], [13], [14], [16], [17], [18], [25], [26] | Reward hook, Phase 1 attribution, privacy model and explicitly bounded prototype evidence |
+| 7. Economic and operational trade-offs | [3], [15], [19], [27] | Qualitative architecture comparison; no reproducible numerical cost model exists in the inspected snapshot |
 | 8. Discussion | [1]–[19] as relevant | Synthesis; cite the source for each specific factual or methodological claim rather than attaching a blanket citation |
 | 9. Limitations and future research | [1]–[19] as relevant | Snapshot, implementation status, prototype and experiment limitations |
 | 10. Conclusion | [1]–[3], [9], [14]–[19] | Restate only results already supported in the body |
 
-## E. Outstanding source and manuscript issues
+### [25] Settlement manifest validator
+BigWave45. `canton-research-lab`. `analysis/settlement_manifest_validator.py`, repository snapshot `ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c`.
+https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/settlement_manifest_validator.py
+**Supports:** interval coverage, report status, agreement-version and digest presence, duplicate and cross-settlement burn checks, allocation references and payment residual calculation.
+**Does not support:** source measurement completeness, legal authority of agreement signers or reward-attribution validation.
 
-These must be resolved before converting this register into the final numbered References section.
+### [26] Settlement manifest validator tests
+BigWave45. `canton-research-lab`. `tests/test_settlement_manifest_validator.py`, repository snapshot `ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c`.
+https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/tests/test_settlement_manifest_validator.py
+**Supports:** test cases for complete manifests, missing intervals, gaps, duplicate burns, reused burn IDs, wrong settlement assignment, payment mismatch, uncovered windows, missing agreement versions and missing report digests.
+**Does not support:** the full reward-attribution checklist or production integration.
 
-1. **Section 4.3 PR identity:** the current research audit says PR #111 replaces PR #103 and contains the participant-departure implementation observation. The manuscript's earlier correction ties that observation to PR #103. Confirm the exact code revision observed, then cite the correct PR and commit. Do not use PR #103 to support behaviour that exists only in PR #111.
-2. **Section 6.1 invariant identifier:** the manuscript says “I-10 validation model”, but the current `research/accounting-properties-and-threat-model.md` defines P1–P8. Locate the authoritative twelve-invariant register and map I-10 to the reward checks listed in the manuscript. If no such register exists, correct the identifier and narrow the claim.
-3. **Section 7.2 ICU totals:** the four outputs (28.0, 59.5, 105.0, 141.5 ICU) and per-interval increments were not found in the inspected research-repository tree or the two comparative-assurance model scripts. Locate the exact model, parameter file and execution output, or reproduce the calculations in a committed script. Until then, do not describe the figures as reproducible outputs from the repository.
-4. **Section 6.3 four-participant example:** the four-equation example is explicitly hand-derived, not an executable fixture. Keep that qualification unless a matching test is added.
-5. **CIP-0129 permalink:** replace the mutable `main` URL with the exact approved revision used in the manuscript.
-6. **Current implementation status:** PR #111, PR #8449 and issue #155 must be cited with snapshot dates and status. Do not translate open/draft issue evidence into production behaviour.
-7. **Research prototype test count:** the final manuscript should identify the exact repository commit and command behind the final reported test count. Do not cite a test count without a reproducible revision and run record.
-8. **External literature:** this manuscript currently relies mainly on protocol specifications, implementation evidence and its own experiments. Do not add generic privacy, ZK or accounting papers merely to make the bibliography look academic. If the text makes general claims about differential privacy, cryptographic proofs or audit independence beyond standard definitions, add authoritative technical sources for those specific claims.
+### [27] Integrated qualitative assurance comparison
+BigWave45. `canton-research-lab`. `analysis/integrated_assurance_comparison.py`, repository snapshot `ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c`.
+https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/integrated_assurance_comparison.py
+**Supports:** qualitative architecture ratings for measurement assurance, payment completeness, allocation assurance, reward attribution, disclosure, residual trust, implementation burden, latency and dispute resolution.
+**Qualification:** ratings are analytical judgements, not measured performance or probabilities. This file does not support numerical ICU costs.
+
+## E. Resolved audit issues and remaining publication checks
+
+The three substantive issues from the initial source audit have been resolved in `research/manuscript-audit-resolution-2026-11-18.md`. Apply the stated replacement text to the manuscript before inserting citations.
+
+1. **Section 4.3:** attribute the participant-departure observation to PR #111, not PR #103. PR #111 replaces the earlier design and was open at the 17 November 2026 snapshot. Cite [5] and [10]. PR #103 [8] is historical context only.
+2. **Section 6.1:** do not describe the full reward-attribution checklist as an implemented I-10 model. The located formal property register is P1–P8; P6 is only a reward-budget bound. Describe the full checklist as a proposed validation requirement and distinguish the narrower prototype checks in [18], [25] and [26].
+3. **Section 7.2:** remove the unsupported ICU totals and break-even arithmetic. The current repository does not contain the model or parameters that generated them. Use qualitative, explicitly unmeasured cost drivers supported by [15], [19] and [27].
+4. **Section 6.3:** retain the qualification that the four-participant example is hand-derived, not an executable fixture. The executable row-space experiment is [16] and [17].
+5. **CIP-0129 permalink:** still replace the mutable `main` URL with a pinned approved revision before final publication.
+6. **Implementation status:** cite PR #100 and #104 as merged feature-fork code, PR #111 as open, PR #8449 as draft, and tracker issues #152, #155, #159 and #163 with the 17 November 2026 snapshot qualification. None of this is proof of MainNet deployment.
+7. **Prototype test count:** attach a test count only to a precise repository commit and reproducible CI/local run. The isolated 29-test result in [new audit evidence] is not a full repository-suite run and must not be presented as one.
+8. **External literature:** do not add generic academic references for appearance. Add a source only when the manuscript makes a substantive claim that depends on it.
 
 ## F. Final citation style recommendation
 
