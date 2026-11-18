@@ -23,13 +23,49 @@ Run:
 - python analysis/aggregate_linear_leakage.py
 - python -m unittest discover -s tests -p 'test_aggregate_linear_leakage.py' -v
 
-## 3. Disclosure policy implications
+## 3. Full-rank reconstruction despite k=3
+
+A four-participant construction shows why checking only nested pairs is insufficient. Let the protected traffic vector be:
+
+`x = [A, B, C, D]^T = [40, 30, 20, 10]^T`.
+
+Publish these four cohort totals:
+
+| Release | Cohort | Equation | Total |
+|---|---|---|---:|
+| R1 | A, B, C | A + B + C | 90 |
+| R2 | A, B, D | A + B + D | 80 |
+| R3 | A, C, D | A + C + D | 70 |
+| R4 | B, C, D | B + C + D | 60 |
+
+Every release contains three participants, so each passes a simple minimum-cohort threshold of k=3. Yet the four equations uniquely determine all four values.
+
+Adding the releases counts each participant three times:
+
+`90 + 80 + 70 + 60 = 3(A+B+C+D) = 300`.
+
+Therefore `A+B+C+D = 100`. Each participant's value is then recovered by subtracting the release that excludes that participant:
+
+- `A = 100 - R4 = 40`
+- `B = 100 - R3 = 30`
+- `C = 100 - R2 = 20`
+- `D = 100 - R1 = 10`
+
+In matrix form, the release matrix is:
+
+`M = [[1,1,1,0], [1,1,0,1], [1,0,1,1], [0,1,1,1]]`.
+
+It has full column rank (rank 4), so all four participant variables are identifiable from the exact releases when cohort membership and the participant universe are known. This is an exact synthetic counterexample, not a Canton data observation.
+
+**Implementation boundary:** `analysis/aggregate_linear_leakage.py` already contains an exact-rational row-space test capable of checking whether an individual unit vector is identifiable from a release matrix. Its current `run()` fixture does not include this four-release full-rank construction. This section is a hand-derived analytical example; do not imply that the new fixture was executed or added to the test suite.
+
+## 4. Disclosure policy implications
 
 A production disclosure controller should maintain a permanent ledger of released aggregates and their cohort/time definitions; evaluate each proposed release against the entire release history; reject releases that make protected variables exactly identifiable or create unacceptable inference risk; include timing windows and participant membership versions; and treat auxiliary public knowledge as part of the threat model.
 
-A linear-rank test catches exact disclosure under a known fixed cohort model. It does not prevent approximate inference, side-channel correlation, or inference where membership is only partially known. A production system needs a stronger policy and risk assessment.
+A linear-rank test catches exact disclosure under a known fixed cohort model. The four-release example demonstrates that full-rank reconstruction can occur even when every individual cohort passes k=3. It does not prevent approximate inference, side-channel correlation, or inference where membership is only partially known. A production system needs a stronger policy and risk assessment.
 
-## 4. Proposed public verification surface
+## 5. Proposed public verification surface
 
 The research should not force a choice between publishing all billing evidence and asking the public to trust an opaque burn. Separate the proof surface from confidential evidence.
 
@@ -60,7 +96,7 @@ The research should not force a choice between publishing all billing evidence a
 
 This division is a proposal. The current CIP does not establish that such a public commitment or proof surface exists.
 
-## 5. What could a public proof establish?
+## 6. What could a public proof establish?
 
 A commitment alone establishes that a particular manifest has not changed relative to the committed digest, assuming correct cryptographic binding and a trustworthy anchor. It does not establish that the committed report is true or complete.
 
@@ -70,7 +106,7 @@ But the proof requires a sound statement and defined trust model. It cannot prov
 
 If commercial terms are hidden, the verifier needs a commitment to those terms and a proof that the committed values satisfy the agreed pricing relation. The auditor can inspect exact terms. Public verification can establish consistency with a committed rule without necessarily disclosing the rule, but only if the commitment, circuit and dispute process are specified.
 
-## 6. Candidate assurance tiers
+## 7. Candidate assurance tiers
 
 | Tier | Evidence | Public claim | Residual trust |
 |---|---|---|---|
@@ -82,13 +118,13 @@ If commercial terms are hidden, the verifier needs a commitment to those terms a
 
 These tiers are conceptual. Tier 3 is not a recommendation to deploy zero-knowledge proofs immediately. First determine whether auditor-verifiable signed manifests are sufficient and what public question actually needs cryptographic proof.
 
-## 7. Research decision
+## 8. Research decision
 
 The strongest near-term architecture to evaluate is a two-surface design: exact evidence available to a purpose-limited independent auditor; and public burn and commitment/status evidence, with optional proof of allocation and reconciliation invariants.
 
 The main unresolved research question is source completeness. Cryptography can bind a report and prove calculations over it. It cannot make an untrusted or incomplete meter truthful by itself.
 
-## 8. Limitations
+## 9. Limitations
 
 - All participant names, cohort membership and traffic values in the experiment are synthetic.
 - The matrix model assumes exact integer aggregate releases and known membership.
