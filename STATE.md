@@ -892,3 +892,14 @@ Integrate successful agreement verification as a mandatory precondition for acce
 ## Next task
 
 Inspect the CI result and run/fix the full suite. Then evaluate the remaining trust assumptions quantitatively: registry compromise, signer key compromise, delayed revocation, and false/missing traffic reports. Do not add zero-knowledge proofs until the simpler signed-report and independent-audit baselines are measured.
+
+
+## Update — 18 November 2026: I-12 aggregate composition analysis consolidated
+
+- Reviewed the existing privacy disclosure matrix, nested-cohort differencing experiment, exact-rational aggregate row-space implementation and public-verification-surface analysis. The repository already contained a general linear-identifiability routine; this work did not create a parallel privacy model.
+- Added a four-participant/four-release construction: each release contains three participants (k=3), but the 4×4 release matrix has rank 4 and uniquely identifies all four synthetic participant values. The derivation is documented in `research/linear-composition-and-public-verification-surface.md`.
+- The four-release construction is hand-derived and documented only. It has not been added as an executable fixture or run through the test suite. The existing exact-rational row-space routine is capable of evaluating such a matrix, but its current run fixture does not contain this specific case.
+- Updated the privacy disclosure note, I-12 validation matrix row and evidence map to distinguish exact synthetic reconstruction from any claim about Canton exposure.
+- **Evidence boundary:** no live Canton data, participant cohort API, privacy incident or production attack was observed. CIP-0132's described synchronizer-wide aggregate does not establish that arbitrary overlapping participant-cohort releases are available. The attack requires such releases or equivalent aggregate equations plus known cohort membership.
+- **Validation:** documentation-only update through GitHub; no Codespaces agent, local tests or CI were used. The four-release arithmetic and matrix-rank conclusion are analytically derived, not a newly executed test result.
+- **I-12 status:** analytically investigated. Remaining work is evidence about actual reporting permissions and realistic disclosure surfaces, plus an optional executable regression fixture if test capacity becomes available. Do not expand the prototype solely to mark the invariant complete.
