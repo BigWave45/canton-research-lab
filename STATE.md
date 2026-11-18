@@ -903,3 +903,14 @@ Inspect the CI result and run/fix the full suite. Then evaluate the remaining tr
 - **Evidence boundary:** no live Canton data, participant cohort API, privacy incident or production attack was observed. CIP-0132's described synchronizer-wide aggregate does not establish that arbitrary overlapping participant-cohort releases are available. The attack requires such releases or equivalent aggregate equations plus known cohort membership.
 - **Validation:** documentation-only update through GitHub; no Codespaces agent, local tests or CI were used. The four-release arithmetic and matrix-rank conclusion are analytically derived, not a newly executed test result.
 - **I-12 status:** analytically investigated. Remaining work is evidence about actual reporting permissions and realistic disclosure surfaces, plus an optional executable regression fixture if test capacity becomes available. Do not expand the prototype solely to mark the invariant complete.
+
+
+## Update — 18 November 2026: remaining invariant evidence assessment
+
+- Inspected committed source and tests for I-02, I-03, I-04, I-06 and I-07. Added `research/remaining-invariant-evidence-assessment-2026-11-18.md` and updated the invariant matrix and evidence map.
+- I-02: prototype distinguishes valid zero, non-OK and missing evidence; upstream report feed remains proposed/open in the reviewed snapshot, so production behavior is unverified.
+- I-03: signed settlement binding commits to a report-set digest, but no operator-origin report signature exists in the protocol report model. This is a provenance architecture gap, not a reason to add another signature without selecting that architecture.
+- I-04: agreement document signature and generic signer role are modelled; authority to bind a specific synchronizer/paymaster/obligation and real legal authority remain external.
+- I-06: deterministic integer pricing exists for synthetic supplied rules; no independent implementation/golden-vector verification or actual operator tariff evidence exists.
+- I-07: due dates, grace, FIFO, carry-forward and unapplied payment are modelled, but allocation events do not carry burn event/finality timestamps. Historical paid-by-time-t cannot be independently reconstructed without those timestamps and an agreed payment-time rule.
+- **Decision:** no more implementation expansion. Preserve these as scoped evidence/architecture gaps. No CI or local tests were run for this documentation assessment.
