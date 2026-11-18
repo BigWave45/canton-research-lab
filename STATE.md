@@ -27,6 +27,16 @@ The scope-correction note and evidence map control. Older public-observability/s
 - Next validation targets that do not require TestNet access: duplicate/overlapping/out-of-order interval cases; multi-obligation burn allocation bounds; binding-attestation tampering, replay and signer-authorisation tests; then locally execute the relevant test suite and preserve commit/environment/output provenance.
 - No CI workflow should be invoked; the user's CI budget is exhausted. The CircleCI pass remains user-confirmed but is not tied to the latest commit SHA.
 
+## Update — 18 November 2026: I-08/I-09 portfolio burn allocation strengthened
+
+- Extended the existing `analysis/portfolio_settlement_model.py` rather than creating a parallel validator. `Allocation` now has a distinct portfolio-wide allocation ID; empty and repeated IDs and duplicate burn event evidence are rejected.
+- The validator permits one burn to fund multiple obligations and multiple burns to fund one or more obligations. It checks aggregate allocation against each burn, validates burn/obligation references and paymaster identity, and rejects non-positive allocation amounts.
+- Added optional `prior_allocations` for amendment checks. Prior and new claims are combined against burn amounts and obligation liabilities; reused IDs are rejected, and already consumed burn credit cannot be claimed again.
+- Amounts must be finite `Decimal` values. Fractional values use exact arithmetic without float conversion or quantization. The prototype does not specify a CC precision or rounding policy.
+- Due-time status remains obligation-specific: a paid obligation can reconcile while another is `short_paid`, and unpaid future tranches remain `not_yet_due`.
+- **Local execution:** Python 3.14.2; focused suites passed (63 tests total: portfolio settlement 26, portfolio allocation 8, reconciliation state machine 13, scheduled reconciliation 6, paymaster reconciliation 10); complete unittest suite passed (243 tests). `git diff --check` passed.
+- **Evidence boundary:** tests cover the encoded invariants over synthetic supplied data only. Burn authenticity/finality, completeness of burn and obligation records, eligible-credit policy, and agreement-defined due, carry-forward and amendment semantics remain external. These tests are not Canton production guarantees.
+
 ## Latest update — 18 November 2026: separate settlement-binding attestation implemented in prototype
 
 - Extended `SettlementBinding` with a report-set digest and a separate binding signature. The digest commits to canonical report fields (report ID, interval, timestamps, status, bytes, revision and supersession reference), deterministically ordered before hashing.
