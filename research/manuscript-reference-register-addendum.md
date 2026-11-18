@@ -43,25 +43,15 @@ https://github.com/ChainSafe/canton-extending-mainnet/issues/163
 **Use:** Sections 2, 6.1 and 9.  
 **Qualification:** cite the issue's state and audit date. Do not describe the integration as complete based on a tracked follow-up.
 
-## Corrections and unresolved points
+## Resolution status
 
-### Section 4.3: use PR #111 for the participant-departure behaviour
+The earlier open issues in this addendum have been adjudicated in `research/manuscript-audit-resolution-2026-11-18.md`.
 
-The current repository file `research/traffic-report-implementation-audit.md` explicitly attributes the implementation semantics to PR #111. It says PR #111 replaces PR #103 and describes the current implementation as an on-demand reader using sequencer counter snapshots. It also says the calculation iterates participants present in the end-of-interval state and excludes participants absent at interval end, even if present at interval start.
+- **PR #103 versus PR #111:** use PR #111 for the participant-departure implementation observation. PR #103 is historical context only.
+- **I-10:** the full reward-attribution checklist is not supported as an implemented I-10 model. The formal property register contains P1–P8; P6 is a narrower reward-budget bound. Describe the full checklist as a proposed validation requirement and cite the narrower code/tests only for the checks they actually perform.
+- **ICU cost figures:** the four numerical architecture totals and break-even values have no reproducible model in the inspected repository snapshot. Remove them from the manuscript and use qualitative cost drivers unless the missing model is recovered and committed.
 
-Therefore, the manuscript's existing sentence attributing this observation to PR #103 is inconsistent with the current audit record. Unless the source-code diff establishes that the same exact behaviour was already present in PR #103, change the manuscript attribution to PR #111 and identify the 17 November 2026 source snapshot. Retain the caveat that this was an open pull request, not deployed production behaviour.
-
-### Section 6.1: I-10 has not been located in the current register
-
-The inspected `research/accounting-properties-and-threat-model.md` defines eight properties, P1–P8. The current repository tree and targeted search did not locate an authoritative twelve-invariant register or a definition of I-10. This does not prove no such document exists outside the inspected tree, but the current paper citation cannot be supported from the located register.
-
-Before publication, either locate and cite the exact I-01–I-12 source file and verify I-10's definition, or remove the I-10 label and describe the validation checks directly. Do not silently map I-10 onto P6 or another property.
-
-### Section 7.2: ICU model remains untraceable
-
-The located scripts `analysis/comparative_assurance_model.py` and `analysis/integrated_assurance_comparison.py` do not reproduce the 28.0, 59.5, 105.0 and 141.5 ICU values. The separate `analysis/synchronizer_economics_scenarios.py` models a different USD/MB pricing and collateral question, so it is not a source for the Section 7.2 assurance-cost table.
-
-The manuscript needs the exact cost-model inputs, formulae, units, script or spreadsheet, and output. If the values were manually constructed, label them as an illustrative scenario and show enough arithmetic to reproduce them. Do not cite an unrelated model.
+The main reference register has been updated to reflect these decisions. This addendum remains the source record for references [20]–[24].
 
 ## Revised citation map additions
 
