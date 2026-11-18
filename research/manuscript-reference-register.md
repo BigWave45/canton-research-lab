@@ -10,7 +10,7 @@ This register separates primary protocol sources, implementation evidence, and t
 ## A. Primary protocol and technical sources
 
 ### [1] Canton Improvement Proposal 0104 — Traffic-Based App Rewards
-Canton Foundation. *CIP-0104: Traffic-Based App Rewards*. Approved 12 February 2026; amended text reviewed in the November 2026 source snapshot.  
+Canton Foundation. *CIP-0104: Traffic-Based App Rewards*. Original CIP approved 12 February 2026. The amendment aligning the proposal with Featured App Guidance 2.0b was approved by Super Validator node owners on 27 October 2026; the pinned revision below reflects the amended text.  
 Version used for the dedicated-synchronizer extension-hook relationship: https://github.com/canton-foundation/cips/blob/92df641487c5e465dad5ea8d03245d3b9b328523/cip-0104/cip-0104.md  
 Current proposal location: https://github.com/canton-foundation/cips/blob/main/cip-0104/cip-0104.md  
 **Supports:** the Global Synchronizer traffic-based application reward mechanism; the ActivityRecorder_DsoRecordActivity extension hook; the distinction between existing Global Synchronizer measurement and proposed dedicated-synchronizer integration.  
