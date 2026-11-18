@@ -19,10 +19,10 @@ Current proposal location: https://github.com/canton-foundation/cips/blob/main/c
 
 ### [2] Canton Improvement Proposal 0129 — Universal Burn and Synchronizer Pricing
 Canton Foundation. *CIP-0129: Universal Burn and Synchronizer Pricing*. Approved 23 October 2026.  
-https://github.com/canton-foundation/cips/blob/main/cip-0129/cip-0129.md  
+https://github.com/canton-foundation/cips/blob/8e694e509c47ecb59e5731289882b350e3186372/cip-0129/cip-0129.md  
 **Supports:** the universal-burn and synchronizer-pricing framework; dedicated-synchronizer traffic reporting and reward attribution context; the trust placed in operator reports in the initial design; the stated limits of aggregate payment-based reward constraints.  
 **Use in manuscript:** Sections 1, 2, 3, 6.1, 7.1, 8.1, 8.3, 8.5 and 9.1.  
-**Qualification:** before final publication, replace the mutable `main` URL with the exact commit permalink used for the status and wording claims. Approval of CIP-0129 must not be conflated with approval or deployment of CIP-0132.
+**Qualification:** this permalink is pinned to the 23 October 2026 approval commit. Approval of CIP-0129 must not be conflated with approval or deployment of CIP-0132.
 
 ### [3] Canton Improvement Proposal 0132 — Dedicated Synchronizer Paymaster Model
 Canton Foundation. *CIP-0132: Dedicated Synchronizer Paymaster Model*. Created 9 November 2026; proposed 16 November 2026; status Proposed in the reviewed revision.  
@@ -186,7 +186,7 @@ The three substantive issues from the initial source audit have been resolved in
 2. **Section 6.1:** do not describe the full reward-attribution checklist as an implemented I-10 model. The located formal property register is P1–P8; P6 is only a reward-budget bound. Describe the full checklist as a proposed validation requirement and distinguish the narrower prototype checks in [18], [25] and [26].
 3. **Section 7.2:** remove the unsupported ICU totals and break-even arithmetic. The current repository does not contain the model or parameters that generated them. Use qualitative, explicitly unmeasured cost drivers supported by [15], [19] and [27].
 4. **Section 6.3:** retain the qualification that the four-participant example is hand-derived, not an executable fixture. The executable row-space experiment is [16] and [17].
-5. **CIP-0129 permalink:** still replace the mutable `main` URL with a pinned approved revision before final publication.
+5. **CIP-0129 permalink:** resolved. Reference [2] now points to the 23 October 2026 approval commit `8e694e509c47ecb59e5731289882b350e3186372`.
 6. **Implementation status:** cite PR #100 and #104 as merged feature-fork code, PR #111 as open, PR #8449 as draft, and tracker issues #152, #155, #159 and #163 with the 17 November 2026 snapshot qualification. None of this is proof of MainNet deployment.
 7. **Prototype test count:** attach a test count only to a precise repository commit and reproducible CI/local run. The isolated 29-test result in [new audit evidence] is not a full repository-suite run and must not be presented as one.
 8. **External literature:** do not add generic academic references for appearance. Add a source only when the manuscript makes a substantive claim that depends on it.
