@@ -225,3 +225,31 @@ No claim is made that a specific cryptographic technique is necessary, absent fr
 ## 10. Primary source
 
 CIP-0129, *Universal Burn and Synchronizer Pricing*, especially §2 (Rewards), §4 (Commitment discounts), §5 (Governance), and §9 (Left to the second CIP): https://github.com/canton-foundation/cips/blob/main/cip-0129/cip-0129.md
+
+## 11. I-10 prototype and current source-status check
+
+### Specification, implementation, and scope
+
+Keep three reward concepts separate:
+
+1. **Validator rewards:** the paymaster purchase implementation issues a `ValidatorRewardCoupon` to the paymaster for the burn.
+2. **App/asset activity rewards:** CIP-0104 defines the app-reward measurement/accounting path and an `ActivityRecorder_DsoRecordActivity` extension hook for activity not directly observed by the Global Synchronizer.
+3. **Participant-level dSync attribution:** this is not the CIP-0132 Phase 1 model. Phase 1 designates the paymaster as the recipient for dSync traffic rewards; dividing rewards among dSync participants is a separate later design question.
+
+CIP-0132 is a proposal, not a production guarantee. Its Phase 1 model does not establish that the dSync report matches source-meter records, or that a reward can be independently traced end to end to complete paid traffic. CIP-0129's acknowledged reporting trust and future granular attribution must not be conflated with Phase 1 paymaster attribution.
+
+### Upstream status, retrieved 18 November 2026
+
+- [CIP-0104](https://github.com/canton-foundation/cips/blob/main/cip-0104/cip-0104.md) specifies traffic-based app rewards and the extension hook; [CIP-0129](https://github.com/canton-foundation/cips/blob/main/cip-0129/cip-0129.md) describes the broader synchronizer-reward framework; [CIP-0132](https://github.com/canton-foundation/cips/blob/main/cip-0132/cip-0132.md) describes the proposed Phase 1 paymaster model.
+- [splice-multi-sync#100](https://github.com/canton-network/splice-multi-sync/pull/100) is merged (11 November 2026). Its tests distinguish the `ValidatorRewardCoupon` from `PaymasterActivity`; the latter computes purchased bytes multiplied by configured app/asset activity weights. This verifies behavior in that merged PR's tests, not that the activity hook is wired or deployed.
+- [splice-multi-sync#104](https://github.com/canton-network/splice-multi-sync/pull/104) is merged (12 November 2026) for Scan/SV handling.
+- [splice#8449](https://github.com/canton-network/splice/pull/8449) remains **open and draft** (last updated 16 November 2026; inspected head `3e052a5924cc28476bdf975073540240656cc9aa`). Its current diff adds an `ActivityRecorder` template/choice and AmuletRules schema migration; the choice body is `pure ()`. The diff does not connect the dSync purchase paths to app reward issuance.
+- [ChainSafe/canton-extending-mainnet#163](https://github.com/ChainSafe/canton-extending-mainnet/issues/163) remains **open** (updated 12 November 2026). Its acceptance requires recording paymaster app/asset activity through the hook in both purchase paths and testing both, and it depends on #8449.
+- [ChainSafe/canton-extending-mainnet#159](https://github.com/ChainSafe/canton-extending-mainnet/issues/159) remains **open** (updated 12 November 2026) for the full register → transact → report → pay → activity-record flow; it depends on #163 among other work.
+- [ChainSafe/canton-extending-mainnet#155](https://github.com/ChainSafe/canton-extending-mainnet/issues/155) is **closed** (updated 12 November 2026); its description records that the paymaster purchase amount is not checked against the traffic report. This is a stated limitation in the implementation tracker, not evidence of live misuse.
+
+### Local prototype boundary
+
+`analysis/adversarial_accounting_tests.py` now includes a synthetic app-reward validator, with adversarial cases in `tests/test_adversarial_accounting.py`. It checks that app rewards reference identified activity, settlements and burns; that settlement identity, epoch and the single active weight-rule version match; that activity units do not exceed paid bytes multiplied by the supplied app weight; that only the terminal activity revision can receive reward credit; and that the reward amount follows the supplied exact-Decimal rule. Validator reward records are not accepted as app rewards. Phase 1 recipient checks target the designated paymaster, not individual synchronizer participants.
+
+The result reports per-record attribution validity separately from aggregate reward-cap validity. Tests use synthetic weight/rate/cap values only; no Canton reward percentage, tariff or real reward rule is asserted. The validator assumes its settlement-to-burn/paid-byte evidence and active reward rules are independently authoritative. It cannot prove source activity identity or completeness, burn authenticity/finality, correct upstream epoch assignment, deployment, or the end-to-end hook path. These are prototype tests, not a live reward-accounting vulnerability finding or Canton production guarantee. An authorised end-to-end network test remains necessary.

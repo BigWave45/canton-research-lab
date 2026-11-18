@@ -37,6 +37,14 @@ The scope-correction note and evidence map control. Older public-observability/s
 - **Local execution:** Python 3.14.2; focused suites passed (63 tests total: portfolio settlement 26, portfolio allocation 8, reconciliation state machine 13, scheduled reconciliation 6, paymaster reconciliation 10); complete unittest suite passed (243 tests). `git diff --check` passed.
 - **Evidence boundary:** tests cover the encoded invariants over synthetic supplied data only. Burn authenticity/finality, completeness of burn and obligation records, eligible-credit policy, and agreement-defined due, carry-forward and amendment semantics remain external. These tests are not Canton production guarantees.
 
+## Update — 18 November 2026: I-10 reward attribution integrity
+
+- Extended `analysis/adversarial_accounting_tests.py` with an exact-Decimal app-reward validator and added adversarial tests in `tests/test_adversarial_accounting.py`. It checks activity/settlement/burn references, paid-byte × authorized-weight bounds, paymaster and synchronizer identity, active rule version and epoch, duplicate and superseded records, app-vs-validator reward type, expected reward computation, and a separate aggregate epoch cap.
+- Phase 1 attribution is checked against the designated paymaster. Participant-level reward distribution is explicitly outside this validator and must not be used as a Phase 1 correctness expectation.
+- Current upstream check retrieved 18 November 2026: `splice-multi-sync` PRs #100 (merged 11 Nov) and #104 (merged 12 Nov); Splice PR #8449 remains draft/open; ChainSafe issues #163 and #159 remain open; issue #155 is closed. Source detail and exact links are in `research/reward-attribution-integrity.md`.
+- **Local execution:** Python 3.14.2; focused adversarial suite passed (20 tests); complete local unittest suite passed (257 tests); `git diff --check` passed.
+- **Evidence boundary:** local tests establish synthetic invariants over supplied settlement/burn evidence and reward rules; they do not prove source activity completeness, input authority, reward-rule authenticity, or a complete deployed report-to-burn-to-app-reward path. No live vulnerability is alleged and no actual Canton reward percentages or tariff values are assumed.
+
 ## Latest update — 18 November 2026: separate settlement-binding attestation implemented in prototype
 
 - Extended `SettlementBinding` with a report-set digest and a separate binding signature. The digest commits to canonical report fields (report ID, interval, timestamps, status, bytes, revision and supersession reference), deterministically ordered before hashing.
