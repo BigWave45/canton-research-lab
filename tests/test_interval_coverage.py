@@ -153,6 +153,26 @@ class IntervalCoverageTests(unittest.TestCase):
         out=evaluate_coverage(self.expected,reports,END)
         self.assertEqual((out["state"],out["reason"]),
                          ("INVALID","DUPLICATE_REPORT_REVISION"))
+    def test_two_corrections_cannot_supersede_the_same_report(self):
+        item=self.expected[0]
+        reports=(
+            IntervalReport("r0",item.interval_id,item.start,item.end,item.end,"OK"),
+            IntervalReport("r1",item.interval_id,item.start,item.end,item.end+timedelta(minutes=1),
+                           "OK",1,"r0"),
+            IntervalReport("r1-alt",item.interval_id,item.start,item.end,item.end+timedelta(minutes=2),
+                           "OK",2,"r0"),
+        )
+        out=evaluate_coverage(self.expected[:1],reports,END+timedelta(minutes=3))
+        self.assertEqual((out["state"],out["reason"]),("INVALID","SUPERSESSION_BRANCH"))
+    def test_supersession_cycle_is_rejected(self):
+        item=self.expected[0]
+        reports=(
+            IntervalReport("r0",item.interval_id,item.start,item.end,item.end,"OK",0,"r1"),
+            IntervalReport("r1",item.interval_id,item.start,item.end,item.end+timedelta(minutes=1),
+                           "OK",1,"r0"),
+        )
+        out=evaluate_coverage(self.expected[:1],reports,END+timedelta(minutes=2))
+        self.assertEqual((out["state"],out["reason"]),("INVALID","CORRECTION_CHAIN_CYCLE"))
     def test_missing_correction_revision_is_invalid(self):
         item=self.expected[0]
         reports=(

@@ -8,9 +8,10 @@ class CorrectionBindingTests(unittest.TestCase):
     def setUp(self):
         self.expected=build_expected_intervals(START,END,timedelta(minutes=10),timedelta(minutes=5))
         self.interval=self.expected[0]
-    def report(self,rid,revision=0,supersedes=None,sync="sync-A",obligation="obligation-A",agreement="v1",units=10):
+    def report(self,rid,revision=0,supersedes=None,sync="sync-A",obligation="obligation-A",
+               agreement="v1",units=10,paymaster="paymaster-A"):
         return IntervalReport(rid,self.interval.interval_id,START,END,END+timedelta(minutes=revision),
-            "OK",revision,supersedes,agreement,units,obligation,sync)
+            "OK",revision,supersedes,agreement,units,obligation,sync,paymaster)
     def test_correction_preserves_accounting_identity(self):
         out=evaluate_coverage(self.expected,(self.report("r0"),self.report("r1",1,"r0",units=12)),END+timedelta(minutes=2))
         self.assertEqual(out["state"],"COMPLETE")
@@ -18,6 +19,12 @@ class CorrectionBindingTests(unittest.TestCase):
     def test_correction_cannot_change_synchronizer(self):
         out=evaluate_coverage(self.expected,(self.report("r0"),self.report("r1",1,"r0",sync="sync-B")),END+timedelta(minutes=2))
         self.assertEqual(out["state"],"INVALID")
+        self.assertEqual(out["reason"],"CORRECTION_BINDING_CHANGED")
+    def test_correction_cannot_change_paymaster(self):
+        out=evaluate_coverage(self.expected,(
+            self.report("r0"),
+            self.report("r1",1,"r0",units=12,paymaster="paymaster-B")
+        ),END+timedelta(minutes=2))
         self.assertEqual(out["reason"],"CORRECTION_BINDING_CHANGED")
     def test_correction_cannot_change_obligation(self):
         out=evaluate_coverage(self.expected,(self.report("r0"),self.report("r1",1,"r0",obligation="obligation-B")),END+timedelta(minutes=2))

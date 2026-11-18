@@ -11,6 +11,7 @@ from protocol_settlement_interface import (
 from interval_coverage import build_expected_intervals
 from pricing_liability import PriceBand,PricingAgreement
 from reconciliation_state_machine import Allocation,Burn,Case,Obligation,Report
+from integrated_interval_reconciliation import PriorSettlement
 
 UTC=timezone.utc
 START=datetime(2026,11,17,12,0,tzinfo=UTC)
@@ -51,29 +52,33 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
         signature=base64.b64encode(self.agreement_private.sign(canonical_agreement_bytes(self.signed_document))).decode()
         unsigned=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1",
             "agreement-authority:doc-1","key-agreement",signature,
-            protocol_report_set_digest((self.report,)),"","key-binding")
+            protocol_report_set_digest((self.report,)),"","key-binding","paymaster-A")
         binding_signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
             canonical_binding_document(unsigned)))).decode()
         self.binding=SettlementBinding(unsigned.binding_id,unsigned.interval_id,unsigned.synchronizer_id,
             unsigned.obligation_id,unsigned.agreement_id,unsigned.agreement_version,
             unsigned.authority_reference,unsigned.signer_key_id,unsigned.signature_b64,
-            unsigned.report_set_digest,binding_signature,unsigned.binding_signer_key_id)
-    def run_case(self,reports=None,bindings=None,registry=None,pricing_agreements=None):
+            unsigned.report_set_digest,binding_signature,unsigned.binding_signer_key_id,
+            unsigned.paymaster_id)
+    def run_case(self,reports=None,bindings=None,registry=None,pricing_agreements=None,
+                 prior_settlements=()):
         return reconcile_protocol_evidence(make_case(),self.expected,
             (self.report,) if reports is None else reports,
             (self.binding,) if bindings is None else bindings,
             {"v1":agreement()} if pricing_agreements is None else pricing_agreements,
+            prior_settlements=prior_settlements,
             trusted_signers=self.trusted if registry is None else registry)
     def binding_for(self, reports):
         digest=protocol_report_set_digest(reports)
         unsigned=SettlementBinding("b0",self.expected[0].interval_id,"sync-A","o1","agreement-A","v1",
-            "agreement-authority:doc-1","key-agreement",self.binding.signature_b64,digest,"","key-binding")
+            "agreement-authority:doc-1","key-agreement",self.binding.signature_b64,digest,"","key-binding",
+            "paymaster-A")
         signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
             canonical_binding_document(unsigned)))).decode()
         return SettlementBinding(unsigned.binding_id,unsigned.interval_id,unsigned.synchronizer_id,
             unsigned.obligation_id,unsigned.agreement_id,unsigned.agreement_version,
             unsigned.authority_reference,unsigned.signer_key_id,unsigned.signature_b64,
-            digest,signature,unsigned.binding_signer_key_id)
+            digest,signature,unsigned.binding_signer_key_id,unsigned.paymaster_id)
     def altered_binding(self, **changes):
         values={name:getattr(self.binding,name) for name in self.binding.__dataclass_fields__}
         values.update(changes)
@@ -85,6 +90,45 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
     def test_authority_reference_tampering_blocks(self):
         out=self.run_case(bindings=(self.altered_binding(authority_reference="attacker-ref"),))
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_INVALID_SIGNATURE")
+    def test_correction_cannot_change_prior_authority_reference(self):
+        correction=ProtocolTrafficReport(
+            "r1",self.report.interval_id,START,END,END+timedelta(minutes=1),"OK",11,1,"r0"
+        )
+        reports=(self.report,correction)
+        changed=self.altered_binding(
+            authority_reference="replacement-authority",
+            report_set_digest=protocol_report_set_digest(reports),
+        )
+        signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
+            canonical_binding_document(changed)))).decode()
+        changed=self.altered_binding(
+            authority_reference="replacement-authority",
+            report_set_digest=protocol_report_set_digest(reports),
+            binding_signature_b64=signature
+        )
+        prior=(PriorSettlement("settle-1",self.expected[0].interval_id,"r0",10,
+                               authority_reference="agreement-authority:doc-1",
+                               paymaster_id="paymaster-A"),)
+        out=self.run_case(reports=reports,bindings=(changed,),prior_settlements=prior)
+        self.assertEqual(out["coverage"]["reason"],"CORRECTION_AUTHORITY_CHANGED")
+    def test_correction_cannot_change_prior_paymaster(self):
+        correction=ProtocolTrafficReport(
+            "r1",self.report.interval_id,START,END,END+timedelta(minutes=1),"OK",11,1,"r0"
+        )
+        reports=(self.report,correction)
+        changed=self.altered_binding(
+            paymaster_id="paymaster-B",report_set_digest=protocol_report_set_digest(reports)
+        )
+        signature=base64.b64encode(self.binding_private.sign(canonical_agreement_bytes(
+            canonical_binding_document(changed)))).decode()
+        changed=self.altered_binding(
+            paymaster_id="paymaster-B",report_set_digest=protocol_report_set_digest(reports),
+            binding_signature_b64=signature
+        )
+        prior=(PriorSettlement("settle-1",self.expected[0].interval_id,"r0",10,
+                               paymaster_id="paymaster-A"),)
+        out=self.run_case(reports=reports,bindings=(changed,),prior_settlements=prior)
+        self.assertEqual(out["coverage"]["reason"],"CORRECTION_BINDING_CHANGED")
     def test_obligation_tampering_blocks(self):
         out=self.run_case(bindings=(self.altered_binding(obligation_id="other-obligation"),))
         self.assertEqual(out["coverage"]["reason"],"SETTLEMENT_BINDING_SIGNATURE_INVALID_SIGNATURE")
@@ -122,7 +166,8 @@ class ProtocolSettlementSeparationTests(unittest.TestCase):
             self.binding.binding_id,self.binding.interval_id,self.binding.synchronizer_id,
             self.binding.obligation_id,self.binding.agreement_id,self.binding.agreement_version,
             self.binding.authority_reference,self.binding.signer_key_id,self.binding.signature_b64,
-            self.binding.report_set_digest,self.binding.binding_signature_b64,
+            self.binding.report_set_digest,self.binding.binding_signature_b64,"",
+            self.binding.paymaster_id,
         )
         registry={
             "key-agreement":{

@@ -41,6 +41,7 @@ class SettlementBinding:
     report_set_digest: str = ""
     binding_signature_b64: str = ""
     binding_signer_key_id: str = ""
+    paymaster_id: str = ""
 
 
 def canonical_report_document(report):
@@ -80,6 +81,7 @@ def canonical_binding_document(binding):
         "agreement_version": binding.agreement_version,
         "authority_reference": binding.authority_reference,
         "binding_signer_key_id": binding.binding_signer_key_id,
+        "paymaster_id": binding.paymaster_id,
     }
 
 
@@ -100,6 +102,7 @@ def reconcile_protocol_evidence(
     """
     protocol_reports = tuple(protocol_reports)
     bindings = tuple(settlement_bindings)
+    prior_settlements = tuple(prior_settlements)
     expected_by_id = {x.interval_id: x for x in expected_intervals}
     expected_ids = set(expected_by_id)
     if trusted_signers is None:
@@ -114,7 +117,7 @@ def reconcile_protocol_evidence(
             return _blocked("UNEXPECTED_BINDING_INTERVAL")
         if not all((binding.synchronizer_id, binding.obligation_id, binding.agreement_id,
                     binding.agreement_version, binding.authority_reference,
-                    binding.signer_key_id, binding.signature_b64)):
+                    binding.signer_key_id, binding.signature_b64,binding.paymaster_id)):
             return _blocked("INCOMPLETE_SETTLEMENT_BINDING")
         if binding.interval_id in by_interval:
             return _blocked("AMBIGUOUS_INTERVAL_BINDING")
@@ -183,6 +186,28 @@ def reconcile_protocol_evidence(
     # from a deliberately unbound interval.
     if set(by_interval) != expected_ids:
         return _blocked("INCOMPLETE_BINDING_COVERAGE")
+    for prior in prior_settlements:
+        binding=by_interval.get(prior.interval_id)
+        if binding is not None:
+            if (
+                prior.paymaster_id is not None
+                and binding.paymaster_id != prior.paymaster_id
+            ) or (
+                prior.synchronizer_id is not None
+                and binding.synchronizer_id != prior.synchronizer_id
+            ) or (
+                prior.obligation_id is not None
+                and binding.obligation_id != prior.obligation_id
+            ) or (
+                prior.agreement_version is not None
+                and binding.agreement_version != prior.agreement_version
+            ):
+                return _blocked("CORRECTION_BINDING_CHANGED")
+            if (
+                prior.authority_reference is not None
+                and binding.authority_reference != prior.authority_reference
+            ):
+                return _blocked("CORRECTION_AUTHORITY_CHANGED")
 
     linked_reports = []
     for report in protocol_reports:
@@ -200,6 +225,8 @@ def reconcile_protocol_evidence(
             consumed_units=report.traffic_consumed_bytes,
             obligation_id=binding.obligation_id,
             synchronizer_id=binding.synchronizer_id,
+            paymaster_id=binding.paymaster_id,
+            authority_reference=binding.authority_reference,
         ))
 
     return reconcile_with_interval_coverage(

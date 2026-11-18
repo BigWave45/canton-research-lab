@@ -34,6 +34,8 @@ class IntervalReport:
     consumed_units: int | None = None
     obligation_id: str | None = None
     synchronizer_id: str | None = None
+    paymaster_id: str | None = None
+    authority_reference: str | None = None
 
     @property
     def interval_start(self):
@@ -198,6 +200,25 @@ def evaluate_coverage(
         if len(revisions) != len(set(revisions)):
             return {"state":"INVALID","reason":"DUPLICATE_REPORT_REVISION",
                     "interval_id":item.interval_id,"schedule_validation":schedule_validation}
+        reports_by_id = {report.report_id: report for report in versions}
+        supersession_children = {}
+        for report in versions:
+            predecessor_id = report.supersedes_report_id
+            if predecessor_id is not None:
+                supersession_children.setdefault(predecessor_id, []).append(report.report_id)
+        if any(len(children) > 1 for children in supersession_children.values()):
+            return {"state":"INVALID","reason":"SUPERSESSION_BRANCH",
+                    "interval_id":item.interval_id,"schedule_validation":schedule_validation}
+        for report in versions:
+            path, current_id = set(), report.report_id
+            while current_id in reports_by_id:
+                if current_id in path:
+                    return {"state":"INVALID","reason":"CORRECTION_CHAIN_CYCLE",
+                            "interval_id":item.interval_id,"schedule_validation":schedule_validation}
+                path.add(current_id)
+                current_id = reports_by_id[current_id].supersedes_report_id
+                if current_id is None:
+                    break
         previous=None
         original_binding=None
         for n,r in enumerate(versions):
@@ -207,7 +228,10 @@ def evaluate_coverage(
             if (n==0 and r.supersedes_report_id is not None) or (n>0 and r.supersedes_report_id != previous):
                 return {"state":"INVALID","reason":"BROKEN_CORRECTION_CHAIN",
                         "interval_id":item.interval_id,"schedule_validation":schedule_validation}
-            binding=(r.synchronizer_id,r.obligation_id,r.agreement_version)
+            binding=(
+                r.paymaster_id,r.synchronizer_id,r.obligation_id,
+                r.agreement_version,r.authority_reference,
+            )
             if n==0:
                 original_binding=binding
             elif binding!=original_binding:
