@@ -209,3 +209,8 @@ The user reports that the targeted protocol-interface suite passed all 18 tests 
 The legacy-binding regression verifies fail-closed behavior when the binding signer identity is absent, even when the agreement key is configured with both roles. The implementation does not, however, enforce that agreement and binding keys belong to different principals or prevent a single key from being granted both roles. That is a trust-registry governance requirement, not a code-enforced separation-of-duties guarantee.
 
 The attestation authenticates the mapping and exact report content supplied to the verifier. It does not prove source-meter completeness, truth of the source counters, legal authority of the agreement/mapping, or independence of the signer-governance process. This remains a research prototype result, not a Canton production finding.
+
+
+## Remaining invariant assessment — 18 November 2026
+
+The focused assessment of I-02, I-03, I-04, I-06 and I-07 is recorded in `research/remaining-invariant-evidence-assessment-2026-11-18.md`. I-02 has adequate synthetic state distinction but no deployed feed evidence. I-03's signed settlement binding commits to a report digest but is not an operator-origin report signature. I-04's signer role is not entity-scoped contractual authority. I-06 is deterministic within one synthetic implementation, not independently reproduced against real tariffs. I-07 models due/grace amounts but allocation records lack burn event/finality timestamps for historical as-of payment claims. No further implementation is recommended until corresponding architecture or evidence requirements are specified.
