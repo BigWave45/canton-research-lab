@@ -776,3 +776,24 @@ Integrate successful agreement verification as a mandatory precondition for acce
 ## Next task
 
 Inspect the CI result and run/fix the full suite. Then evaluate the remaining trust assumptions quantitatively: registry compromise, signer key compromise, delayed revocation, and false/missing traffic reports. Do not add zero-knowledge proofs until the simpler signed-report and independent-audit baselines are measured.
+
+
+## Validation update — 18 November 2026
+
+This entry supersedes the earlier statements above that the integrated local test suite had not yet been executed. Those statements were accurate at their earlier timestamps but are no longer the final execution status.
+
+Successful local executions were subsequently recorded:
+
+- Focused correction suites: 63 passed; complete local unittest suite: 243 passed. Commit: `b6c1bf27eb10c8bf0349f13f76d2053d85623726`.
+- Focused integration/correction suite: 20 passed; complete local unittest suite: 257 passed; `git diff --check` passed. Commit: `f99bbde5978dad5dd216244da060615d75357447`.
+- Focused correction suites: 71 passed; complete local unittest suite: 271 passed; `git diff --check` passed. Python 3.14.2. Commit: `68502120cecb8e223c5bfb5c98028aff02389ed4`.
+
+The complete-suite command was:
+
+```bash
+PYTHONPATH=analysis python -m unittest discover -s tests -v
+```
+
+These were local executions. They must not be conflated with GitHub Actions workflow runs that concluded with failure. The inspected Actions job record had no executed steps and no assigned runner; the available record does not establish that the Python tests ran and failed. The exact Actions infrastructure cause remains undetermined.
+
+The passing tests validate the implemented prototype against supplied test inputs. They do not establish production traffic completeness, production deployment, or complete end-to-end reward attribution. See `research/validation-and-execution-record.md` for the consolidated execution record and limitations.
