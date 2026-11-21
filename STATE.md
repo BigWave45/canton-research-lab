@@ -797,3 +797,16 @@ PYTHONPATH=analysis python -m unittest discover -s tests -v
 These were local executions. They must not be conflated with GitHub Actions workflow runs that concluded with failure. The inspected Actions job record had no executed steps and no assigned runner; the available record does not establish that the Python tests ran and failed. The exact Actions infrastructure cause remains undetermined.
 
 The passing tests validate the implemented prototype against supplied test inputs. They do not establish production traffic completeness, production deployment, or complete end-to-end reward attribution. See `research/validation-and-execution-record.md` for the consolidated execution record and limitations.
+
+
+## Branch reconciliation update — 21 November 2026
+
+The successful local test record above belongs to the `circleci-project-setup` development history, not the current `main` branch used by the public presentation PR.
+
+Commit `68502120cecb8e223c5bfb5c98028aff02389ed4` recorded 271 passing tests and 71 passing focused correction tests under Python 3.14.2. The current `circleci-project-setup` branch is nine commits ahead of that commit; those nine commits change research/state documentation, not the analysis or test files.
+
+The public `main` branch diverged from that development history. A tree comparison identifies differences in implementation and test files, including interval coverage, integrated interval reconciliation, portfolio settlement, protocol settlement, adversarial accounting, comparative assurance and associated tests. Consequently, the 271-test result cannot be attributed to the current `main` branch or to the presentation PR until the branches are reconciled and the resulting tree is tested.
+
+GitHub Actions failures are a separate matter. The inspected latest GitHub Actions job failed without recorded steps or an assigned runner. The available metadata does not show a Python test failure, and the precise workflow infrastructure cause remains undetermined.
+
+See `research/validation-and-execution-record.md` for the exact test milestones and scope.
