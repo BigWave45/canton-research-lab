@@ -66,7 +66,7 @@ Canton Network, `splice-multi-sync`. Pull request #103.
 https://github.com/canton-network/splice-multi-sync/pull/103  
 **Supports:** historical implementation context only, if the manuscript explicitly discusses the earlier database-backed interval-report trigger/store.  
 **Use in manuscript:** only where the historical PR #103 design itself is being discussed.  
-**Qualification:** the current implementation audit says PR #111 explicitly replaces PR #103. Do not cite PR #103 as the source for behaviour observed in PR #111. Section 4.3 must be reconciled with this source history before final citation insertion.
+**Qualification:** PR #103 is retained only as historical implementation context. The manuscript attributes the participant-departure observation to PR #111 [5].
 
 ## C. Research artefacts and reproducibility sources
 
@@ -148,7 +148,7 @@ https://github.com/BigWave45/canton-research-lab/tree/ecd8e8bdccbe6dc2556d54e8a0
 
 | Manuscript section | Main source keys | Citation purpose |
 |---|---|---|
-| Abstract | [1]–[3], [9], [14]–[19] | Summarise protocol basis, research methods and the bounded nature of results |
+| Abstract | No inline citations | The abstract states the study scope and bounded findings; supporting evidence is cited in the body |
 | 1. Introduction | [1]–[3] | Protocol chronology, proposal status and motivation |
 | 2. Protocol model | [1]–[3], [5]–[7], [12] | Separate CIP design from implementation evidence |
 | 3. Threat model and invariants | [3], [9], [18] | Protocol trust assumptions and research-defined threats/invariants |
@@ -178,21 +178,19 @@ https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a0
 **Supports:** qualitative architecture ratings for measurement assurance, payment completeness, allocation assurance, reward attribution, disclosure, residual trust, implementation burden, latency and dispute resolution.
 **Qualification:** ratings are analytical judgements, not measured performance or probabilities. This file does not support numerical ICU costs.
 
-## E. Resolved audit issues and remaining publication checks
+## E. Audit resolutions incorporated in the manuscript
 
-The three substantive issues from the initial source audit have been resolved in `research/manuscript-audit-resolution-2026-11-18.md`. Apply the stated replacement text to the manuscript before inserting citations.
+The manuscript now incorporates the source and scope corrections recorded during the November 2026 audit.
 
-1. **Section 4.3:** attribute the participant-departure observation to PR #111, not PR #103. PR #111 replaces the earlier design and was open at the 17 November 2026 snapshot. Cite [5] and [10]. PR #103 [8] is historical context only.
-2. **Section 6.1:** do not describe the full reward-attribution checklist as an implemented I-10 model. The located formal property register is P1–P8; P6 is only a reward-budget bound. Describe the full checklist as a proposed validation requirement and distinguish the narrower prototype checks in [18], [25] and [26].
-3. **Section 7.2:** remove the unsupported ICU totals and break-even arithmetic. The current repository does not contain the model or parameters that generated them. Use qualitative, explicitly unmeasured cost drivers supported by [15], [19] and [27].
-4. **Section 6.3:** retain the qualification that the four-participant example is hand-derived, not an executable fixture. The executable row-space experiment is [16] and [17].
-5. **CIP-0129 permalink:** resolved. Reference [2] now points to the 23 October 2026 approval commit `8e694e509c47ecb59e5731289882b350e3186372`.
-6. **Implementation status:** cite PR #100 and #104 as merged feature-fork code, PR #111 as open, PR #8449 as draft, and tracker issues #152, #155, #159 and #163 with the 17 November 2026 snapshot qualification. None of this is proof of MainNet deployment.
-7. **Prototype test count:** attach a test count only to a precise repository commit and reproducible CI/local run. The isolated 29-test result in [new audit evidence] is not a full repository-suite run and must not be presented as one.
-8. **External literature:** do not add generic academic references for appearance. Add a source only when the manuscript makes a substantive claim that depends on it.
+1. **Section 4.3:** the participant-departure observation is attributed to PR #111. PR #103 is identified only as historical context. The observed behaviour is explicitly limited to proposed source code, not deployed production behaviour.
+2. **Section 6.1:** the complete reward-attribution checklist is described as a proposed validation requirement. The manuscript distinguishes it from the narrower reward-budget test and the settlement-manifest validator's actual coverage.
+3. **Section 7.2:** unsupported numerical ICU totals and break-even arithmetic have been removed. The section describes qualitative cost drivers and explicitly states that costs were not empirically measured or parameterised in a reproducible model.
+4. **Section 6.3:** the hand-derived nested-cohort example is distinguished from the executable row-space experiment. Both are qualified by their stated assumptions.
+5. **Protocol status:** CIP-0129 is cited at its approved revision. CIP-0132 is identified as Proposed in the reviewed revision. Proposed, merged-source, open-PR and draft-PR evidence is not described as proof of MainNet deployment.
+6. **Prototype evidence:** test counts are not claimed without a reproducible run tied to a specific commit. Prototype tests are distinguished from production integration and independent operational assurance.
 
 ## F. Final citation style recommendation
 
 Use numbered citations in square brackets, for example `[1, 3]`, with a numbered References section. Cite the primary CIP for protocol requirements, the exact PR/issue for implementation observations, and the repository artefact for the authors' own experiments. Where a sentence combines multiple evidence classes, cite each class separately.
 
-The final bibliography should keep external sources and the authors' own reproducibility artefacts distinguishable. This register is an editorial working document; it is not itself the paper's final References section.
+The manuscript contains the final numbered References section. This register remains a supporting source map that records provenance, claim scope and qualifications for the cited material.
