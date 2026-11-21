@@ -24,7 +24,7 @@ CIP-0132, Dedicated Synchronizer Paymaster Model, proposes the first technical p
 The proposal divides traffic reporting into ten-minute intervals. In this initial phase, traffic is not enforced against a prepaid limit: messages are not rejected because a node has exhausted its traffic allowance. The relationship between the traffic report and the subsequent burn is off-ledger. The proposal explicitly relies on the dedicated synchronizer operator and paymaster being trusted to report and pay the correct amount. The burn invokes an activity-recording mechanism intended to support app and validator reward attribution.
 
 This arrangement is an interim architecture. It provides a path toward including dedicated synchronizers in the Universal Burn economy without requiring the full enforcement and trust model of a later implementation.
- As of 18 November 2026, CIP-0132 remained proposed. The analysis therefore treats it as a proposed protocol model rather than an approved or production-deployed system. CIP-0132.
+ As of 18 November 2026, CIP-0132 remained proposed. The analysis therefore treats it as a proposed protocol model rather than an approved or production-deployed system [3].
 
 1.2 The accounting assurance problem
 
@@ -90,7 +90,7 @@ The objective is therefore narrower and more testable than proving the entire pa
 
 2.1 Dedicated synchronizer paymaster architecture
 
-The accounting model examined in this research emerges from two related proposals.
+The accounting model examined in this research emerges from two related proposals [2, 3, 12].
 
 CIP-0129 establishes the economic framework of Universal Burn and Synchronizer Pricing. Its central objective is to bring production traffic on dedicated synchronizers into the same Canton Coin burn-and-reward economy as traffic on the Global Synchronizer. Under this framework, production traffic on every synchronizer is intended to contribute to network-wide burns, while applications and validators receive rewards according to the applicable reward rules.
 
@@ -151,7 +151,7 @@ This creates an on-ledger association between a synchronizer and its authorised 
 
 Stage 5: Activity recording and reward attribution
 
-The paymaster’s traffic purchase exercises the App Activity Recording Extension Hook associated with CIP-0104.
+CIP-0132 proposes that the paymaster’s traffic purchase exercise the App Activity Recording Extension Hook associated with CIP-0104 [1, 3, 6, 24].
 
 The proposal describes the creation of activity records for the paymaster and a validator reward coupon corresponding to the amount of traffic purchased. App and asset activity records use the registered activity-weight parameters. Subsequent reward issuance occurs through separate transactions.
 
@@ -506,14 +506,13 @@ Settlement assurance is therefore stronger than measurement assurance in this pr
 6.1 Reward attribution integrity
 The Dedicated Synchronizer Paymaster Model connects traffic purchases to the Canton Coin reward mechanism through activity records generated when the paymaster burns CC.
 This creates an accounting dependency between the traffic reported by the dedicated synchronizer, the payment made by the paymaster and the activity recognised by the reward system.
-The first phase of the proposed model attributes the relevant activity to the designated paymaster through the activity-recording mechanism. The registered activity weights determine how the purchase is represented for application and asset activity. Validator reward attribution is handled through a separate reward mechanism.
+The first phase of the proposed model attributes the relevant activity to the designated paymaster through the activity-recording mechanism. The registered activity weights determine how the purchase is represented for application and asset activity. Validator reward attribution is handled through a separate reward mechanism [1, 3, 6, 23, 24].
 This should not be confused with complete participant-level attribution. The initial paymaster model does not, by itself, demonstrate that every participant’s individual traffic contribution is independently measured and rewarded through the same accounting path.
 
 The research design specifies a reward-attribution validation checklist covering identity and reference binding, authorised activity weights, reward-rule and epoch versions, duplicate or superseded records, reward categories, deterministic calculation and aggregate budget limits.
 The current prototype evidence is narrower: the checked-in adversarial test demonstrates a reward-budget bound, while the settlement-manifest validator tests interval coverage, agreement references, burn uniqueness and payment reconciliation. The full reward-attribution checklist has not been demonstrated by the checked-in prototype tests and is treated here as a proposed validation requirement. [9, 18, 25, 26]
 
-The model uses exact Decimal arithmetic and explicit references between activity, settlement and reward records. It is designed to reject attribution that cannot be reconciled with the supplied accounting evidence.
-These checks address errors such as applying an outdated weight, counting the same activity twice, using a superseded record or associating a reward with the wrong paymaster or synchronizer.
+The proposed validation design would use exact Decimal arithmetic and explicit references between activity, settlement and reward records. If implemented, such controls could reject attribution that cannot be reconciled with the supplied accounting evidence. They would address errors such as applying an outdated weight, counting the same activity twice, using a superseded record or associating a reward with the wrong paymaster or synchronizer. The full set of these controls is not demonstrated by the checked-in prototype tests [13, 18, 23, 24].
 However, correct calculation is not equivalent to justified attribution.
 The prototype assumes that the activity records, burn evidence, registered weights and reward rules supplied to it are authoritative and sufficiently complete. It does not independently establish that the original traffic was measured correctly, that every relevant burn has been included, or that the deployed reward system follows the same rules.
 The distinction is particularly important when considering the relationship between payment and reward. A reward calculation can be mathematically correct relative to a supplied burn while still inheriting an incomplete or incorrect upstream traffic report.
