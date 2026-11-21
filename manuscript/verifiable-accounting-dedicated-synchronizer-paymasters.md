@@ -504,7 +504,7 @@ Settlement assurance is therefore stronger than measurement assurance in this pr
 
 6. Reward Attribution and Privacy
 6.1 Reward attribution integrity
-The Dedicated Synchronizer Paymaster Model connects traffic purchases to the Canton Coin reward mechanism through activity records generated when the paymaster burns CC.
+The Dedicated Synchronizer Paymaster Model proposes to connect traffic purchases to the Canton Coin reward mechanism through activity records generated when the paymaster burns CC [1, 3].
 This creates an accounting dependency between the traffic reported by the dedicated synchronizer, the payment made by the paymaster and the activity recognised by the reward system.
 The first phase of the proposed model attributes the relevant activity to the designated paymaster through the activity-recording mechanism. The registered activity weights determine how the purchase is represented for application and asset activity. Validator reward attribution is handled through a separate reward mechanism [1, 3, 6, 23, 24].
 This should not be confused with complete participant-level attribution. The initial paymaster model does not, by itself, demonstrate that every participant’s individual traffic contribution is independently measured and rewarded through the same accounting path.

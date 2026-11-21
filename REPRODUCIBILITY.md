@@ -25,7 +25,6 @@ Examples:
 ```bash
 python analysis/aggregate_linear_leakage.py
 python analysis/aggregate_disclosure_experiment.py
-python analysis/interval_coverage.py
 ```
 
 Not every analysis module is designed as a standalone command-line program. Inspect its module docstring and `run` or entry-point function before executing it.
