@@ -4,10 +4,10 @@ This repository contains deterministic research models, validators and unit test
 
 ## Requirements
 
-- Python 3.14.2 was used for the latest recorded full-suite execution.
+- Python 3.14.2 was used for the recorded successful local full-suite execution.
 - The test suite uses Python's built-in `unittest` framework.
-- The agreement-signature tests require the `cryptography` package for Ed25519 operations.
-- The repository does not currently provide a pinned dependency lockfile. The recorded environment is evidence of one successful configuration, not a guarantee for every Python version.
+- Agreement-signature tests require the `cryptography` package for Ed25519 operations.
+- The repository does not currently provide a pinned dependency lockfile.
 
 Install the test dependency:
 
@@ -23,7 +23,7 @@ From the repository root:
 PYTHONPATH=analysis python -m unittest discover -s tests -v
 ```
 
-The latest recorded local full-suite execution completed with **271 tests passed** on 18 November 2026, using Python 3.14.2. The focused correction suites recorded 71 passing tests. See the [validation and execution record](research/validation-and-execution-record.md) for the dated test counts, commit SHAs and distinction from failed GitHub Actions workflow runs.
+A complete local suite of **271 tests passed** on 18 November 2026 at commit `68502120cecb8e223c5bfb5c98028aff02389ed4`, using Python 3.14.2. That commit is on the `circleci-project-setup` development history. The current `main` branch and the presentation PR do not contain the same analysis/test code, so this result does not certify those branches. See the [validation and execution record](research/validation-and-execution-record.md) for the branch comparison, earlier successful milestones and the distinction from GitHub Actions failures.
 
 ## Run selected standalone experiments
 
@@ -38,7 +38,7 @@ Not every analysis module is designed as a standalone command-line program. Insp
 
 ## Interpretation
 
-A passing test establishes that the checked-in implementation behaved as expected for that test's supplied inputs. It does not establish:
+A passing test establishes that the tested implementation behaved as expected for that test's supplied inputs. It does not establish:
 - completeness or authenticity of production traffic measurements;
 - production deployment or integration of the proposed accounting path;
 - legal authority or institutional independence of signers;
@@ -49,4 +49,4 @@ Synthetic experiment outputs must be interpreted under the assumptions stated in
 
 ## Reproducibility record
 
-For a new run, record the commit SHA, Python version, command, test output and any local modifications. Do not overwrite earlier successful execution records with the status of a later GitHub Actions workflow. Local test execution and CI workflow execution are separate evidence.
+For a new run, record the commit SHA, branch, Python version, command, test output and any local modifications. Do not conflate a successful local test execution with a GitHub Actions workflow conclusion. Test the final reconciled branch before describing its implementation as passing.
