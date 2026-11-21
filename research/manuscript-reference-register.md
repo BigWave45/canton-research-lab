@@ -1,7 +1,7 @@
 # Manuscript Reference Register
 
 **Manuscript:** *Verifiable Accounting for Dedicated Synchronizer Paymasters: Guarantees, Trust Boundaries, and Trade-offs*  
-**Register status:** Working register; not yet the final bibliography.  
+**Register status:** Working source map retained for research provenance; the final numbered bibliography is in the manuscript.  
 **Repository snapshot inspected:** `BigWave45/canton-research-lab`, default branch `main`, tree SHA `ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c`.  
 **Register prepared:** 18 November 2026.
 
@@ -87,8 +87,8 @@ https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a0
 **Use:** Sections 4.3–4.4, 6.1, 8.5 and 9.1.
 
 ### [11] Implementation evidence mapping
-`research/implementation-evidence-mapping-2026-11-17.md`  
-https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/implementation-evidence-mapping-2026-11-17.md  
+`research/canton-implementation-evidence-map.md`  
+https://github.com/BigWave45/canton-research-lab/blob/cfddf3a416d0b00284640dd27988d3ee800377f2/research/canton-implementation-evidence-map.md  
 **Supports:** status classification of proposed/present/partial/unverified interface properties; report API, settlement binding, burn mapping and reward integration evidence gaps.  
 **Use:** Sections 2–5, 8 and 9.
 
