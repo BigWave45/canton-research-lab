@@ -1,12 +1,19 @@
 # Reproducibility
 
-This repository contains deterministic research models and unit tests. They evaluate supplied synthetic or explicitly constructed records; they do not query Canton production systems.
+This repository contains deterministic research models, validators and unit tests. They evaluate supplied synthetic or explicitly constructed records; they do not query Canton production systems.
 
 ## Requirements
 
-- Python 3.10 or later.
+- Python 3.14.2 was used for the latest recorded full-suite execution.
 - The test suite uses Python's built-in `unittest` framework.
-- The repository does not currently provide a pinned dependency lockfile. Do not assume that every optional analysis script has been tested in every Python environment.
+- The agreement-signature tests require the `cryptography` package for Ed25519 operations.
+- The repository does not currently provide a pinned dependency lockfile. The recorded environment is evidence of one successful configuration, not a guarantee for every Python version.
+
+Install the test dependency:
+
+```bash
+python -m pip install cryptography
+```
 
 ## Run the test suite
 
@@ -16,7 +23,7 @@ From the repository root:
 PYTHONPATH=analysis python -m unittest discover -s tests -v
 ```
 
-The `PYTHONPATH` setting makes the modules in `analysis/` available to the test files.
+The latest recorded local full-suite execution completed with **271 tests passed** on 18 November 2026, using Python 3.14.2. The focused correction suites recorded 71 passing tests. See the [validation and execution record](research/validation-and-execution-record.md) for the dated test counts, commit SHAs and distinction from failed GitHub Actions workflow runs.
 
 ## Run selected standalone experiments
 
@@ -27,12 +34,11 @@ python analysis/aggregate_linear_leakage.py
 python analysis/aggregate_disclosure_experiment.py
 ```
 
-Not every analysis module is designed as a standalone command-line program. Inspect its module docstring and `run` or entry-point function before executing it.
+Not every analysis module is designed as a standalone command-line program. Inspect its module docstring and `run` or entry-point function before executing it. Each experiment's research note defines its inputs, assumptions, expected invariants and interpretation limits.
 
 ## Interpretation
 
 A passing test establishes that the checked-in implementation behaved as expected for that test's supplied inputs. It does not establish:
-
 - completeness or authenticity of production traffic measurements;
 - production deployment or integration of the proposed accounting path;
 - legal authority or institutional independence of signers;
@@ -43,4 +49,4 @@ Synthetic experiment outputs must be interpreted under the assumptions stated in
 
 ## Reproducibility record
 
-For a reproducible report, record the commit SHA, Python version, command, test output and any local modifications. The manuscript's November 2026 snapshot and its source references define the scope of the reported findings.
+For a new run, record the commit SHA, Python version, command, test output and any local modifications. Do not overwrite earlier successful execution records with the status of a later GitHub Actions workflow. Local test execution and CI workflow execution are separate evidence.
