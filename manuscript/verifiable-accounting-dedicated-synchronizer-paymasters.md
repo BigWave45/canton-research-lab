@@ -1,3 +1,16 @@
+Verifiable Accounting for Dedicated Synchronizer Paymasters: Guarantees, Trust Boundaries, and Trade-offs
+
+Abstract
+
+The proposed Dedicated Synchronizer Paymaster Model introduces a payment mechanism in which a designated paymaster periodically settles synchronizer traffic costs through Canton Coin burns. The model creates an accounting relationship between reported infrastructure activity, commercial obligations, payment events and reward attribution. However, verifying that a payment corresponds to a reported liability does not establish that the underlying activity was measured completely or correctly.
+
+This research examines the accounting guarantees that can be added to the proposed model and evaluates their economic, privacy and operational trade-offs. It develops and tests a prototype covering interval completeness, signed settlement bindings, deterministic liability calculation, multi-burn allocation, duplicate-payment prevention and correction handling. Reward attribution is examined through a proposed validation framework and a narrower prototype test of reward-budget constraints. Synthetic experiments examine the limits of aggregate privacy controls, while a qualitative comparison evaluates alternative assurance architectures and their implementation and operational cost drivers.
+
+
+The results distinguish three assurance layers. Settlement integrity can be strengthened through explicit evidence binding, schedule validation, deterministic calculations and allocation controls. Measurement completeness remains dependent on authoritative source records and independent evidence of activity. Reward attribution and privacy can be modelled and constrained, but cannot be considered production-verified without access to the relevant operational evidence and disclosure interfaces.
+
+The central finding is that accounting verification must distinguish the integrity of a settlement from the completeness and authority of the evidence on which that settlement depends. Stronger cryptographic and reconciliation controls can make accounting records more consistent and auditable, but they cannot independently establish that the original measurement was truthful.
+
 1. Introduction
 
 1.1 Background
