@@ -1,34 +1,24 @@
-# Research Workstream
+# Research evidence and supporting analysis
 
-This directory contains the source-backed and model-based work supporting the selected Canton Paymaster accounting study.
+This directory contains technical records that support the paper. It is organised by the claims and mechanisms examined, rather than by the chronology of the research process.
 
-## Controlling scope
+## Core evidence map
 
-**What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?**
+| Research area | Supporting material |
+|---|---|
+| Protocol and implementation status | [CIP architecture comparison](cip-0104-0129-0132-architecture-comparison.md), [implementation evidence audit](implementation-evidence-audit.md), [Canton implementation evidence map](canton-implementation-evidence-map.md) |
+| Accounting invariants and threat model | [Accounting properties and threat model](accounting-properties-and-threat-model.md) |
+| Measurement and reporting | [Traffic report implementation audit](traffic-report-implementation-audit.md), [traffic report consistency and retention](traffic-report-consistency-and-retention.md), [participant departure mechanisms](participant-departure-mechanism-comparison.md), [underlying sequencer pruning semantics](underlying-sequencer-pruning-semantics.md) |
+| Agreement and liability | [Cryptographic agreement verification](cryptographic-agreement-verification.md), [agreement-aware liability calculation](agreement-aware-liability-calculation.md), [agreement schedule calculator](agreement-schedule-calculator.md) |
+| Settlement and correction | [Settlement accounting interface specification](settlement-accounting-interface-specification.md), [paymaster state transition model](paymaster-state-transition-model.md), [correction identity and obligation mapping](correction-identity-and-obligation-mapping.md), [end-to-end verification audit](end-to-end-verification-audit.md) |
+| Burn allocation and reconciliation | [Shared paymaster portfolio allocation experiment](shared-paymaster-portfolio-allocation-experiment.md), [reconciliation experiment results](reconciliation-experiment-results.md), [reconciliation model validation results](reconciliation-model-validation-results.md) |
+| Reward attribution | [Reward attribution integrity](reward-attribution-integrity.md), [paymaster versus Merkle reward accounting](paymaster-vs-merkle-reward-accounting.md) |
+| Privacy | [Privacy disclosure matrix and leakage experiment](privacy-disclosure-matrix-and-leakage-experiment.md), [linear composition and public verification surface](linear-composition-and-public-verification-surface.md), [privacy disclosure requirements](privacy-disclosure-requirements.md) |
+| Assurance architecture | [Comparative assurance model specification](comparative-assurance-model-specification.md), [integrated assurance architecture comparison](integrated-assurance-architecture-comparison.md), [comparative findings](comparative-findings.md) |
+| Adversarial testing | [Adversarial accounting experiments](adversarial-accounting-experiments.md), [minimum viable reconciliation state machine](minimum-viable-reconciliation-state-machine.md) |
 
-The current project stage is evidence consolidation and validation. The topic has been selected; the literature review, source verification and experimental validation continue as parts of the research rather than as prerequisites to selecting a topic.
+## How to read these records
 
-## Start here
+The research notes are supporting evidence, not independent publications. The final paper is the authoritative synthesis. Where an older technical note differs from the paper's stated November 2026 evidence boundary, use the paper's dated claim and verify the underlying source before relying on the older note.
 
-1. [Research evidence map](research-evidence-map.md): maps research claims to existing files, evidence classes, limitations and remaining work.
-2. [Research scope correction](research-scope-correction.md): defines the thesis and keeps implementation defects subordinate to the accounting question.
-3. [Canton implementation evidence map](canton-implementation-evidence-map.md): distinguishes present, proposed, absent and unverified implementation elements.
-4. [Integrated assurance architecture comparison](integrated-assurance-architecture-comparison.md): compares four assurance designs and records the qualitative nature of the ratings.
-5. [Initial comparative assurance experiment](initial-comparative-assurance-experiment.md): the six-scenario synthetic experiment and its limitations.
-6. [Quantitative assurance evaluation plan](quantitative-assurance-evaluation-plan.md): the evaluation design and existing-artifact feasibility audit.
-7. [Assurance cost model](assurance-cost-model.md): the parameterised calculator, inputs, outputs and limits.
-8. [Illustrative assurance-cost scenario](illustrative-assurance-cost-scenario.md): a synthetic four-architecture cost comparison and sensitivity checks; not Canton cost evidence.
-9. [Prototype measurement protocol](prototype-measurement-protocol.md): the reproducible local microbenchmark method for manifest validation, allocation checks and aggregate-leakage analysis.
-
-## Workstream organisation
-
-- Literature and grant precedent: literature matrices, comparative grant research and completed-output case studies.
-- Canton protocol and implementation: CIP analysis, code audits, issue/PR evidence and implementation status.
-- Accounting models: measurement, pricing, agreement schedules, settlement, allocation and reward attribution.
-- Privacy: disclosure tiers, aggregate composition and leakage experiments.
-- Comparative assurance: public burn evidence, signed reconciliation, confidential audit and cryptographic proof.
-- Data feasibility: public data access, metric definitions and limits on network-wide inference.
-
-## Publication discipline
-
-Every claim in the paper must be traceable to a primary source, reproducible data extract, model, test or explicitly labelled analytical judgement. Synthetic outputs are not Canton production measurements. Qualitative architecture ratings are not measured cost or latency. See the evidence map before adding new models or expanding scope.
+The executable models are in [`analysis/`](../analysis/), with corresponding tests in [`tests/`](../tests/). Reproduction instructions are in [`REPRODUCIBILITY.md`](../REPRODUCIBILITY.md).
