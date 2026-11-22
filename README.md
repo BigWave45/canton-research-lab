@@ -1,49 +1,52 @@
-# Canton Research Lab
+# Verifiable Accounting for Dedicated Synchronizer Paymasters
 
-Private research workspace for an interdisciplinary, quantitatively grounded study of economic accounting in privacy-preserving financial infrastructure, using Canton's proposed Dedicated Synchronizer Paymaster Model as the case study.
+**Research paper:** [Verifiable Accounting for Dedicated Synchronizer Paymasters: Guarantees, Trust Boundaries, and Trade-offs](manuscript/verifiable-accounting-dedicated-synchronizer-paymasters.md)
 
-## Controlling research question
+This repository contains the research artefacts supporting the paper: executable accounting models, unit tests, synthetic privacy experiments, implementation evidence reviews, and technical specifications.
 
-**What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?**
+## Research question
 
-The project follows activity measurement, interval reporting, off-ledger commercial liability, Canton Coin settlement, reward attribution and independent reconciliation. It is not a general security audit or a claim that Canton has experienced accounting failures.
+What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?
 
-## Current research status
+## What the research contributes
 
-The repository contains:
-- a comparative review of other public research-funding programmes and selected completed outputs;
-- Canton literature, protocol and implementation evidence reviews;
-- synthetic accounting, pricing, reconciliation, allocation and privacy models;
-- a comparative assessment of four assurance architectures;
-- a preliminary research evidence map identifying what each artefact can and cannot establish.
+- A model of the accounting path from synchronizer activity reports through commercial liability, Canton Coin burns, allocation and reward attribution.
+- Executable controls for expected reporting intervals, agreement and signer checks, deterministic liability calculations, settlement reconciliation, burn allocation and correction handling.
+- Synthetic experiments on adversarial accounting cases and disclosure through overlapping aggregate releases.
+- A comparative assessment of four assurance architectures: public burn-only verification, signed reconciliation, independent confidential audit and cryptographic proof.
+- An explicit separation between properties demonstrated by the research prototype and claims that require independent operational evidence.
 
-The work is now in **evidence consolidation and validation**. The models are not production Canton software. Synthetic scenarios must not be described as observed network behaviour. Public-source implementation reviews do not establish deployment.
+## Start here
 
-Read [the research evidence map](research/research-evidence-map.md) for the current claim-to-evidence inventory and limitations. Read [STATE.md](STATE.md) for the chronological project log and next action.
+1. Read the [research paper](manuscript/verifiable-accounting-dedicated-synchronizer-paymasters.md).
+2. Review the [research map](research/README.md) to locate the evidence and experiments behind each part of the paper.
+3. Inspect the [analysis code](analysis/) and [tests](tests/).
+4. Follow the [reproducibility instructions](REPRODUCIBILITY.md).
+5. Review the [Canton parameter register](data/parameter-register.md) for the status and provenance of protocol and modelling inputs.
 
-## Repository map
+## Repository structure
 
-- `STATE.md`: project checkpoint and historical work log.
-- `GRANT_PROGRAMME.md`: programme requirements and verification status.
-- `RESEARCH_METHODOLOGY.md`: research and reproducibility standards.
-- `research/research-evidence-map.md`: controlling map of claims, artefacts, evidence classes and gaps.
-- `research/`: literature, source analysis, implementation reviews, experiments and research notes.
-- `sources/`: source index and bibliography.
-- `data/`: datasets, metadata and provenance notes.
-- `analysis/`: models and calculations.
-- `tests/`: tests of the research code.
-- `outputs/`: publication-ready research outputs.
+| Path | Contents |
+|---|---|
+| `manuscript/` | The final research paper |
+| `analysis/` | Executable models, validators and synthetic experiments |
+| `tests/` | Unit tests for selected model properties |
+| `research/` | Technical evidence reviews, experiment specifications and supporting analysis |
+| `data/` | Parameter register and data definitions |
+| `sources/` | Source provenance and research evidence guidance |
 
-## Evidence rules
+## Evidence boundary
 
-1. Separate primary-source facts, implementation observations, observed public data, synthetic results, analytical judgements and unknowns.
-2. Record source dates, versions, coverage and provenance.
-3. A merged pull request is not proof of production deployment.
-4. A passing synthetic test is not empirical validation of Canton.
-5. A public burn is not proof that all chargeable activity was measured or that the correct private liability was settled.
-6. Do not invent data, grant criteria, performance measurements or probabilities of selection.
-7. Keep unpublished research and working materials private until the evidence, licensing, privacy and reproducibility checks are complete.
+This is a research prototype and public-source study. The models operate on supplied records and explicit assumptions. They are not connected to a production synchronizer, paymaster or reward-distribution service.
 
-## Publication
+The repository does not provide independent ground-truth traffic measurements, a complete production settlement history, or proof that the proposed accounting path is deployed end to end. Passing tests establishes behaviour for the supplied test cases; it does not establish production correctness or measurement completeness. The reward-attribution implementation evidence is narrower than the full validation framework discussed in the paper.
 
-The intended primary output is a substantive research paper. The GitHub repository is its reproducibility and evidence companion; it does not replace the paper's explanation of methods, results and limitations. Resonance is the planned public publication venue, subject to the grant programme's current terms.
+The economic comparison is qualitative. This repository does not provide a reproducible numerical assurance-cost model or measured Canton operating costs.
+
+## Research status
+
+The paper describes a November 2026 public-source snapshot. Protocol proposals, implementation branches and operational interfaces can change. Status statements should be read against the dates and source references in the paper and supporting evidence records.
+
+## Citation
+
+When using this work, cite the paper title and link to this repository. The paper contains the full reference list and explains the evidence classification and limitations.
