@@ -1,14 +1,13 @@
-# Sources and Literature
+# Sources and provenance
 
-Store source records with stable URLs, publication dates, access dates, source type, and notes on what each source supports.
+The paper's numbered reference list is the primary bibliography for claims made in the published research. The technical records in `research/` identify the specific protocol proposals, source changes, issues and implementation snapshots they examine.
 
-Prefer:
-1. official programme terms and funder award records;
-2. original funded papers, datasets, code, and project outputs;
-3. academic papers and institutional publications;
-4. technical documentation and governance records;
-5. reputable secondary reporting for context only.
+Use the following evidence hierarchy when evaluating claims:
 
-For every material claim, record the precise source and the claim it supports. Distinguish primary evidence from commentary. Do not cite search snippets when the underlying source can be retrieved.
+1. Protocol proposals and approved governance documents establish documented design or governance status, not necessarily deployed behaviour.
+2. Source-code observations establish behaviour in the inspected revision, not production deployment.
+3. Prototype tests establish behaviour for their supplied test cases.
+4. Synthetic experiments establish results under their stated constructed inputs and assumptions.
+5. Independent operational evidence and production assurance require evidence not available in this study.
 
-See `source-ledger.csv` when created.
+Always record the source revision or access date when reproducing a time-sensitive implementation claim. Do not treat an open pull request, issue description or proposed interface as proof of deployed functionality.
