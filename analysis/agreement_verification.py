@@ -28,6 +28,7 @@ def agreement_digest(document):
 
 def verify_signed_agreement(
     document, signature_b64, signer_key_id, trusted_signers, verification_time,
+    required_role=None,
 ):
     """Return a structured verification result; never silently trust unknown keys."""
     try:
@@ -48,6 +49,8 @@ def verify_signed_agreement(
         return _fail("UNKNOWN_SIGNER_KEY")
     if signer.get("authorised") is not True:
         return _fail("SIGNER_NOT_AUTHORISED")
+    if required_role is not None and required_role not in signer.get("roles", ()):
+        return _fail("SIGNER_ROLE_NOT_AUTHORISED")
     if signer.get("revoked_at"):
         revoked = _parse_time(signer["revoked_at"])
         if when >= revoked:

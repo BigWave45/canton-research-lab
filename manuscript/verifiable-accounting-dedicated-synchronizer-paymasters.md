@@ -15,185 +15,16 @@ The central finding is that accounting verification must distinguish the integri
 
 1.1 Background
 
-Introduce the Dedicated Synchronizer Paymaster Model proposed in CIP-0132 and its relationship to synchronizer traffic reporting, post-hoc Canton Coin burns and reward attribution.
-
-Explain the economic problem: infrastructure activity creates a liability, but the relationship between measured activity and payment must be established through an auditable accounting process.
-
-1.2 The accounting assurance problem
-
-Establish the distinction between:
-
-	•	Measuring chargeable activity.
-	•	Reporting measured activity.
-	•	Determining the commercial liability.
-	•	Settling that liability.
-	•	Attributing rewards.
-	•	Allowing independent verification without unnecessary disclosure.
-
-1.3 Research question
-
-What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?
-
-1.4 Contributions
-
-	1.	A structured accounting assurance model covering measurement, settlement and attribution.
-	2.	A tested prototype for interval, settlement, allocation, reward and correction integrity.
-	3.	Adversarial and synthetic experiments identifying limits in signatures, interval completeness and aggregate privacy.
-	4.	A comparative assurance-cost model.
-	5.	An evidence-based assessment distinguishing demonstrated prototype guarantees from unresolved production assumptions.
-
-2. Protocol and Accounting Model
-
-2.1 Dedicated synchronizer paymaster architecture
-
-Describe the proposed roles and the Phase 1 flow, including the off-ledger reporting and commercial agreement assumptions.
-
-2.2 Accounting lifecycle
-
-Define the relationship between activity reports, reporting intervals, agreements, liabilities, burn events, allocations and reward attribution.
-
-2.3 Trust boundaries
-
-Identify which claims depend on the synchronizer operator, paymaster, signing authority, reporting system, ledger evidence and independent auditor.
-
-2.4 Scope and assumptions
-
-Separate proposed protocol behaviour, observed source implementation, prototype assumptions and unavailable production evidence.
-
-3. Threat Model and Assurance Requirements
-
-3.1 Failure and adversarial scenarios
-
-Consider incomplete reports, missing intervals, invalid corrections, substituted evidence, duplicate burn allocation, unauthorized agreement changes, incorrect reward attribution and aggregate disclosure.
-
-3.2 Accounting invariants
-
-Introduce the twelve research invariants, grouped by measurement, settlement, temporal accounting, reward attribution and privacy.
-
-3.3 Evidence classification
-
-Define the distinction between specification evidence, source-code observations, prototype tests, reproducible synthetic experiments, independent network evidence and production assurance.
-
-4. Measurement Assurance
-
-4.1 Interval completeness
-
-Explain expected schedules, independent window anchors, gaps, overlaps, duplicate intervals and reporting deadlines.
-
-4.2 Report validity versus measurement completeness
-
-Demonstrate why signatures, digests and internally consistent reports cannot establish that every chargeable event was captured.
-
-4.3 Participant membership and departure
-
-Examine the observed interval-end aggregation behaviour and the unresolved question of whether activity before participant departure remains chargeable.
-
-4.4 Evidence limitations
-
-Explain the absence of independent traffic ground truth and the difference between a prototype completeness check and a verified source measurement.
-
-5. Settlement Assurance
-
-5.1 Agreement and authority verification
-
-Examine agreement signatures, signer roles, key registries and the limits of generic role authorization.
-
-5.2 Report-to-obligation binding
-
-Explain report-set digests and separately signed settlement bindings.
-
-5.3 Deterministic liability calculation
-
-Describe tariff inputs, effective periods, integer arithmetic and explicit rounding policies.
-
-5.4 Burn allocation and double-counting prevention
-
-Evaluate many-to-many allocation, unique identifiers, replay checks, exact arithmetic and due-time-aware coverage.
-
-5.5 Temporal settlement and corrections
-
-Examine grace periods, partial settlement, supersession chains, adjustment candidates, overpayments and the limits of historical as-of verification.
-
-5.6 Prototype evaluation
-
-Present the tests, adversarial cases, validation results and the assumptions that remain external to the prototype.
-
-6. Reward Attribution and Privacy
-
-6.1 Reward attribution integrity
-
-Describe the relationship between activity evidence, settlement evidence, authorized weights, rule versions and reward calculations.
-
-6.2 Public verification versus restricted audit
-
-Propose a separation between publicly verifiable payment facts, auditor-restricted accounting evidence and highly restricted participant-level information.
-
-6.3 Aggregate disclosure and composition
-
-Present the nested-cohort and full-rank synthetic examples. Explain why a minimum cohort-size rule alone cannot prevent disclosure under arbitrary overlapping releases.
-
-6.4 Privacy controls and trade-offs
-
-Evaluate fixed cohorts, query composition controls, delayed publication, coarser reporting windows, rounding and differential privacy. Distinguish optional public analytics from exact contractual billing.
-
-7. Economic and Operational Trade-offs
-
-7.1 Assurance architectures
-
-Compare public burn-only verification, signed reconciliation, independent confidential audit and cryptographic proof architectures.
-
-7.2 Cost model
-
-Present the parameterised cost model and its illustrative outputs.
-
-7.3 Operational consequences
-
-Discuss evidence retention, key management, audit access, dispute resolution, reporting latency and the operational burden of corrections.
-
-7.4 Limits of the comparison
-
-Make clear that the model uses synthetic assumptions, not measured Canton production costs, actual tariffs or observed performance.
-
-8. Discussion
-
-8.1 What can be verified
-
-Distinguish integrity of supplied evidence, deterministic settlement correctness and completeness of the original measurement.
-
-8.2 What remains dependent on trust
-
-Identify source measurement, authority, record completeness, production deployment and reward-system integration.
-
-8.3 Design implications
-
-Discuss what a practical assurance architecture should expose, retain, authenticate and restrict.
-
-9. Limitations and Further Work
-
-Cover the absence of independent traffic ground truth, unavailable operational records, unresolved API and deployment status, synthetic privacy assumptions, unmeasured costs and the lack of independent production validation.
-
-10. Conclusion
-
-Return to the central distinction: verifying a payment is not equivalent to verifying the activity that generated the liability. State which guarantees the prototype demonstrates and which require independent source evidence or operational changes.
-
-Research artefacts
-
-The repository provides the prototype implementation, tests, synthetic experiments, source observations, evidence map, invariant matrix and cost model. These artefacts support reproducibility; they are not substitutes for production evidence.
-
-1. Introduction
-
-1.1 Background
-
-Canton’s Universal Burn framework seeks to bring traffic on the Global Synchronizer and dedicated synchronizers into a common economic system. Under the previously established arrangement, Global Synchronizer traffic was paid for through Canton Coin (CC) burns, while dedicated synchronizer traffic operated under a separate commercial model. CIP-0129, Universal Burn and Synchronizer Pricing, proposes extending the burn-and-reward framework to production traffic on every synchronizer. The proposal was approved on 23 October 2026. CIP-0129.
+Canton’s Universal Burn framework seeks to bring traffic on the Global Synchronizer and dedicated synchronizers into a common economic system. Under the previously established arrangement, Global Synchronizer traffic was paid for through Canton Coin (CC) burns, while dedicated synchronizer traffic operated under a separate commercial model. CIP-0129, Universal Burn and Synchronizer Pricing, proposes extending the burn-and-reward framework to production traffic on every synchronizer. The proposal was approved on 23 October 2026 [2].
 
 The economic change is significant. Dedicated synchronizer activity would contribute to the same network-wide burn mechanism, while applications and validators could receive rewards associated with that activity. The framework also anticipates volume-based pricing and commitment discounts, although those pricing mechanisms require further specification and implementation.
 
-CIP-0132, Dedicated Synchronizer Paymaster Model, proposes the first technical phase for bringing dedicated synchronizers into this system. Its proposed model assigns payment responsibility to a designated paymaster. The synchronizer operator reports consumed traffic, and the paymaster periodically settles the reported consumption by burning CC on the Global Synchronizer.
+CIP-0132, Dedicated Synchronizer Paymaster Model, proposes the first technical phase for bringing dedicated synchronizers into this system [3]. Its proposed model assigns payment responsibility to a designated paymaster. The synchronizer operator reports consumed traffic, and the paymaster periodically settles the reported consumption by burning CC on the Global Synchronizer.
 
 The proposal divides traffic reporting into ten-minute intervals. In this initial phase, traffic is not enforced against a prepaid limit: messages are not rejected because a node has exhausted its traffic allowance. The relationship between the traffic report and the subsequent burn is off-ledger. The proposal explicitly relies on the dedicated synchronizer operator and paymaster being trusted to report and pay the correct amount. The burn invokes an activity-recording mechanism intended to support app and validator reward attribution.
 
 This arrangement is an interim architecture. It provides a path toward including dedicated synchronizers in the Universal Burn economy without requiring the full enforcement and trust model of a later implementation.
- As of 18 November 2026, CIP-0132 remained proposed. The analysis therefore treats it as a proposed protocol model rather than an approved or production-deployed system. CIP-0132.
+ As of 18 November 2026, CIP-0132 remained proposed. The analysis therefore treats it as a proposed protocol model rather than an approved or production-deployed system [3].
 
 1.2 The accounting assurance problem
 
@@ -259,7 +90,7 @@ The objective is therefore narrower and more testable than proving the entire pa
 
 2.1 Dedicated synchronizer paymaster architecture
 
-The accounting model examined in this research emerges from two related proposals.
+The accounting model examined in this research emerges from two related proposals [2, 3, 12].
 
 CIP-0129 establishes the economic framework of Universal Burn and Synchronizer Pricing. Its central objective is to bring production traffic on dedicated synchronizers into the same Canton Coin burn-and-reward economy as traffic on the Global Synchronizer. Under this framework, production traffic on every synchronizer is intended to contribute to network-wide burns, while applications and validators receive rewards according to the applicable reward rules.
 
@@ -320,7 +151,7 @@ This creates an on-ledger association between a synchronizer and its authorised 
 
 Stage 5: Activity recording and reward attribution
 
-The paymaster’s traffic purchase exercises the App Activity Recording Extension Hook associated with CIP-0104.
+CIP-0132 proposes that the paymaster’s traffic purchase exercise the App Activity Recording Extension Hook associated with CIP-0104 [1, 3, 6, 24].
 
 The proposal describes the creation of activity records for the paymaster and a validator reward coupon corresponding to the amount of traffic purchased. App and asset activity records use the registered activity-weight parameters. Subsequent reward issuance occurs through separate transactions.
 
@@ -433,7 +264,7 @@ The prototype treats supplied evidence as input. It can reject inconsistencies w
 This limitation is fundamental. An adversary who controls the only source of a measurement may be able to provide a consistently signed but incomplete record. A verifier cannot distinguish that record from a complete one without an independent measurement source, trusted execution boundary or other evidence that constrains the source’s behaviour.
 The research does not attempt to break Canton cryptography, decrypt synchronizer messages, compromise validator infrastructure or infer transaction payloads from traffic volume alone. It also does not establish that any of the scenarios above has occurred in a Canton production deployment.
 3.3 Accounting invariants
-The threat scenarios are translated into twelve invariants. An invariant defines a property that an accounting process should preserve; it does not imply that the property is already guaranteed by the protocol.
+The threat scenarios are translated into twelve research-defined invariants. An invariant defines a property that an accounting process should preserve; it does not imply that the property is already guaranteed by the protocol. These twelve invariants are distinct from the repository’s P1–P8 prototype property register [9].
 Measurement and reporting
 I-01 — Interval completeness
 Every expected reporting interval within an independently defined settlement window must be represented exactly once, subject to an explicit and valid correction history. Gaps, overlaps, duplicates, malformed timestamps and truncated windows must not be silently accepted.
@@ -537,7 +368,7 @@ Each approach introduces its own trust and operational assumptions. An independe
 The research prototype does not implement an independent source measurement mechanism. It deliberately treats measurement completeness as an external assurance requirement.
 4.3 Participant membership and departure
 Interval aggregation introduces a further accounting question: which participants belong to the population whose activity is included in an interval?
-The inspected implementation associated with the proposed traffic-report work aggregates participants present at the end of an interval. A participant who was present at the start but absent at the end is therefore excluded from that end-of-interval participant population.
+The inspected implementation in Canton Network’s proposed traffic-report API, PR #111, aggregates participants present at the end of an interval [5, 10]. A participant who was present at the start but absent at the end is therefore excluded from that end-of-interval participant population.
 This is an implementation observation, not proof of incorrect billing.
 Whether the behaviour is economically correct depends on the intended charging semantics. If the accounting rule charges only participants present at the interval boundary, the aggregation may be intentional. If activity consumed before departure remains chargeable, an end-of-interval population alone may not capture the complete chargeable population.
 A robust accounting specification must therefore distinguish at least three concepts:
@@ -547,13 +378,13 @@ A robust accounting specification must therefore distinguish at least three conc
 These populations are not necessarily identical.
 If participant-level activity is relevant to pricing or reward attribution, the reporting specification must define how join and leave events affect the accounting period. It must also define whether activity is attributed to the participant that generated it, the party responsible for the associated costs, or another protocol-defined identity.
 The inspected implementation does not, on its own, answer these economic and contractual questions. The research therefore does not classify the observed aggregation behaviour as a billing defect. It identifies a specification question that must be resolved before participant-level completeness can be claimed.
-A suitable validation would compare interval aggregation against an independent event history containing participant join and leave times and the corresponding traffic measurements. Such a test would need an authoritative definition of which events are chargeable. No such independent production dataset was available for this research. The implementation calculates interval traffic from sequencer counter snapshots and iterates participants present in the end-of-interval state. Its test excludes a participant who had a start-of-interval counter but was absent at interval end. PR #111 explicitly replaces the earlier PR #103 design. This is an observation about proposed source code, not deployed production behaviour. Whether the exclusion is an accounting defect depends on the intended charging rule for participants that leave during an interval; the protocol specification must define that rule. [5, 10]
+A suitable validation would compare interval aggregation against an independent event history containing participant join and leave times and the corresponding traffic measurements. Such a test would need an authoritative definition of which events are chargeable. No such independent production dataset was available for this research. PR #111 explicitly replaces the earlier PR #103 design [5, 8, 10]. This is an observation about proposed source code, not deployed production behaviour. Whether the exclusion is an accounting defect depends on the intended charging rule for participants that leave during an interval; the protocol specification must define that rule.
 4.4 Evidence limitations
 The measurement-assurance investigation encountered a boundary between public protocol information and operational evidence.
-CIP-0132 describes ten-minute traffic reporting and a proposed operator-facing reporting interface. The associated traffic-report API work was not merged in the source snapshot examined for this research. The proposal and its related implementation work therefore provide architectural and source-level evidence, but not proof of an operational, durable reporting endpoint.
+CIP-0132 describes ten-minute traffic reporting and a proposed operator-facing reporting interface. The associated traffic-report API work was not merged in the source snapshot examined for this research [5, 10, 22]. The proposal and its related implementation work therefore provide architectural and source-level evidence, but not proof of an operational, durable reporting endpoint.
 The research also examined the documented Scan API surface. The documented traffic-status endpoint exposes synchronizer traffic information, including actual consumption, limits and purchased targets. This provides a potentially useful operational reference, but it is not equivalent to the proposed private ten-minute traffic report used for paymaster accounting.
 Two direct requests to the MainNet and TestNet Global Synchronizer Foundation Scan endpoints returned HTTP 403. The responses did not provide enough diagnostic information to establish the cause. These results are recorded as access failures, not evidence that the API is universally inaccessible or that the underlying traffic records do not exist.
-No operator-provided report set, independently retained traffic measurement or production settlement dataset was available to establish the completeness of the proposed accounting measurements.
+No operator-provided report set, independently retained traffic measurement or production settlement dataset was available to establish the completeness of the proposed accounting measurements [3, 5, 10, 11].
 Consequently, the evidence supports the following distinctions:
 Property	Research result	Evidence boundary
 Expected interval validation	Implemented and locally tested	Prototype behaviour
@@ -580,7 +411,7 @@ For the Phase 1 architecture, the most defensible claim is narrower: interval co
 5. Settlement Assurance
 5.1 Agreement and authority verification
 A settlement obligation is meaningful only if the commercial terms used to calculate it are valid for the relevant parties, synchronizer and reporting period.
-The prototype models agreements as canonical documents containing the terms required for deterministic verification. Agreement signatures are checked against a key registry, and the verifier evaluates whether the signing key has the required role. Effective dates and agreement versions are also considered when determining whether an agreement applies to a reporting interval.
+The prototype models agreements as canonical documents containing the terms required for deterministic verification [9, 25, 26]. Agreement signatures are checked against a key registry, and the verifier evaluates whether the signing key has the required role. Effective dates and agreement versions are also considered when determining whether an agreement applies to a reporting interval.
 This addresses a specific weakness in a system that treats the existence of a valid signature as sufficient evidence of authority. A signature establishes that a particular key signed particular content. It does not, by itself, establish that the key was authorised to approve those terms.
 The prototype therefore distinguishes agreement signers from settlement-binding signers through explicit roles. It rejects signatures from unknown, revoked or unauthorised keys and prevents an agreement from being accepted solely because its cryptographic signature is valid.
 However, role verification is not equivalent to complete commercial authority verification. The current registry model does not establish that a key’s authority is scoped to a particular legal entity, synchronizer, paymaster or commercial obligation. Nor does it establish the legal capacity or enforceability of an actual agreement.
@@ -612,7 +443,7 @@ A stronger production assurance process would publish canonical calculation rule
 5.4 Burn allocation and double-counting prevention
 A burn event establishes that a payment occurred. It does not automatically establish how that payment should be credited across multiple obligations.
 This distinction becomes important when a paymaster settles several obligations through one burn, or when one obligation is settled through several burns. A single-burn, single-obligation model cannot represent these cases without additional allocation rules.
-The prototype extends the portfolio settlement model to support many-to-many allocation:
+The prototype extends the portfolio settlement model to support many-to-many allocation [18, 25, 26]:
 	•	One burn may be divided across several obligations.
 	•	One obligation may receive allocations from several burns.
 	•	Each allocation must have a unique, non-empty identifier.
@@ -673,16 +504,15 @@ Settlement assurance is therefore stronger than measurement assurance in this pr
 
 6. Reward Attribution and Privacy
 6.1 Reward attribution integrity
-The Dedicated Synchronizer Paymaster Model connects traffic purchases to the Canton Coin reward mechanism through activity records generated when the paymaster burns CC.
+The Dedicated Synchronizer Paymaster Model proposes to connect traffic purchases to the Canton Coin reward mechanism through activity records generated when the paymaster burns CC [1, 3].
 This creates an accounting dependency between the traffic reported by the dedicated synchronizer, the payment made by the paymaster and the activity recognised by the reward system.
-The first phase of the proposed model attributes the relevant activity to the designated paymaster through the activity-recording mechanism. The registered activity weights determine how the purchase is represented for application and asset activity. Validator reward attribution is handled through a separate reward mechanism.
+The first phase of the proposed model attributes the relevant activity to the designated paymaster through the activity-recording mechanism. The registered activity weights determine how the purchase is represented for application and asset activity. Validator reward attribution is handled through a separate reward mechanism [1, 3, 6, 23, 24].
 This should not be confused with complete participant-level attribution. The initial paymaster model does not, by itself, demonstrate that every participant’s individual traffic contribution is independently measured and rewarded through the same accounting path.
 
 The research design specifies a reward-attribution validation checklist covering identity and reference binding, authorised activity weights, reward-rule and epoch versions, duplicate or superseded records, reward categories, deterministic calculation and aggregate budget limits.
 The current prototype evidence is narrower: the checked-in adversarial test demonstrates a reward-budget bound, while the settlement-manifest validator tests interval coverage, agreement references, burn uniqueness and payment reconciliation. The full reward-attribution checklist has not been demonstrated by the checked-in prototype tests and is treated here as a proposed validation requirement. [9, 18, 25, 26]
 
-The model uses exact Decimal arithmetic and explicit references between activity, settlement and reward records. It is designed to reject attribution that cannot be reconciled with the supplied accounting evidence.
-These checks address errors such as applying an outdated weight, counting the same activity twice, using a superseded record or associating a reward with the wrong paymaster or synchronizer.
+The proposed validation design would use exact Decimal arithmetic and explicit references between activity, settlement and reward records. If implemented, such controls could reject attribution that cannot be reconciled with the supplied accounting evidence. They would address errors such as applying an outdated weight, counting the same activity twice, using a superseded record or associating a reward with the wrong paymaster or synchronizer. The full set of these controls is not demonstrated by the checked-in prototype tests [13, 18, 23, 24].
 However, correct calculation is not equivalent to justified attribution.
 The prototype assumes that the activity records, burn evidence, registered weights and reward rules supplied to it are authoritative and sufficiently complete. It does not independently establish that the original traffic was measured correctly, that every relevant burn has been included, or that the deployed reward system follows the same rules.
 The distinction is particularly important when considering the relationship between payment and reward. A reward calculation can be mathematically correct relative to a supplied burn while still inheriting an incomplete or incorrect upstream traffic report.
@@ -690,7 +520,7 @@ The prototype therefore demonstrates attribution integrity over supplied evidenc
 6.2 Public verification versus restricted audit
 The accounting architecture faces a disclosure problem.
 Independent verification requires evidence. Yet exposing every traffic report, participant identifier, membership change and commercial agreement publicly could reveal information that synchronizer operators and participants have legitimate reasons to keep confidential.
-The research proposes separating accounting information into three disclosure classes.
+The research proposes separating accounting information into three disclosure classes [4, 14].
 Publicly verifiable evidence
 Public verification should focus on facts that can be checked without exposing the underlying participant-level traffic.
 Potentially public information includes:
@@ -986,7 +816,7 @@ This creates a second accounting relationship beyond the operator-paymaster sett
 
 A correct burn does not automatically establish that the resulting reward attribution is correct. Attribution depends on the applicable rules, weights, identities, epochs and the integrity of the records used in the calculation.
 
-The prototype models several of these checks, including identity consistency, authorised activity weights, rule versions, duplicate records and reward caps.
+The research design identifies these as validation requirements. The checked-in prototype evidence is narrower: it demonstrates a reward-budget bound, while the settlement-manifest tests cover interval, agreement, burn-uniqueness and payment-reconciliation checks [13, 18, 23, 24, 25, 26].
 
 However, the upstream implementation evidence reviewed for this research does not establish that the complete report-to-burn-to-reward path is deployed and independently verified. The prototype’s reward calculations should therefore be understood as a model of accounting controls, not a production validation of Canton reward distribution.
 
@@ -1075,7 +905,7 @@ That separation provides a basis for evaluating proposed accounting guarantees w
 
 9.1 Limitations of protocol and implementation evidence
 
-This study examines a specific public-source snapshot of the Canton protocol and related implementation work from November 2026. The principal protocol documents describe a proposed dedicated-synchronizer paymaster model, while several implementation components remain under development.
+This study examines a specific public-source snapshot of the Canton protocol and related implementation work from November 2026 [5, 6, 7, 10, 11, 20, 21, 22, 23, 24]. The principal protocol documents describe a proposed dedicated-synchronizer paymaster model, while several implementation components remain under development.
 
 The source review does not constitute an audit of a deployed production system. Public repositories cannot establish the configuration, internal procedures or actual accounting practices of individual synchronizer operators and paymasters.
 
@@ -1216,3 +1046,59 @@ The qualitative economic comparison identifies different cost drivers and trust 
 The practical implication is that a dedicated-synchronizer accounting design should state precisely what has been verified, which evidence supports the claim, who is authorised to produce that evidence and which assumptions remain unresolved.
 
 A stronger accounting system is not one that merely produces more signatures, proofs or reconciliation checks. It is one that makes the boundary between verified facts and trusted assumptions explicit.
+
+References
+
+1. Canton Foundation. *CIP-0104: Traffic-Based App Rewards*. Original proposal approved 12 February 2026; amendment aligning the proposal with Featured App Guidance 2.0b approved 27 October 2026. Pinned revision used for the dedicated-synchronizer extension-hook relationship: https://github.com/canton-foundation/cips/blob/92df641487c5e465dad5ea8d03245d3b9b328523/cip-0104/cip-0104.md.
+
+2. Canton Foundation. *CIP-0129: Universal Burn and Synchronizer Pricing*. Approved 23 October 2026. https://github.com/canton-foundation/cips/blob/8e694e509c47ecb59e5731289882b350e3186372/cip-0129/cip-0129.md.
+
+3. Canton Foundation. *CIP-0132: Dedicated Synchronizer Paymaster Model*. Proposed 16 November 2026; status Proposed in the reviewed revision. https://github.com/canton-foundation/cips/blob/538adf41789fa971f3ad397595de4549dd507e79/cip-0132/cip-0132.md.
+
+4. Canton Network. *Privacy Model*. Developer documentation, accessed 17 November 2026. https://github.com/canton-network/cf-docs/blob/main/docs-main/appdev/deep-dives/privacy-model.mdx.
+
+5. Canton Network. splice-multi-sync. Pull request #111, “Traffic report API and interval calculation.” Reviewed 17 November 2026; open at the reviewed snapshot. https://github.com/canton-network/splice-multi-sync/pull/111.
+
+6. Canton Network. splice. Pull request #8449, “ActivityRecorder implementation.” Reviewed 17 November 2026; draft at the reviewed snapshot. https://github.com/canton-network/splice/pull/8449.
+
+7. ChainSafe. canton-extending-mainnet. Issue #155, “Paymaster purchase path and amount checking.” Reviewed 17 November 2026. Issue-tracker evidence, not proof of production underpayment or misconduct. https://github.com/ChainSafe/canton-extending-mainnet/issues/155.
+
+8. Canton Network. splice-multi-sync. Pull request #103, earlier traffic-report implementation. Historical implementation context; superseded by the design in PR #111. https://github.com/canton-network/splice-multi-sync/pull/103.
+
+9. BigWave45. *Accounting Properties and Threat Model*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/accounting-properties-and-threat-model.md.
+
+10. BigWave45. *Traffic-Report Implementation Audit*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/traffic-report-implementation-audit.md.
+
+11. BigWave45. *Canton Implementation Evidence Map for the Settlement Accounting Interface*. Canton Research Lab, research artefact, 17 November 2026. https://github.com/BigWave45/canton-research-lab/blob/cfddf3a416d0b00284640dd27988d3ee800377f2/research/canton-implementation-evidence-map.md.
+
+12. BigWave45. *Architecture Comparison: CIP-0104, CIP-0129 and CIP-0132*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/cip-0104-0129-0132-architecture-comparison.md.
+
+13. BigWave45. *Reward Attribution Integrity*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/reward-attribution-integrity.md.
+
+14. BigWave45. *Privacy Disclosure Matrix and Aggregate Leakage Experiment*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/privacy-disclosure-matrix-and-leakage-experiment.md.
+
+15. BigWave45. *Comparative Assurance Model Specification*. Canton Research Lab, research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/research/comparative-assurance-model-specification.md.
+
+16. BigWave45. *Aggregate Linear Leakage Analysis*. Canton Research Lab, executable research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/aggregate_linear_leakage.py.
+
+17. BigWave45. *Aggregate Disclosure Experiment*. Canton Research Lab, executable research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/aggregate_disclosure_experiment.py.
+
+18. BigWave45. *Adversarial Accounting Tests*. Canton Research Lab, test artefact, snapshot 18 November 2026. Synthetic and prototype tests, not production integration tests. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/adversarial_accounting_tests.py.
+
+19. BigWave45. *Comparative Assurance Model Code*. Canton Research Lab, executable research artefacts, snapshot 18 November 2026. Includes comparative_assurance_model.py and integrated_assurance_comparison.py; qualitative ratings are analytical judgements, not measured costs or probabilities. https://github.com/BigWave45/canton-research-lab/tree/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis.
+
+20. Canton Network. splice-multi-sync. Pull request #100, “Paymaster traffic purchase support.” Merged source changes; merge status does not establish deployment to MainNet. https://github.com/canton-network/splice-multi-sync/pull/100.
+
+21. Canton Network. splice-multi-sync. Pull request #104, “Scan and SV registered-synchronizer handling.” Merged source changes; merge status does not establish deployment to MainNet. https://github.com/canton-network/splice-multi-sync/pull/104.
+
+22. ChainSafe. canton-extending-mainnet. Issue #152, “Traffic report API acceptance criteria.” Reviewed 17 November 2026. Acceptance criteria are requirements, not proof that they passed. https://github.com/ChainSafe/canton-extending-mainnet/issues/152.
+
+23. ChainSafe. canton-extending-mainnet. Issue #159, “End-to-end paymaster flow test.” Reviewed 17 November 2026; open at the reviewed snapshot. The issue records a requested test sequence, not a passing end-to-end result. https://github.com/ChainSafe/canton-extending-mainnet/issues/159.
+
+24. ChainSafe. canton-extending-mainnet. Issue #163, “ActivityRecorder integration.” Reviewed 17 November 2026. Tracked integration work, not proof of a completed production path. https://github.com/ChainSafe/canton-extending-mainnet/issues/163.
+
+25. BigWave45. *Settlement Manifest Validator*. Canton Research Lab, executable research artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/settlement_manifest_validator.py.
+
+26. BigWave45. *Settlement Manifest Validator Tests*. Canton Research Lab, test artefact, snapshot 18 November 2026. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/tests/test_settlement_manifest_validator.py.
+
+27. BigWave45. *Integrated Qualitative Assurance Comparison*. Canton Research Lab, executable research artefact, snapshot 18 November 2026. Ratings are qualitative analytical judgements, not measured performance, probabilities or monetary costs. https://github.com/BigWave45/canton-research-lab/blob/ecd8e8bdccbe6dc2556d54e8a01fb4d962537d0c/analysis/integrated_assurance_comparison.py.

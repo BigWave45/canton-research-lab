@@ -1,6 +1,122 @@
+# Current checkpoint — 18 November 2026
+
+**Repository:** private  
+**Reviewed branch:** `circleci-project-setup`  
+**Reviewed base snapshot:** `1f7bc8bdec8d65cf70e85ef6615a25ababe734a0` (subsequent commits below update the evidence map and documentation).
+
+## Controlling research question
+
+**What verifiable accounting guarantees can be added to the proposed dedicated-synchronizer paymaster model, and what are their economic, privacy and operational costs?**
+
+The scope-correction note and evidence map control. Older public-observability/synchronizer-economics material is retained as supporting background, not a parallel thesis.
+
+## Latest update — 18 November 2026: Scan API access check
+
+- The official Canton Foundation SV directory opened in the user's mobile browser; the user supplied its 13 TestNet SV entries and Scan URLs.
+- The Global Synchronizer Foundation `/api/scan/v0/scans` endpoint returned user-observed HTTP 403 on both MainNet and TestNet. No response metadata was captured; the cause is unknown and this does not establish universal API inaccessibility.
+- No live Scan records were retrieved. The directory is not transaction or traffic data.
+- Official Scan documentation describes a DSO-party view and a traffic-status endpoint, but these do not establish completeness of CIP-0132's private interval traffic reports.
+- Detailed record: [research/scan-api-access-check-2026-11-18.md](research/scan-api-access-check-2026-11-18.md). Evidence map updated accordingly.
+- Next route: stop retrying identical endpoints from the same browser context; continue source-to-invariant validation and local reproducible experiments. No validator onboarding or CI workflow is required for this step.
+
+## Latest update — 18 November 2026: invariant validation mapped
+
+- Added `research/accounting-invariant-validation-matrix-2026-11-18.md`, mapping twelve invariants to public Canton evidence, existing research prototype artefacts/tests, current evidence level and remaining validation.
+- The matrix is a gap analysis, not a claim that every listed test has been executed or that Canton conforms.
+- Highest-priority technical gap: the prototype's agreement signature does not authenticate the report-to-obligation settlement binding. An existing adversarial test demonstrates that changing the authority reference while retaining the agreement signature still reconciles. The next local prototype change should introduce a distinct binding attestation and negative tests.
+- Next validation targets that do not require TestNet access: duplicate/overlapping/out-of-order interval cases; multi-obligation burn allocation bounds; binding-attestation tampering, replay and signer-authorisation tests; then locally execute the relevant test suite and preserve commit/environment/output provenance.
+- No CI workflow should be invoked; the user's CI budget is exhausted. The CircleCI pass remains user-confirmed but is not tied to the latest commit SHA.
+
+## Update — 18 November 2026: I-08/I-09 portfolio burn allocation strengthened
+
+- Extended the existing `analysis/portfolio_settlement_model.py` rather than creating a parallel validator. `Allocation` now has a distinct portfolio-wide allocation ID; empty and repeated IDs and duplicate burn event evidence are rejected.
+- The validator permits one burn to fund multiple obligations and multiple burns to fund one or more obligations. It checks aggregate allocation against each burn, validates burn/obligation references and paymaster identity, and rejects non-positive allocation amounts.
+- Added optional `prior_allocations` for amendment checks. Prior and new claims are combined against burn amounts and obligation liabilities; reused IDs are rejected, and already consumed burn credit cannot be claimed again.
+- Amounts must be finite `Decimal` values. Fractional values use exact arithmetic without float conversion or quantization. The prototype does not specify a CC precision or rounding policy.
+- Due-time status remains obligation-specific: a paid obligation can reconcile while another is `short_paid`, and unpaid future tranches remain `not_yet_due`.
+- **Local execution:** Python 3.14.2; focused suites passed (63 tests total: portfolio settlement 26, portfolio allocation 8, reconciliation state machine 13, scheduled reconciliation 6, paymaster reconciliation 10); complete unittest suite passed (243 tests). `git diff --check` passed.
+- **Evidence boundary:** tests cover the encoded invariants over synthetic supplied data only. Burn authenticity/finality, completeness of burn and obligation records, eligible-credit policy, and agreement-defined due, carry-forward and amendment semantics remain external. These tests are not Canton production guarantees.
+
+## Update — 18 November 2026: I-10 reward attribution integrity
+
+- Extended `analysis/adversarial_accounting_tests.py` with an exact-Decimal app-reward validator and added adversarial tests in `tests/test_adversarial_accounting.py`. It checks activity/settlement/burn references, paid-byte × authorized-weight bounds, paymaster and synchronizer identity, active rule version and epoch, duplicate and superseded records, app-vs-validator reward type, expected reward computation, and a separate aggregate epoch cap.
+- Phase 1 attribution is checked against the designated paymaster. Participant-level reward distribution is explicitly outside this validator and must not be used as a Phase 1 correctness expectation.
+- Current upstream check retrieved 18 November 2026: `splice-multi-sync` PRs #100 (merged 11 Nov) and #104 (merged 12 Nov); Splice PR #8449 remains draft/open; ChainSafe issues #163 and #159 remain open; issue #155 is closed. Source detail and exact links are in `research/reward-attribution-integrity.md`.
+- **Local execution:** Python 3.14.2; focused adversarial suite passed (20 tests); complete local unittest suite passed (257 tests); `git diff --check` passed.
+- **Evidence boundary:** local tests establish synthetic invariants over supplied settlement/burn evidence and reward rules; they do not prove source activity completeness, input authority, reward-rule authenticity, or a complete deployed report-to-burn-to-app-reward path. No live vulnerability is alleged and no actual Canton reward percentages or tariff values are assumed.
+
+## Update — 18 November 2026: I-11 correction and supersession integrity
+
+- Extended interval coverage and integrated reconciliation to reject supersession branches/cycles, preserve paymaster/synchronizer/interval/obligation/agreement/authority identity, and price only the terminal valid report revision.
+- Prior settlement snapshots can carry prior paid amount, burn/allocation/reward IDs, exact committed allocation records, an explicit allocation-detail-completeness assertion, and identity metadata. Corrections emit deterministic append-only deltas, calculate outstanding/credit-candidate balances, combine committed and new allocations against burn limits, and reject allocation/reward replay. New claims are blocked when known prior credit has no allocation snapshot marked complete. A caller-supplied durable processed-adjustment ID set makes repeated processing idempotent.
+- Signed binding reconciliation pins paymaster and authority reference to the prior settlement. Negative deltas do not trigger automatic refund, netting or carry-forward; prior reward records require explicit reward reconciliation rather than inferred reversal.
+- Upstream status checked 18 November 2026: CIP-0132 remains Proposed; `splice-multi-sync` PR #111 remains open and does not specify corrections in its diff; issue #152 remains open with report persistence, unfinished intervals and four-node consistency in scope. The CIP does not define correction authority, post-settlement credit or reward reversal semantics.
+- **Local execution:** Python 3.14.2; focused correction suites passed (71 tests: interval coverage 29, correction identity 6, pricing/correction integration 12, multi-interval correction 4, signed protocol settlement interface 20); complete local unittest suite passed (271 tests); `git diff --check` passed. No CI workflow was invoked.
+- **Evidence boundary:** synthetic behavior over supplied report, agreement, settlement, burn and reward records does not authenticate correction authority or establish source completeness, real burn finality, legal credit/refund rules, reward reversal, or deployed Canton behavior. The caller's completeness assertion about prior allocation history is not authenticated.
+
+## Latest update — 18 November 2026: separate settlement-binding attestation implemented in prototype
+
+- Extended `SettlementBinding` with a report-set digest and a separate binding signature. The digest commits to canonical report fields (report ID, interval, timestamps, status, bytes, revision and supersession reference), deterministically ordered before hashing.
+- Reconciliation now requires the digest to match the actual report set and verifies a separate Ed25519 signature over binding ID, report-set digest, interval, synchronizer, obligation, agreement ID/version and authority reference.
+- Added role-scoped signer checks: agreement signatures require the `agreement` role; mapping attestations require `settlement_binding`. The trusted signer registry must explicitly carry those roles.
+- Expanded protocol-interface tests for authority-reference tampering, obligation/synchronizer/version tampering, report-digest substitution, report-content tampering, missing/invalid attestation, unknown/revoked signer and missing signer role. Existing status/byte-count tests now re-sign the altered report set so they isolate those invariants rather than failing earlier on digest mismatch.
+- Updated the settlement interface specification to include the report-set digest and distinct binding attestation.
+- **Validation status:** the targeted `tests/test_protocol_settlement_interface.py` suite was run in Codespaces after commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`; all 18 tests passed, including the legacy-binding fail-closed regression. `git diff --check` passed. These are user-reported local execution results, not CI results. No CI workflow was invoked.
+- **Signer separation boundary:** the implementation requires a separately identified binding signer key and checks its `settlement_binding` role. It does not enforce that the binding signer is a different legal person or key from the agreement signer if the trust registry grants one key both roles. Strict separation of duties therefore remains a governance/registry policy, not an enforced code invariant.
+- **Security boundary:** the binding attestation authenticates the mapping and exact report content supplied to the verifier. It does not prove that the operator's source meter captured all chargeable traffic, or that the authority reference is legally valid without independently governed trust-registry evidence.
+
+## Update — 17 November 2026: I-01 expected schedule validation strengthened
+
+- Expected schedules are checked before reports: empty schedules/IDs, duplicate IDs or temporal intervals, naive boundaries/deadlines, non-positive intervals, deadlines before interval end, gaps and overlaps return stable invalid reasons. Validation and output rows use chronological order regardless of caller order.
+- Reports must match the expected interval boundaries. Revisions are interpreted by revision number and predecessor IDs, independent of input order; duplicate revisions, missing revisions, broken supersession links and out-of-schedule intervals are rejected.
+- Added `ScheduleAnchor` for caller-supplied settlement window start/end, cadence and reporting grace. The validator reconstructs the canonical schedule and compares it with the supplied expected intervals; a truncated but internally contiguous schedule is detected when an anchor for the full window is supplied.
+- **Trust boundary:** internal continuity proves only consistency of the supplied list. Anchor matching establishes completeness only relative to the supplied window/cadence values; it does not authenticate their source or authority. Source-meter completeness remains outside this prototype's proof.
+- Payment reconciliation keeps compatibility mode by default and marks a schedule without an anchor as `INTERNALLY_CONSISTENT_UNANCHORED`. Explicit strict mode requires an anchor. Empty and internally invalid schedules are blocked before payment reconciliation.
+- **Local execution:** Python 3.14.2; the three requested focused suites passed (27 + 12 + 12 tests), and the complete local unittest suite passed (225 tests) against working-tree changes based on HEAD `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`. No CI workflow was invoked.
+
+## Current phase: evidence consolidation and validation
+
+The repository already contains substantial research and model work. Do not expand the feature set by default. Use [research/research-evidence-map.md](research/research-evidence-map.md) to connect every claim to its artefact, evidence class, limitation and next validation.
+
+## Verified repository inventory at the base snapshot
+
+At the base snapshot, the recursive Git tree contained 132 files: 23 Python analysis modules, 25 test files and 62 files under `research/`. Following the evidence-map, documentation, quantitative-cost-model and benchmark-harness updates, the branch has grown beyond the last exact inventory of 137 files. A fresh recursive inventory has not been run. Counts describe repository contents, not quality or validation.
+
+## Current evidence position
+
+- The comparative assurance model now has six synthetic scenarios across four architectures (24 model outputs). The test file contains ten test methods. The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The exact run URL and tested commit SHA are not recorded, so the pass is not independently tied to this branch head.
+- The original under-reporting counterexample remains central: a burn can match liability calculated from an understated report while the report omits activity relative to the synthetic reference.
+- The integrated assurance comparison is qualitative. Its cost, latency and operational-burden assessments are not measured benchmarks.
+- Added `analysis/assurance_cost_model.py`, with unit tests and documentation. It calculates cost components and break-even thresholds only from supplied inputs; it contains no Canton cost assumptions or empirical benchmarks. Comparisons reject mismatched currency, evaluation period or interval count.
+- The implementation reviews are dated public-source snapshots, not deployment audits. CIP-0132 remains Proposed; PRs #100/#104 are merged purchase-path changes, while traffic-report PR #111 remains open and ActivityRecorder PR #8449 remains draft/open.
+- PR #111 reads traffic counters on demand; its author dropped report storage because dSync sequencers were not being pruned at the time. The report API is JWT-protected, not a signed report attestation. Its current tests do not establish four-node report equality.
+- PR #111's participant aggregation excludes a participant present at interval start but absent at interval end. This is an observed code semantic whose billing treatment needs clarification, not proof of underbilling.
+- The PR's source comment warns of a pruning-boundary race. A separate harness audit finds that retained boundary rows may preserve correct reads; only the stale-pruning-status concurrency case remains an untested hypothesis. No incorrect `Ok` report has been demonstrated.
+- The prototype now verifies two separate cryptographic objects: the pricing-agreement document and the report-to-obligation `SettlementBinding`. The latter binds the canonical report-set digest and mapping metadata to a separately identified signer key with the `settlement_binding` role. The 18-test targeted suite passed locally in Codespaces at commit `85506c9a2d84cd5a7646ee4c9b4773dbcf5f4a0e`; no CI was run. This closes the previously demonstrated unsigned-mapping-field gap in the prototype. It does not prove source-meter completeness, legal authority, or independent control by distinct principals.
+- The data-access audit records that no authenticated API extraction or live data collection had been performed. Do not claim a network-wide empirical dataset.
+- **CI status:** The user confirmed that the CircleCI research-test pipeline eventually passed after the earlier eight failures. The successful result is accepted as the current project update. The exact CircleCI run URL and tested commit SHA were not captured in this repository checkpoint, so this record does not claim independent verification that the run tested branch head `83c02e68e4f511aa34f3b736653249ac9c51177d` or any later documentation commit. Do not reopen the resolved failures without new evidence.
+- The GitHub Actions endpoint shows no workflow runs for this branch; that is separate from CircleCI and does not contradict the user's CircleCI update.
+- The earlier reconstructed 29-case harness is not a substitute for the repository's full CI run.
+
+## Immediate next actions
+
+1. Validate interval completeness (I-01): inspect the existing expected-interval builder and report-coverage logic, then test missing, duplicate, overlapping, misaligned, adjacent, partial-window and non-OK interval cases. Preserve the requirement that the verifier has an independently known expected schedule.
+2. Validate unique burn allocation and double counting (I-08/I-09), then corrections and reward attribution. Keep each test tied to a stated accounting invariant.
+3. Replace the illustrative cost inputs with measured prototype data, scoped engineering estimates or confidential operator data where obtainable; do not present synthetic ICU values as Canton estimates.
+4. Execute `analysis/research_benchmark.py` on a local machine when code execution is available; preserve full JSON output, exact commit SHA, Python version and hardware context. Until then, no timings or memory figures may be claimed.
+5. When execution is available, run the cost-model tests and existing deterministic model commands, then record the exact commit and outputs. Until then, treat the tests as unexecuted.
+6. Build the evidence-to-predicate matrix and complete the economic, privacy and operational comparison without inventing empirical costs or probabilities.
+7. Recheck the current Canton CIPs, upstream PRs, tracker issues and official grant Terms and Conditions before publication.
+8. Draft the paper from claims that have traceable sources, reproducible model outputs or clearly labelled analytical judgments.
+9. Preserve the CircleCI run URL and commit SHA in the research record if they are available from the CircleCI project history.
+
+**Do not merge this research branch into `main` without explicit approval. Do not publish private working material before privacy, licensing and reproducibility review.**
+
+---
+
 # Project State
 
-**Last updated:** 2026-11-17  
+**Last updated:** 2026-11-18  
 **Repository:** private  
 **Project:** Canton Community Research Grants research preparation
 
@@ -22,9 +138,9 @@ The project studies the chain from private synchronizer activity to measurement,
 
 The repository contains the comparative grant-winner research, Canton literature/data mapping, technical architecture and implementation analysis, accounting invariants, synthetic experiments and tests, privacy-disclosure analysis, and the comparative assurance specification. Detailed chronological records are retained below.
 
-## Current phase
+## Historical checkpoint — superseded by the current checkpoint above
 
-**Comparative assurance experiments.**
+**Phase at the time of this entry: comparative assurance experiments.**
 
 The formal specification defines four architectures:
 1. Public burn records only.
@@ -776,3 +892,25 @@ Integrate successful agreement verification as a mandatory precondition for acce
 ## Next task
 
 Inspect the CI result and run/fix the full suite. Then evaluate the remaining trust assumptions quantitatively: registry compromise, signer key compromise, delayed revocation, and false/missing traffic reports. Do not add zero-knowledge proofs until the simpler signed-report and independent-audit baselines are measured.
+
+
+## Update — 18 November 2026: I-12 aggregate composition analysis consolidated
+
+- Reviewed the existing privacy disclosure matrix, nested-cohort differencing experiment, exact-rational aggregate row-space implementation and public-verification-surface analysis. The repository already contained a general linear-identifiability routine; this work did not create a parallel privacy model.
+- Added a four-participant/four-release construction: each release contains three participants (k=3), but the 4×4 release matrix has rank 4 and uniquely identifies all four synthetic participant values. The derivation is documented in `research/linear-composition-and-public-verification-surface.md`.
+- The four-release construction is hand-derived and documented only. It has not been added as an executable fixture or run through the test suite. The existing exact-rational row-space routine is capable of evaluating such a matrix, but its current run fixture does not contain this specific case.
+- Updated the privacy disclosure note, I-12 validation matrix row and evidence map to distinguish exact synthetic reconstruction from any claim about Canton exposure.
+- **Evidence boundary:** no live Canton data, participant cohort API, privacy incident or production attack was observed. CIP-0132's described synchronizer-wide aggregate does not establish that arbitrary overlapping participant-cohort releases are available. The attack requires such releases or equivalent aggregate equations plus known cohort membership.
+- **Validation:** documentation-only update through GitHub; no Codespaces agent, local tests or CI were used. The four-release arithmetic and matrix-rank conclusion are analytically derived, not a newly executed test result.
+- **I-12 status:** analytically investigated. Remaining work is evidence about actual reporting permissions and realistic disclosure surfaces, plus an optional executable regression fixture if test capacity becomes available. Do not expand the prototype solely to mark the invariant complete.
+
+
+## Update — 18 November 2026: remaining invariant evidence assessment
+
+- Inspected committed source and tests for I-02, I-03, I-04, I-06 and I-07. Added `research/remaining-invariant-evidence-assessment-2026-11-18.md` and updated the invariant matrix and evidence map.
+- I-02: prototype distinguishes valid zero, non-OK and missing evidence; upstream report feed remains proposed/open in the reviewed snapshot, so production behavior is unverified.
+- I-03: signed settlement binding commits to a report-set digest, but no operator-origin report signature exists in the protocol report model. This is a provenance architecture gap, not a reason to add another signature without selecting that architecture.
+- I-04: agreement document signature and generic signer role are modelled; authority to bind a specific synchronizer/paymaster/obligation and real legal authority remain external.
+- I-06: deterministic integer pricing exists for synthetic supplied rules; no independent implementation/golden-vector verification or actual operator tariff evidence exists.
+- I-07: due dates, grace, FIFO, carry-forward and unapplied payment are modelled, but allocation events do not carry burn event/finality timestamps. Historical paid-by-time-t cannot be independently reconstructed without those timestamps and an agreed payment-time rule.
+- **Decision:** no more implementation expansion. Preserve these as scoped evidence/architecture gaps. No CI or local tests were run for this documentation assessment.

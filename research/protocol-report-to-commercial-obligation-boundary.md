@@ -37,15 +37,19 @@ The model rejects a correction that changes synchronizer, obligation or agreemen
 
 It is not asserted as a Canton protocol rule. Legitimate agreement amendments, novations, synchronizer migrations or billing-period reassignment require an explicit, separately authorised mapping event. They should not be smuggled into an ordinary measurement correction.
 
-## 5. Required interface separation
+## 5. Interface separation implemented in the research model
 
-Before the comparative experiments are treated as final, the model interface should separate:
+The repository now implements this separation in `analysis/protocol_settlement_interface.py`:
 
-1. **Protocol report:** interval, status, aggregate bytes, revision/lineage if the reporting system provides it.
-2. **Off-ledger settlement binding:** synchronizer, agreement version, billing period, obligation or invoice mapping, and authority for that mapping.
-3. **Public payment evidence:** CC burn transaction and any reward records attributable to it.
+1. **ProtocolTrafficReport:** interval, status, aggregate bytes, revision and supersession lineage only.
+2. **SettlementBinding:** synchronizer, obligation, agreement ID/version, authority reference and signer metadata.
+3. **Public payment evidence:** supplied separately through the reconciliation case as burn and allocation records.
 
-This separation prevents the model from implying that commercial terms are embedded in the protocol report. It also makes the trust question visible: who supplied and authorised the mapping, how changes are recorded, and what independent evidence can verify it?
+The adapter rejects missing, duplicate, ambiguous and incomplete bindings, verifies the signed agreement document against a supplied trusted-key registry, and blocks non-OK reports carrying billable bytes. However, the signature verifies the agreement document only; it does not cover the binding's interval, synchronizer, obligation or authority-reference fields. The mapping itself is not cryptographically attested in the current prototype. See [Settlement Binding Attestation Gap](settlement-binding-attestation-gap.md).
+
+Important limitations remain: the current synthetic model requires exactly one binding per expected interval; it does not support split interval allocation. The `authority_reference` is only a provenance label and is not itself authenticated. The agreement signature verifies document integrity and a key's status in the supplied registry, but does not sign the mapping or prove legal authority or enforceability. The model also does not establish source measurement completeness.
+
+This is an implemented research prototype, not a production Canton interface or a native CIP-0132 feature.
 
 ## 6. Primary evidence and status
 

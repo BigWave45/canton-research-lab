@@ -6,7 +6,7 @@
 ## 1. Finding
 
 The implementation is not yet an end-to-end verified accounting system. The public code contains meaningful components:
-- traffic reporting is under active development;
+- traffic reporting is under active development in open PR #111;
 - a registered paymaster can buy traffic and burn CC;
 - Scan and SV components can process the registration and resulting traffic contracts.
 
@@ -16,9 +16,9 @@ But the connection from measured traffic to a correctly sized payment and then t
 
 | Component | Evidence | Status on 17 Nov 2026 | What it establishes | What it does not establish |
 |---|---|---|---|---|
-| Traffic interval calculation | PR #111, TrafficReport.scala, TrafficReportReader.scala | PR open | Computes participant traffic deltas across ten-minute intervals from sequencer cumulative counters | Does not independently establish that the source meter captured every chargeable event |
+| Traffic interval calculation | PR #111, TrafficReport.scala, TrafficReportReader.scala | PR open | Computes participant traffic deltas across ten-minute intervals from sequencer cumulative counters; its integration tests cover a completed interval and an interval spanning an LSU | Does not independently establish that the source meter captured every chargeable event or satisfy the four-node equality acceptance criterion in tracker #152 |
 | Traffic report API | PR #111, sync-operator-internal.yaml, HttpSyncOperatorHandler.scala | PR open | Authenticated endpoint, aligned time ranges, pagination and explicit interval statuses | Does not provide a public API or signed report for third-party verification |
-| Historical report retention | PR #111 review thread and TrafficReportReader.scala | On-demand sequencer reads in current patch | Can answer while required sequencer counter history remains available | No report database/trigger in current patch; if counters are pruned, old intervals can be CannotProvide |
+| Historical report retention | PR #111 review thread and TrafficReportReader.scala | No report database/trigger in current patch | The author states on 17 Nov that no dSync sequencer pruning exists today, so the store/trigger/migration were dropped and the handler reads the sequencer per request | If pruning is introduced, historical intervals may become CannotProvide; this is an operational dependency, not durable archival |
 | Logical synchronizer upgrade | PR #111, TrafficReportReader.scala, SyncOperatorLsuIntegrationTest.scala | Test added in open PR | Reads pre-upgrade and post-upgrade counter states from predecessor and successor sequencers | An interval spanning an upgrade may be unavailable if it was not read before predecessor history is lost |
 | Paymaster purchase | PR #100 | Merged 11 Nov 2026 | Registered paymaster can burn CC for its synchronizer, with payer, synchronizer, migration and weight checks | Does not automatically check purchase amount against reported usage |
 | Scan/SV registration handling | PR #104 | Merged 12 Nov 2026 | Scan can find registrations for token-standard transfers; SV can ingest and merge paymaster traffic contracts | Does not complete traffic-to-burn reconciliation |
@@ -34,22 +34,31 @@ The proposed endpoint returns one record per aligned interval. The default inter
 
 The implementation reads cumulative sequencer traffic counters at the start and end of an interval, subtracts the start value from the end value, and sums participant counters.
 
+The PR #111 diff includes a single-operator integration test for a completed interval and a logical-synchronizer-upgrade test that reads an interval spanning predecessor and successor sequencers. This is test coverage in an open PR, not a merged or deployed test result. Tracker #152 additionally asks for all four operator apps on a four-node synchronizer to return identical totals; that acceptance criterion is not established by the PR's visible test additions.
+
 The code includes lifecycle behaviour:
 - a participant present at the end but absent at the start counts from zero;
 - a participant present at the start but absent at the end is not counted.
 
-The test explicitly encodes the second rule as a participant who left during the interval and is not counted. This is a billing-policy question to verify against CIP-0132 and the eventual operator/paymaster agreement. The test proves the implementation's chosen behaviour, not that the policy is economically correct for every agreement.
+The test explicitly encodes the second rule as a participant who left during the interval and is not counted. The implementation's `participantsConsumed` function iterates over members present at the end reading; a participant present only at the start contributes no delta. This is a concrete metering-boundary question: does a participant that leaves partway through an interval owe for traffic consumed before departure, and if so, where is that usage retained and included? The current test proves the implementation's chosen behaviour, not that the billing policy is economically correct or consistent with every operator/paymaster agreement.
+
+### Pruning-boundary race noted in the implementation
+
+The PR #111 `TrafficReport.firstReadableStart` source comment warns that a request at the edge of the retention period can race pruning and report a wrong total. A separate test-harness audit narrows this concern: the pruning implementation retains, for each member, the latest traffic-consumption row at or before the pruning timestamp, so that boundary row may still answer reads at or after the effective pruning point. The unresolved case is a stale pruning-status observation combined with pruning advancing between the status check and counter read. Existing mocked tests do not exercise this database-level concurrency.
+
+This is an unresolved concurrency hypothesis, not an established incorrect-report defect. No incorrect `Ok` response has been demonstrated. A deterministic test must distinguish a correct `Ok`, an explicit unavailable/error response, a safe retry and an incorrect `Ok` against an independent reference.
 
 ## 4. Report storage was removed from the current PR
 
-The original tracker issue #152 requested that interval totals be stored in the sync operator app database so they remain available after sequencer pruning and across a logical synchronizer upgrade.
+Tracker issue #152 originally required durable totals in the sync operator app database across sequencer pruning and logical synchronizer upgrades. PR #103 implemented a storage/trigger approach but was closed unmerged and explicitly superseded by PR #111.
 
-The PR #111 review thread records the author's later decision: because the dedicated synchronizer sequencer was not being pruned at that time, the store, trigger and migration were dropped, and the HTTP handler reads the sequencer on each request.
+In PR #111's 17 November review thread, the author explains that no dedicated-synchronizer sequencer pruning exists at present, so the store, trigger and migration were dropped; the handler reads the sequencer on each request. This is an explicit operational assumption, not durable archival.
 
-This is not necessarily a defect under the current operational assumption. It is a dependency:
-- if dedicated synchronizer sequencer history remains available for the full payment/audit period, on-demand reads may suffice;
-- if pruning is introduced, historical report availability must be revisited;
-- if an upgrade occurs before a required interval is read, the reader may return CannotProvide.
+The distinction matters:
+- while sequencer counter history remains available, on-demand reads may suffice;
+- if pruning is introduced, old intervals may become CannotProvide;
+- during an LSU, the PR adds a test querying an interval across predecessor and successor sequencers;
+- tracker #152 remains open, and the public evidence reviewed here does not establish that its four-node equality acceptance criterion has passed.
 
 The research must not state that reports are durably archived. The current PR patch does not implement that.
 
@@ -95,10 +104,11 @@ Do not write that the complete paymaster traffic-to-reward pipeline is implement
 
 ## 8. Evidence classification
 
-**Verified in source code / merged changes**
-- Daml purchase constraints and registered-paymaster purchase paths in PR #100.
-- Scan/SV registration and contract handling in PR #104.
-- Proposed traffic report calculation, status model, JWT-protected handler and tests in open PR #111.
+**Verified in reviewed source / merged changes**
+- Daml purchase constraints and registered-paymaster purchase paths in merged PR #100.
+- Scan/SV registration and contract handling in merged PR #104.
+- Proposed traffic report calculation, status model, JWT-protected handler and single-operator/LSU tests in open PR #111. These remain proposed until merged and deployed.
+- Source-level edge cases in the same PR: participants present at interval start but absent at interval end are excluded from the computed interval delta; the source comment warns of a possible pruning-boundary race, but the test-harness audit narrows it to an untested concurrency hypothesis because retained boundary rows may preserve correct reads. Neither is evidence of actual production misbilling.
 - Specific participant join/leave calculation behaviour in TrafficReport.scala and its tests.
 
 **Open or draft**

@@ -30,7 +30,7 @@ Contains the separate off-ledger mapping:
 - agreement version;
 - authority reference for the mapping.
 
-The authority reference is a synthetic provenance field. It does not itself authenticate the referenced document or prove that the signer had authority.
+The authority reference is a synthetic provenance field. It does not itself authenticate the referenced document or prove that the signer had authority. The current `signature_b64` is used to verify the canonical pricing-agreement document against a supplied trusted-key registry; it does **not** sign the `SettlementBinding` fields. The binding ID, interval ID, synchronizer ID, obligation ID and authority reference are therefore not cryptographically bound by that signature. The registry's authority and the signer's legal capacity also remain external trust assumptions.
 
 ## Join and validation
 
@@ -48,10 +48,10 @@ It allows the experiment to distinguish:
 3. tariff calculation;
 4. matching liability to public CC burn allocations.
 
-A successful reconciliation still does not prove the underlying traffic measurement is complete or truthful. The authority reference is supplied as data and is not cryptographically verified.
+A successful reconciliation still does not prove the underlying traffic measurement is complete or truthful. The agreement signature authenticates agreement terms, not the report-to-obligation mapping; the authority reference is supplied as data and is not cryptographically verified.
 
 ## Tests and limitations
 
-Five tests cover a valid join, missing binding, ambiguous binding, invalid non-OK payload and invalid OK byte count. They are authored but not executed.
+The checked-in `tests/test_protocol_settlement_interface.py` contains ten test methods covering a valid join, missing and ambiguous bindings, invalid report payloads, invalid agreement signatures, unknown/revoked signers and a missing trusted-key registry. One new test deliberately changes the authority reference while retaining the same valid agreement signature and asserts that reconciliation still succeeds. This is an executable demonstration that the current signature does not attest the mapping metadata. The test file is present; this audit has not independently run the full repository suite on the latest branch head.
 
 This is an implementation-neutral synthetic research interface, not a production Canton integration.

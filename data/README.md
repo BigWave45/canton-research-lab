@@ -1,13 +1,5 @@
-# Data
+# Research parameters and data provenance
 
-Store data dictionaries, provenance notes, collection scripts, and permitted datasets here.
+[`parameter-register.md`](parameter-register.md) records protocol parameters and modelling inputs with explicit status labels, including approved framework values, observations, assumptions, unknowns and conflicts.
 
-For every dataset document:
-- source and access date;
-- coverage and sampling method;
-- field definitions and units;
-- transformations;
-- missingness and exclusions;
-- licensing and redistribution restrictions.
-
-Do not commit credentials, private user data, restricted datasets, or material whose licence does not permit redistribution.
+A parameter marked approved describes a governance document; it does not by itself prove implementation or deployment. Scenario assumptions must not be reported as observed Canton operating data.

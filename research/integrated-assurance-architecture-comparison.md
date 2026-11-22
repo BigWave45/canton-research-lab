@@ -1,6 +1,6 @@
 # Integrated Assurance Architecture Comparison
 
-**Status:** Research assessment and design recommendation. Qualitative ratings are analytical judgments, not measured cost, latency, detection probability or Canton production performance.
+**Status:** Preliminary research assessment and candidate design recommendation. Qualitative ratings are analytical judgments, not measured cost, latency, detection probability or Canton production performance. This is not the final paper recommendation; it must be tested against the completed evidence map and quantitative design.
 
 ## 1. Purpose
 
@@ -37,7 +37,7 @@ Passing one property does not imply passing the others.
 | Incremental latency | Low | Low to medium | Medium or high due to review cycle | Medium to high until benchmarked |
 | Dispute resolution | Weak | Moderate with retained signed evidence | Stronger with workpapers and appeal process | Strong for proved predicates; input truth still requires external evidence |
 
-The table compares capabilities under stated assumptions. It does not claim that any arrangement is already implemented end-to-end in Canton.
+The table compares **conceptual assurance architectures** under stated assumptions. The labels are not descriptions of complete implementations in the repository or on Canton. In particular, the `signed_reconciliation` model is a capability abstraction: it does not itself verify a signed traffic report. The current prototype verifies a signature over the pricing-agreement document, but the report and report-to-obligation binding are not separately signed. The cryptographic-proof architecture is also conceptual; no proof circuit or deployed proof verifier is implemented. The independent-audit architecture assumes access to complete, sufficiently reliable source evidence, which has not been demonstrated as available. These distinctions must remain explicit in the paper.
 
 ## 4. Disclosure design
 

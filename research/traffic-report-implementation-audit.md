@@ -39,7 +39,7 @@ The PR handles logical synchronizer upgrades by reading pre-upgrade state from t
 
 If the interval spanning an upgrade was not persisted before the old sequencer's history became unavailable, the report can return CannotProvide. The PR includes an LSU integration test for a report interval spanning the upgrade.
 
-The source also documents a pruning-boundary race: journal pruning happens before the pruning lower bound is advanced. A request at the retention edge can therefore still return an incorrect total. The implementation avoids readings at or before the first readable interval after the pruning lower bound, but the comment acknowledges the race.
+The source comment warns that a request at the retention boundary can race pruning and report a wrong total. However, the separate test-harness audit found that the database retains the latest traffic-consumption row at or before the pruning timestamp, which may preserve correct lookups at or after the effective boundary. The remaining hypothesis is a stale pruning-status observation combined with pruning advancing before the historical read. The possible outcomes include a correct value, an explicit error/unavailable response, a retry or an incorrect `Ok`; no incorrect `Ok` has been demonstrated.
 
 These are evidence-availability and boundary semantics. They should be represented explicitly in any accounting protocol and experiment, not converted into zero traffic.
 

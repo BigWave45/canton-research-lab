@@ -1,0 +1,29 @@
+version: 2.1
+
+functions:
+  setup-python: github.com/circleci-functions/setup-python@v0.5.0
+
+jobs:
+  research-tests:
+    docker:
+      - image: cimg/base:stable
+    environment:
+      PYTHONPATH: analysis
+    steps:
+      - checkout
+      - setup-python:
+          with:
+            python-version: "3.12"
+      - run:
+          name: Install test runner and project dependency
+          command: python -m pip install --upgrade pip pytest cryptography
+      - run:
+          name: Run research unit tests
+          command: circleci testsuite run "research unit tests"
+      - store_test_results:
+          path: test-results
+
+workflows:
+  research:
+    jobs:
+      - research-tests

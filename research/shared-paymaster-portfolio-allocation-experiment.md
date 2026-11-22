@@ -2,7 +2,9 @@
 
 **Status:** Synthetic accounting model; not an empirical study of Canton paymasters.  
 **Model:** `analysis/portfolio_allocation_model.py`  
-**Tests:** `tests/test_portfolio_allocation_model.py`
+**Comparative experiment tests:** `tests/test_portfolio_allocation_model.py`
+**Portfolio accounting validator:** `analysis/portfolio_settlement_model.py`
+**Validator tests:** `tests/test_portfolio_settlement_model.py`
 
 ## Question
 
@@ -78,3 +80,9 @@ python analysis/portfolio_allocation_model.py
 ## Next step
 
 Integrate the portfolio results with the earlier 24 comparisons, then move to privacy and operational trade-offs: what must be disclosed to a public verifier, what can remain auditor-restricted, and what evidence must stay confidential.
+
+## Portfolio validator extension: I-08/I-09
+
+The portfolio accounting validator now models distinct allocation IDs, rejects duplicate burn evidence and missing burn/obligation references, and permits many-to-many partitions while enforcing aggregate burn limits and paymaster identity. It combines prior committed allocations with new amendment claims, so allocation IDs cannot be replayed and existing burn credit remains consumed. Per-obligation status checks compare eligible credit with due tranches at the evaluation time and retain the distinction between `short_paid` and `not_yet_due`.
+
+The validator uses finite `Decimal` amounts only and performs exact comparisons without float conversion or quantization. The CC precision/rounding policy remains unspecified. Its tests demonstrate the encoded rules over synthetic input, not correctness or completeness of real burn evidence, the full obligation portfolio, or agreement-defined due/eligibility/amendment semantics.

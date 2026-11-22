@@ -6,7 +6,7 @@
 
 CIP-0132 permits a paymaster to settle traffic from multiple synchronizers and permits discounts/smoothing under off-ledger agreements. A single public burn may therefore fund more than one synchronizer obligation. Requiring every burn event to map to exactly one synchronizer would be too restrictive.
 
-The invariant is: total allocations from a burn event across all obligations must never exceed that burn's actual amount. Each allocation identifies the paymaster, burn event, obligation and amount.
+The invariant is: total allocations from a burn event across all obligations must never exceed that burn's actual amount. Each allocation identifies its burn event and obligation; the validator checks that those records share a paymaster before crediting the obligation.
 
 ## 2. Model
 
@@ -14,7 +14,7 @@ Each obligation contains paymaster identity, synchronizer identity, interval-lev
 
 Burn events contain a public event identifier, amount and paymaster. Allocation records partition burn amounts across obligations.
 
-The model validates interval continuity, complete report status, agreement version per interval, due schedule against expected liability, paymaster consistency, burn allocation limits, obligation liability limits and due-date-aware payment status.
+The model validates interval continuity, complete report status, agreement version per interval, due schedule against expected liability, paymaster consistency, burn allocation limits, obligation liability limits and due-date-aware payment status. Each allocation has its own unique portfolio-wide allocation ID; a burn event ID is not used as an allocation ID. A burn may be partitioned across obligations, and each obligation may receive credit from multiple burns.
 
 ## 3. Synthetic portfolio example
 
@@ -49,8 +49,18 @@ One burn may be partitioned among multiple synchronizer obligations for the same
 
 This replaces the earlier, overly restrictive one-burn-to-one-obligation rule.
 
-## 6. Limits and next questions
+## 6. Allocation amendments and arithmetic
+
+The portfolio validator accepts already committed `prior_allocations` separately from new allocations. It rejects allocation-ID reuse across that boundary and counts prior credit together with new claims against both the burn amount and the obligation liability. Thus an amendment can use only a burn's remaining unallocated amount; it cannot replay consumed credit as a fresh claim.
+
+Amounts are compared as finite `Decimal` values with no float conversion and no quantization. No CC precision or rounding rule is specified here, so the model performs exact arithmetic on the supplied values and does not invent a smallest unit or rounding policy.
+
+The local tests cover split burns, multiple burns per obligation, many-to-many portfolios, exact and excessive aggregate claims, duplicate evidence/IDs, missing references, paymaster mismatches, non-positive allocations, fractional values, due-tranche distinctions and amendment replay. These are prototype checks over supplied inputs, not evidence about production Canton behaviour.
+
+## 7. Limits and next questions
 
 The model does not verify ledger event authenticity, signatures, actual paymaster allocation policy, exchange rates, minimums, rounding, burn finality, disputes or reward attribution. It does not establish traffic completeness or privacy.
 
-Next: derive a reproducible pricing function from a documented agreement, then compare which manifest fields can be public, selectively disclosed or held by an authorised auditor.
+The model cannot establish that the supplied burn set or obligation set is complete, that an obligation is contractually eligible for a particular burn, or that caller-provided due schedules/amendment history follow an authoritative agreement. It does not define a CC precision policy.
+
+Next: derive a reproducible pricing and amendment policy from a documented agreement, then compare which manifest fields can be public, selectively disclosed or held by an authorised auditor.

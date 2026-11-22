@@ -28,13 +28,11 @@ The reader first calls `getSequencerPruningStatus()`, calculates the first inter
 
 The source comment in `TrafficReport.firstReadableStart` explicitly says the sequencer prunes the journal before moving its pruning lower bound. It warns that a request at the retention boundary can race a prune and report a wrong total.
 
-This is a time-of-check/time-of-use race:
-1. The report reader checks the pruning lower bound.
-2. The requested interval appears to be readable.
-3. Pruning may occur before the subsequent counter read.
-4. The returned counter state may no longer represent the intended boundary.
+This creates a candidate time-of-check/time-of-use condition, but it is not enough to conclude that a wrong report can occur. A separate test-harness audit inspected the pruning implementation and found that it retains, for each member, the latest traffic-consumption row at or before the pruning timestamp. For timestamps at or after the effective pruning boundary, that retained row may be sufficient to answer the historical lookup correctly.
 
-This is a concrete source-level risk statement, not proof that a production report has been wrong. Reachability and impact depend on pruning cadence, request timing, retention configuration and the sequencer's exact read semantics.
+The potentially problematic case is narrower: the report reader observes a stale pruning lower bound, pruning advances between that check and the counter read, and the historical read then resolves to a retained row later than the requested timestamp or otherwise returns an invalid result. Whether this produces an incorrect `Ok`, a propagated error, or an explicit unavailable status depends on the exact sequencing and store semantics. The reader recovers only the specific not-yet-sequenced status; other status runtime exceptions propagate.
+
+No deterministic concurrency test has been implemented or run here. No incorrect `Ok` response, production incident, underpayment or financial loss has been demonstrated. Treat this as an unresolved implementation hypothesis, not a confirmed defect.
 
 ## 4. Logical synchronizer upgrade handling
 
@@ -44,7 +42,7 @@ The successor inherits current counters but not historical counter history. It t
 
 The PR adds a test that queries across an upgrade and compares the interval results with direct reads from both sequencers. Once the predecessor's required history is no longer available, some spanning intervals can become `CannotProvide`.
 
-This is a different failure mode from the pruning race. Upgrade handling is explicitly implemented and tested in the PR; retention-boundary consistency still needs a concurrency test or a stronger read guarantee.
+This is a different failure mode from the pruning-boundary hypothesis. Upgrade handling is explicitly implemented and tested in the PR; the stale-pruning-status case still needs a deterministic concurrency test or a stronger read guarantee.
 
 ## 5. What an `Ok` report does and does not mean
 

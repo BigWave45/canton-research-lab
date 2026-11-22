@@ -6,7 +6,7 @@
 
 ## 1. Scope
 
-This audit checks two gates before fixing the research scope:
+This retrospective audit checks two gates for the selected research programme:
 
 1. Whether the proposed CIP-0132 paymaster pipeline is implemented end-to-end in public source as of the verification date.
 2. Whether the official Canton Community Research Grant Terms and Conditions and applicant eligibility can be verified from public official sources.
@@ -31,7 +31,7 @@ Sources:
 
 CIP-0132 specifies an operator API returning total synchronizer traffic in aligned ten-minute intervals, within the sequencer pruning window.
 
-The implementation PR #111, “serve traffic reports from the sync operator app”, was still open on 17 November 2026. Its description says it reads participant cumulative extra-traffic counters at interval boundaries, persists interval totals because sequencer history is pruned, uses JWT authentication, and returns `Ok`, `Undetermined` or `CannotProvide` statuses. It also describes logical-synchronizer-upgrade handling.
+The implementation PR #111, “serve traffic reports from the sync operator app”, was still open on 17 November 2026. It replaces PR #103, which was closed unmerged. PR #111 reads participant cumulative extra-traffic counters at interval boundaries, uses JWT authentication, and returns `Ok`, `Undetermined` or `CannotProvide` statuses. Its 17 November review thread records that the author dropped the report store, trigger and migration because dedicated-synchronizer sequencers were not being pruned at that time; the handler reads the sequencer on each request. The PR adds tests for a completed interval and an interval spanning an LSU, but this is still an open PR, not merged/deployed evidence.
 
 The corresponding tracker issue #152 remains open. Its acceptance criteria include:
 - one total per aligned ten-minute interval matching participant-consumed traffic;
@@ -39,7 +39,7 @@ The corresponding tracker issue #152 remains open. Its acceptance criteria inclu
 - all four operator apps on a four-node synchronizer returning identical totals;
 - persistence sufficient to survive pruning and upgrades.
 
-The PR description does not establish that the four-node equality acceptance test has passed. It also notes a successor sequencer does not carry counter history, so an interval spanning an upgrade that was not stored in time can return `CannotProvide`.
+The PR's visible test additions cover a single operator's report calculation and an LSU-spanning interval using predecessor and successor sequencers. They do not establish that all four operator apps on a four-node synchronizer return identical totals, which remains an acceptance criterion in open tracker issue #152. The PR also documents that a successor sequencer does not carry predecessor counter history; an interval spanning an upgrade can be unavailable if not queried while the required predecessor state is accessible.
 
 This is a material research boundary: the report API was work in progress, not a verified production data feed.
 
@@ -142,15 +142,15 @@ The user is based in Nigeria, so country eligibility and payment access are mate
 Official announcement:
 https://canton.foundation/introducing-the-canton-community-research-grants/
 
-## 6. Research design decision
+## 6. Research design status
 
-The research remains viable as a proposal-level protocol-economics study, but not yet as an empirical evaluation of live Canton paymaster accuracy.
+The research remains viable as a proposal-level accounting-assurance study, but not yet as an empirical evaluation of live Canton paymaster accuracy. The controlling question remains the one recorded in `research-scope-correction.md`: how privacy-preserving financial infrastructure can make its economic accounting independently verifiable. The narrower operational question and evidence map are in `research/README.md` and `research/research-evidence-map.md`.
 
-The strongest evidence-backed study design at this point is:
+The title below is an earlier working-title candidate only. It does not replace the controlling question, and no final title has been selected:
 
 **“Accountability Across a Privacy Boundary: Reconciling Private Synchronizer Traffic with Public Payment and Reward Records.”**
 
-Treat this as a working title only. Its deliverable should be:
+The research package should contain:
 1. an implementation-grounded state-transition and trust-boundary map;
 2. a reproducible agreement-aware reconciliation simulator;
 3. adversarial tests for missing intervals, counter discontinuity, duplicate/altered reports, upgrade/pruning gaps and split views;

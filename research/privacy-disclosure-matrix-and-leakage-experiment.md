@@ -80,7 +80,7 @@ That exactly reveals P1's usage.
 
 The result is a constructive counterexample to the claim that a minimum cohort size by itself prevents disclosure. It does not show that CIP-0132's synchronizer-wide report exposes participant-level usage. The attack requires overlapping sub-cohort releases or an equivalent source of aggregate equations. The current proposal's default synchronizer-wide aggregate is materially less granular.
 
-The experiment is reproducible with:
+The nested-cohort experiment is reproducible with:
 - python analysis/aggregate_disclosure_experiment.py
 - python -m unittest discover -s tests -p 'test_aggregate_disclosure_experiment.py' -v
 
@@ -88,7 +88,7 @@ The experiment is reproducible with:
 
 **Fixed reporting cohorts and no ad hoc overlapping queries.** Avoid releasing aggregates for arbitrary overlapping participant sets. This directly reduces simple differencing opportunities. It does not stop all inference from external side information.
 
-**Minimum cohort threshold.** Suppress small groups, but do not treat k-anonymity as sufficient. The synthetic counterexample passes k=3.
+**Minimum cohort threshold.** Suppress small groups, but do not treat k-anonymity as sufficient. The nested-cohort counterexample passes k=3. A separate four-participant construction in `research/linear-composition-and-public-verification-surface.md` shows all four participant values recoverable from four overlapping releases, each containing three participants.
 
 **Query and release composition audit.** Maintain a ledger of all released cohort definitions and aggregates. Reject a new release if its combination with previous releases isolates a member or creates a high-risk linear equation. Simple subset checks are only a first filter; a production design needs a broader linear-query/privacy review.
 
@@ -131,7 +131,7 @@ The privacy claim should be bounded: this design can reduce routine disclosure w
 
 ## 8. Next experiments
 
-- Extend the disclosure test from nested-set subtraction to general linear combinations of released aggregates.
+- Add the four-release full-rank construction as an executable regression fixture for `analysis/aggregate_linear_leakage.py` when local test capacity is available; the mathematical example is documented, but that fixture has not been added or executed.
 - Compare exact reporting, coarser windows, rounded public analytics and a separately noised public release.
 - Model the cost of auditor access, delayed publication and dispute resolution.
 - Revisit the matrix if the actual operator API or agreement schema exposes fields not included in this proposal.
